@@ -1,0 +1,506 @@
+0 info it worked if it ends with ok
+1 verbose cli [ '/Users/Henka/.nvm/v0.10.28/bin/node',
+1 verbose cli   '/Users/Henka/.nvm/v0.10.28/bin/npm',
+1 verbose cli   'install',
+1 verbose cli   'selenium-standalone@2.42.0-2.9.0' ]
+2 info using npm@1.4.13
+3 info using node@v0.10.28
+4 warn package.json mu@0.5.2 No repository field.
+5 verbose cache add [ 'selenium-standalone@2.42.0-2.9.0', null ]
+6 verbose cache add name=undefined spec="selenium-standalone@2.42.0-2.9.0" args=["selenium-standalone@2.42.0-2.9.0",null]
+7 verbose parsed url { protocol: null,
+7 verbose parsed url   slashes: null,
+7 verbose parsed url   auth: null,
+7 verbose parsed url   host: null,
+7 verbose parsed url   port: null,
+7 verbose parsed url   hostname: null,
+7 verbose parsed url   hash: null,
+7 verbose parsed url   search: null,
+7 verbose parsed url   query: null,
+7 verbose parsed url   pathname: 'selenium-standalone@2.42.0-2.9.0',
+7 verbose parsed url   path: 'selenium-standalone@2.42.0-2.9.0',
+7 verbose parsed url   href: 'selenium-standalone@2.42.0-2.9.0' }
+8 verbose cache add name="selenium-standalone" spec="2.42.0-2.9.0" args=["selenium-standalone","2.42.0-2.9.0"]
+9 verbose parsed url { protocol: null,
+9 verbose parsed url   slashes: null,
+9 verbose parsed url   auth: null,
+9 verbose parsed url   host: null,
+9 verbose parsed url   port: null,
+9 verbose parsed url   hostname: null,
+9 verbose parsed url   hash: null,
+9 verbose parsed url   search: null,
+9 verbose parsed url   query: null,
+9 verbose parsed url   pathname: '2.42.0-2.9.0',
+9 verbose parsed url   path: '2.42.0-2.9.0',
+9 verbose parsed url   href: '2.42.0-2.9.0' }
+10 verbose addNamed [ 'selenium-standalone', '2.42.0-2.9.0' ]
+11 verbose addNamed [ '2.42.0-2.9.0', '2.42.0-2.9.0' ]
+12 silly lockFile 2443509e-selenium-standalone-2-42-0-2-9-0 selenium-standalone@2.42.0-2.9.0
+13 verbose lock selenium-standalone@2.42.0-2.9.0 /Users/Henka/.npm/2443509e-selenium-standalone-2-42-0-2-9-0.lock
+14 verbose registry.get selenium-standalone not expired, no request
+15 silly lockFile 2443509e-selenium-standalone-2-42-0-2-9-0 selenium-standalone@2.42.0-2.9.0
+16 silly lockFile 2443509e-selenium-standalone-2-42-0-2-9-0 selenium-standalone@2.42.0-2.9.0
+17 silly resolved [ { name: 'selenium-standalone',
+17 silly resolved     version: '2.42.0-2.9.0',
+17 silly resolved     description: 'installs a `start-selenium` command line to start a standalone selenium server with chrome-driver',
+17 silly resolved     main: 'index.js',
+17 silly resolved     scripts: { install: 'node install.js', test: 'mocha' },
+17 silly resolved     bin: { 'start-selenium': './bin/start-selenium' },
+17 silly resolved     repository:
+17 silly resolved      { type: 'git',
+17 silly resolved        url: 'git@github.com:vvo/selenium-standalone.git' },
+17 silly resolved     bugs: { url: 'https://github.com/vvo/selenium-standalone/issues' },
+17 silly resolved     homepage: 'https://github.com/vvo/selenium-standalone',
+17 silly resolved     author: { name: 'Vincent Voyer', email: 'vincent@zeroload.net' },
+17 silly resolved     license: 'MIT',
+17 silly resolved     dependencies:
+17 silly resolved      { async: '^0.9.0',
+17 silly resolved        mkdirp: '^0.5.0',
+17 silly resolved        rimraf: '^2.2.8',
+17 silly resolved        unzip: '^0.1.9',
+17 silly resolved        whereis: '0.2.1' },
+17 silly resolved     devDependencies: { mocha: '^1.19.0' },
+17 silly resolved     contributors: [ [Object], [Object] ],
+17 silly resolved     gitHead: 'ad0bea705c6b92678ca14dd1a8ff266c4b7f006f',
+17 silly resolved     _id: 'selenium-standalone@2.42.0-2.9.0',
+17 silly resolved     _shasum: '0a7656c788029b49034f7620960b449636ce87bd',
+17 silly resolved     _from: 'selenium-standalone@2.42.0-2.9.0',
+17 silly resolved     _npmVersion: '1.4.13',
+17 silly resolved     _npmUser: { name: 'vvo', email: 'vincent.voyer@gmail.com' },
+17 silly resolved     maintainers: [ [Object] ],
+17 silly resolved     dist:
+17 silly resolved      { shasum: '0a7656c788029b49034f7620960b449636ce87bd',
+17 silly resolved        tarball: 'http://registry.npmjs.org/selenium-standalone/-/selenium-standalone-2.42.0-2.9.0.tgz' },
+17 silly resolved     directories: {},
+17 silly resolved     _resolved: 'https://registry.npmjs.org/selenium-standalone/-/selenium-standalone-2.42.0-2.9.0.tgz',
+17 silly resolved     readme: 'ERROR: No README data found!' } ]
+18 info install selenium-standalone@2.42.0-2.9.0 into /Users/Henka
+19 info installOne selenium-standalone@2.42.0-2.9.0
+20 info /Users/Henka/node_modules/selenium-standalone unbuild
+21 verbose tar unpack /Users/Henka/.npm/selenium-standalone/2.42.0-2.9.0/package.tgz
+22 silly lockFile 7d64fdd3-node-modules-selenium-standalone tar:///Users/Henka/node_modules/selenium-standalone
+23 verbose lock tar:///Users/Henka/node_modules/selenium-standalone /Users/Henka/.npm/7d64fdd3-node-modules-selenium-standalone.lock
+24 silly lockFile 84385fba-ndalone-2-42-0-2-9-0-package-tgz tar:///Users/Henka/.npm/selenium-standalone/2.42.0-2.9.0/package.tgz
+25 verbose lock tar:///Users/Henka/.npm/selenium-standalone/2.42.0-2.9.0/package.tgz /Users/Henka/.npm/84385fba-ndalone-2-42-0-2-9-0-package-tgz.lock
+26 silly gunzTarPerm modes [ '755', '644' ]
+27 silly gunzTarPerm extractEntry package.json
+28 silly gunzTarPerm extractEntry .npmignore
+29 silly gunzTarPerm extractEntry README.md
+30 silly gunzTarPerm extractEntry LICENSE
+31 silly gunzTarPerm extractEntry conf.js
+32 silly gunzTarPerm extractEntry install.js
+33 silly gunzTarPerm extractEntry test.js
+34 silly gunzTarPerm extractEntry index.js
+35 silly gunzTarPerm extractEntry AUTHORS
+36 silly gunzTarPerm extractEntry bin/start-selenium
+37 silly lockFile 7d64fdd3-node-modules-selenium-standalone tar:///Users/Henka/node_modules/selenium-standalone
+38 silly lockFile 7d64fdd3-node-modules-selenium-standalone tar:///Users/Henka/node_modules/selenium-standalone
+39 silly lockFile 84385fba-ndalone-2-42-0-2-9-0-package-tgz tar:///Users/Henka/.npm/selenium-standalone/2.42.0-2.9.0/package.tgz
+40 silly lockFile 84385fba-ndalone-2-42-0-2-9-0-package-tgz tar:///Users/Henka/.npm/selenium-standalone/2.42.0-2.9.0/package.tgz
+41 info preinstall selenium-standalone@2.42.0-2.9.0
+42 verbose readDependencies using package.json deps
+43 verbose readDependencies using package.json deps
+44 verbose cache add [ 'async@^0.9.0', null ]
+45 verbose cache add name=undefined spec="async@^0.9.0" args=["async@^0.9.0",null]
+46 verbose parsed url { protocol: null,
+46 verbose parsed url   slashes: null,
+46 verbose parsed url   auth: null,
+46 verbose parsed url   host: null,
+46 verbose parsed url   port: null,
+46 verbose parsed url   hostname: null,
+46 verbose parsed url   hash: null,
+46 verbose parsed url   search: null,
+46 verbose parsed url   query: null,
+46 verbose parsed url   pathname: 'async@^0.9.0',
+46 verbose parsed url   path: 'async@^0.9.0',
+46 verbose parsed url   href: 'async@^0.9.0' }
+47 verbose cache add [ 'mkdirp@^0.5.0', null ]
+48 verbose cache add name=undefined spec="mkdirp@^0.5.0" args=["mkdirp@^0.5.0",null]
+49 verbose parsed url { protocol: null,
+49 verbose parsed url   slashes: null,
+49 verbose parsed url   auth: null,
+49 verbose parsed url   host: null,
+49 verbose parsed url   port: null,
+49 verbose parsed url   hostname: null,
+49 verbose parsed url   hash: null,
+49 verbose parsed url   search: null,
+49 verbose parsed url   query: null,
+49 verbose parsed url   pathname: 'mkdirp@^0.5.0',
+49 verbose parsed url   path: 'mkdirp@^0.5.0',
+49 verbose parsed url   href: 'mkdirp@^0.5.0' }
+50 verbose cache add name="async" spec="^0.9.0" args=["async","^0.9.0"]
+51 verbose parsed url { protocol: null,
+51 verbose parsed url   slashes: null,
+51 verbose parsed url   auth: null,
+51 verbose parsed url   host: null,
+51 verbose parsed url   port: null,
+51 verbose parsed url   hostname: null,
+51 verbose parsed url   hash: null,
+51 verbose parsed url   search: null,
+51 verbose parsed url   query: null,
+51 verbose parsed url   pathname: '^0.9.0',
+51 verbose parsed url   path: '^0.9.0',
+51 verbose parsed url   href: '^0.9.0' }
+52 verbose addNamed [ 'async', '^0.9.0' ]
+53 verbose addNamed [ null, '>=0.9.0-0 <0.10.0-0' ]
+54 silly lockFile 7f39d2c2-async-0-9-0 async@^0.9.0
+55 verbose lock async@^0.9.0 /Users/Henka/.npm/7f39d2c2-async-0-9-0.lock
+56 verbose cache add [ 'unzip@^0.1.9', null ]
+57 verbose cache add name=undefined spec="unzip@^0.1.9" args=["unzip@^0.1.9",null]
+58 verbose parsed url { protocol: null,
+58 verbose parsed url   slashes: null,
+58 verbose parsed url   auth: null,
+58 verbose parsed url   host: null,
+58 verbose parsed url   port: null,
+58 verbose parsed url   hostname: null,
+58 verbose parsed url   hash: null,
+58 verbose parsed url   search: null,
+58 verbose parsed url   query: null,
+58 verbose parsed url   pathname: 'unzip@^0.1.9',
+58 verbose parsed url   path: 'unzip@^0.1.9',
+58 verbose parsed url   href: 'unzip@^0.1.9' }
+59 verbose cache add [ 'rimraf@^2.2.8', null ]
+60 verbose cache add name=undefined spec="rimraf@^2.2.8" args=["rimraf@^2.2.8",null]
+61 verbose parsed url { protocol: null,
+61 verbose parsed url   slashes: null,
+61 verbose parsed url   auth: null,
+61 verbose parsed url   host: null,
+61 verbose parsed url   port: null,
+61 verbose parsed url   hostname: null,
+61 verbose parsed url   hash: null,
+61 verbose parsed url   search: null,
+61 verbose parsed url   query: null,
+61 verbose parsed url   pathname: 'rimraf@^2.2.8',
+61 verbose parsed url   path: 'rimraf@^2.2.8',
+61 verbose parsed url   href: 'rimraf@^2.2.8' }
+62 verbose cache add name="mkdirp" spec="^0.5.0" args=["mkdirp","^0.5.0"]
+63 verbose parsed url { protocol: null,
+63 verbose parsed url   slashes: null,
+63 verbose parsed url   auth: null,
+63 verbose parsed url   host: null,
+63 verbose parsed url   port: null,
+63 verbose parsed url   hostname: null,
+63 verbose parsed url   hash: null,
+63 verbose parsed url   search: null,
+63 verbose parsed url   query: null,
+63 verbose parsed url   pathname: '^0.5.0',
+63 verbose parsed url   path: '^0.5.0',
+63 verbose parsed url   href: '^0.5.0' }
+64 verbose addNamed [ 'mkdirp', '^0.5.0' ]
+65 verbose addNamed [ null, '>=0.5.0-0 <0.6.0-0' ]
+66 silly lockFile 0879e7d7-mkdirp-0-5-0 mkdirp@^0.5.0
+67 verbose lock mkdirp@^0.5.0 /Users/Henka/.npm/0879e7d7-mkdirp-0-5-0.lock
+68 verbose cache add name="unzip" spec="^0.1.9" args=["unzip","^0.1.9"]
+69 verbose parsed url { protocol: null,
+69 verbose parsed url   slashes: null,
+69 verbose parsed url   auth: null,
+69 verbose parsed url   host: null,
+69 verbose parsed url   port: null,
+69 verbose parsed url   hostname: null,
+69 verbose parsed url   hash: null,
+69 verbose parsed url   search: null,
+69 verbose parsed url   query: null,
+69 verbose parsed url   pathname: '^0.1.9',
+69 verbose parsed url   path: '^0.1.9',
+69 verbose parsed url   href: '^0.1.9' }
+70 verbose addNamed [ 'unzip', '^0.1.9' ]
+71 verbose addNamed [ null, '>=0.1.9-0 <0.2.0-0' ]
+72 silly lockFile 08bfefe4-unzip-0-1-9 unzip@^0.1.9
+73 verbose lock unzip@^0.1.9 /Users/Henka/.npm/08bfefe4-unzip-0-1-9.lock
+74 verbose cache add [ 'whereis@0.2.1', null ]
+75 verbose cache add name=undefined spec="whereis@0.2.1" args=["whereis@0.2.1",null]
+76 verbose parsed url { protocol: null,
+76 verbose parsed url   slashes: null,
+76 verbose parsed url   auth: null,
+76 verbose parsed url   host: null,
+76 verbose parsed url   port: null,
+76 verbose parsed url   hostname: null,
+76 verbose parsed url   hash: null,
+76 verbose parsed url   search: null,
+76 verbose parsed url   query: null,
+76 verbose parsed url   pathname: 'whereis@0.2.1',
+76 verbose parsed url   path: 'whereis@0.2.1',
+76 verbose parsed url   href: 'whereis@0.2.1' }
+77 verbose cache add name="rimraf" spec="^2.2.8" args=["rimraf","^2.2.8"]
+78 verbose parsed url { protocol: null,
+78 verbose parsed url   slashes: null,
+78 verbose parsed url   auth: null,
+78 verbose parsed url   host: null,
+78 verbose parsed url   port: null,
+78 verbose parsed url   hostname: null,
+78 verbose parsed url   hash: null,
+78 verbose parsed url   search: null,
+78 verbose parsed url   query: null,
+78 verbose parsed url   pathname: '^2.2.8',
+78 verbose parsed url   path: '^2.2.8',
+78 verbose parsed url   href: '^2.2.8' }
+79 verbose addNamed [ 'rimraf', '^2.2.8' ]
+80 verbose addNamed [ null, '>=2.2.8-0 <3.0.0-0' ]
+81 silly lockFile e7d3f915-rimraf-2-2-8 rimraf@^2.2.8
+82 verbose lock rimraf@^2.2.8 /Users/Henka/.npm/e7d3f915-rimraf-2-2-8.lock
+83 silly addNameRange { name: 'async', range: '>=0.9.0-0 <0.10.0-0', hasData: false }
+84 verbose cache add name="whereis" spec="0.2.1" args=["whereis","0.2.1"]
+85 verbose parsed url { protocol: null,
+85 verbose parsed url   slashes: null,
+85 verbose parsed url   auth: null,
+85 verbose parsed url   host: null,
+85 verbose parsed url   port: null,
+85 verbose parsed url   hostname: null,
+85 verbose parsed url   hash: null,
+85 verbose parsed url   search: null,
+85 verbose parsed url   query: null,
+85 verbose parsed url   pathname: '0.2.1',
+85 verbose parsed url   path: '0.2.1',
+85 verbose parsed url   href: '0.2.1' }
+86 verbose addNamed [ 'whereis', '0.2.1' ]
+87 verbose addNamed [ '0.2.1', '0.2.1' ]
+88 silly lockFile e8ea15ac-whereis-0-2-1 whereis@0.2.1
+89 verbose lock whereis@0.2.1 /Users/Henka/.npm/e8ea15ac-whereis-0-2-1.lock
+90 silly addNameRange { name: 'mkdirp', range: '>=0.5.0-0 <0.6.0-0', hasData: false }
+91 silly addNameRange { name: 'unzip', range: '>=0.1.9-0 <0.2.0-0', hasData: false }
+92 silly addNameRange { name: 'rimraf', range: '>=2.2.8-0 <3.0.0-0', hasData: false }
+93 verbose url raw async
+94 verbose url resolving [ 'https://registry.npmjs.org/', './async' ]
+95 verbose url resolved https://registry.npmjs.org/async
+96 info trying registry request attempt 1 at 09:32:15
+97 verbose etag "1MO2T44MYV3BGT6A4FLI065DW"
+98 http GET https://registry.npmjs.org/async
+99 verbose url raw mkdirp
+100 verbose url resolving [ 'https://registry.npmjs.org/', './mkdirp' ]
+101 verbose url resolved https://registry.npmjs.org/mkdirp
+102 info trying registry request attempt 1 at 09:32:15
+103 verbose etag "5P8P29TVEQ554BHA2UQ3XQCA3"
+104 http GET https://registry.npmjs.org/mkdirp
+105 verbose url raw unzip
+106 verbose url resolving [ 'https://registry.npmjs.org/', './unzip' ]
+107 verbose url resolved https://registry.npmjs.org/unzip
+108 info trying registry request attempt 1 at 09:32:15
+109 verbose etag "9MF4LAKN7OXXE962S34NA7WSU"
+110 http GET https://registry.npmjs.org/unzip
+111 verbose url raw rimraf
+112 verbose url resolving [ 'https://registry.npmjs.org/', './rimraf' ]
+113 verbose url resolved https://registry.npmjs.org/rimraf
+114 info trying registry request attempt 1 at 09:32:15
+115 verbose etag "1STEDQ3FCRDH7RYNOV8FGGQ3J"
+116 http GET https://registry.npmjs.org/rimraf
+117 verbose url raw whereis
+118 verbose url resolving [ 'https://registry.npmjs.org/', './whereis' ]
+119 verbose url resolved https://registry.npmjs.org/whereis
+120 info trying registry request attempt 1 at 09:32:15
+121 verbose etag "B21CLLISBD7N614UTU0NJ4E90"
+122 http GET https://registry.npmjs.org/whereis
+123 http 304 https://registry.npmjs.org/mkdirp
+124 silly registry.get cb [ 304,
+124 silly registry.get   { date: 'Mon, 02 Jun 2014 07:32:16 GMT',
+124 silly registry.get     server: 'Apache',
+124 silly registry.get     via: '1.1 varnish',
+124 silly registry.get     'last-modified': 'Mon, 02 Jun 2014 07:32:16 GMT',
+124 silly registry.get     'cache-control': 'max-age=1',
+124 silly registry.get     etag: '"5P8P29TVEQ554BHA2UQ3XQCA3"',
+124 silly registry.get     'x-served-by': 'cache-fra1233-FRA',
+124 silly registry.get     'x-cache': 'HIT',
+124 silly registry.get     'x-cache-hits': '1',
+124 silly registry.get     'x-timer': 'S1401694336.788342,VS0,VE89',
+124 silly registry.get     vary: 'Accept',
+124 silly registry.get     'content-length': '0',
+124 silly registry.get     'keep-alive': 'timeout=10, max=50',
+124 silly registry.get     connection: 'Keep-Alive' } ]
+125 verbose etag mkdirp from cache
+126 silly addNameRange number 2 { name: 'mkdirp', range: '>=0.5.0-0 <0.6.0-0', hasData: true }
+127 silly addNameRange versions [ 'mkdirp',
+127 silly addNameRange   [ '0.0.1',
+127 silly addNameRange     '0.0.2',
+127 silly addNameRange     '0.0.3',
+127 silly addNameRange     '0.0.4',
+127 silly addNameRange     '0.0.5',
+127 silly addNameRange     '0.0.6',
+127 silly addNameRange     '0.0.7',
+127 silly addNameRange     '0.1.0',
+127 silly addNameRange     '0.2.0',
+127 silly addNameRange     '0.2.1',
+127 silly addNameRange     '0.2.2',
+127 silly addNameRange     '0.3.0',
+127 silly addNameRange     '0.3.1',
+127 silly addNameRange     '0.3.2',
+127 silly addNameRange     '0.3.3',
+127 silly addNameRange     '0.3.4',
+127 silly addNameRange     '0.3.5',
+127 silly addNameRange     '0.4.0',
+127 silly addNameRange     '0.4.1',
+127 silly addNameRange     '0.4.2',
+127 silly addNameRange     '0.5.0' ] ]
+128 verbose addNamed [ 'mkdirp', '0.5.0' ]
+129 verbose addNamed [ '0.5.0', '0.5.0' ]
+130 silly lockFile bf9ae38d-mkdirp-0-5-0 mkdirp@0.5.0
+131 verbose lock mkdirp@0.5.0 /Users/Henka/.npm/bf9ae38d-mkdirp-0-5-0.lock
+132 http 304 https://registry.npmjs.org/rimraf
+133 silly registry.get cb [ 304,
+133 silly registry.get   { date: 'Mon, 02 Jun 2014 07:32:16 GMT',
+133 silly registry.get     server: 'Apache',
+133 silly registry.get     via: '1.1 varnish',
+133 silly registry.get     'last-modified': 'Mon, 02 Jun 2014 07:32:16 GMT',
+133 silly registry.get     'cache-control': 'max-age=1',
+133 silly registry.get     etag: '"1STEDQ3FCRDH7RYNOV8FGGQ3J"',
+133 silly registry.get     'x-served-by': 'cache-fra1227-FRA',
+133 silly registry.get     'x-cache': 'HIT',
+133 silly registry.get     'x-cache-hits': '1',
+133 silly registry.get     'x-timer': 'S1401694336.797095,VS0,VE88',
+133 silly registry.get     vary: 'Accept',
+133 silly registry.get     'content-length': '0',
+133 silly registry.get     'keep-alive': 'timeout=10, max=50',
+133 silly registry.get     connection: 'Keep-Alive' } ]
+134 verbose etag rimraf from cache
+135 silly lockFile bf9ae38d-mkdirp-0-5-0 mkdirp@0.5.0
+136 silly lockFile bf9ae38d-mkdirp-0-5-0 mkdirp@0.5.0
+137 silly lockFile 0879e7d7-mkdirp-0-5-0 mkdirp@^0.5.0
+138 silly lockFile 0879e7d7-mkdirp-0-5-0 mkdirp@^0.5.0
+139 silly addNameRange number 2 { name: 'rimraf', range: '>=2.2.8-0 <3.0.0-0', hasData: true }
+140 silly addNameRange versions [ 'rimraf',
+140 silly addNameRange   [ '1.0.0',
+140 silly addNameRange     '1.0.1',
+140 silly addNameRange     '1.0.2',
+140 silly addNameRange     '1.0.4',
+140 silly addNameRange     '1.0.5',
+140 silly addNameRange     '1.0.6',
+140 silly addNameRange     '1.0.7',
+140 silly addNameRange     '1.0.8',
+140 silly addNameRange     '1.0.9',
+140 silly addNameRange     '2.0.0',
+140 silly addNameRange     '2.0.1',
+140 silly addNameRange     '2.0.2',
+140 silly addNameRange     '2.0.3',
+140 silly addNameRange     '2.1.0',
+140 silly addNameRange     '2.1.1',
+140 silly addNameRange     '2.1.2',
+140 silly addNameRange     '2.1.3',
+140 silly addNameRange     '2.1.4',
+140 silly addNameRange     '2.2.0',
+140 silly addNameRange     '2.2.1',
+140 silly addNameRange     '2.2.2',
+140 silly addNameRange     '2.2.3',
+140 silly addNameRange     '2.2.4',
+140 silly addNameRange     '2.2.5',
+140 silly addNameRange     '2.2.6',
+140 silly addNameRange     '2.2.8' ] ]
+141 verbose addNamed [ 'rimraf', '2.2.8' ]
+142 verbose addNamed [ '2.2.8', '2.2.8' ]
+143 silly lockFile b87241a4-rimraf-2-2-8 rimraf@2.2.8
+144 verbose lock rimraf@2.2.8 /Users/Henka/.npm/b87241a4-rimraf-2-2-8.lock
+145 silly lockFile b87241a4-rimraf-2-2-8 rimraf@2.2.8
+146 silly lockFile b87241a4-rimraf-2-2-8 rimraf@2.2.8
+147 silly lockFile e7d3f915-rimraf-2-2-8 rimraf@^2.2.8
+148 silly lockFile e7d3f915-rimraf-2-2-8 rimraf@^2.2.8
+149 http 304 https://registry.npmjs.org/async
+150 silly registry.get cb [ 304,
+150 silly registry.get   { date: 'Mon, 02 Jun 2014 07:32:16 GMT',
+150 silly registry.get     server: 'Apache',
+150 silly registry.get     via: '1.1 varnish',
+150 silly registry.get     'last-modified': 'Mon, 02 Jun 2014 07:32:16 GMT',
+150 silly registry.get     'cache-control': 'max-age=1',
+150 silly registry.get     etag: '"1MO2T44MYV3BGT6A4FLI065DW"',
+150 silly registry.get     'x-served-by': 'cache-fra1235-FRA',
+150 silly registry.get     'x-cache': 'HIT',
+150 silly registry.get     'x-cache-hits': '1',
+150 silly registry.get     'x-timer': 'S1401694336.784384,VS0,VE165',
+150 silly registry.get     vary: 'Accept',
+150 silly registry.get     'content-length': '0',
+150 silly registry.get     'keep-alive': 'timeout=10, max=50',
+150 silly registry.get     connection: 'Keep-Alive' } ]
+151 verbose etag async from cache
+152 silly addNameRange number 2 { name: 'async', range: '>=0.9.0-0 <0.10.0-0', hasData: true }
+153 silly addNameRange versions [ 'async',
+153 silly addNameRange   [ '0.1.0',
+153 silly addNameRange     '0.1.1',
+153 silly addNameRange     '0.1.2',
+153 silly addNameRange     '0.1.3',
+153 silly addNameRange     '0.1.4',
+153 silly addNameRange     '0.1.5',
+153 silly addNameRange     '0.1.6',
+153 silly addNameRange     '0.1.7',
+153 silly addNameRange     '0.1.8',
+153 silly addNameRange     '0.1.9',
+153 silly addNameRange     '0.1.10',
+153 silly addNameRange     '0.1.11',
+153 silly addNameRange     '0.1.12',
+153 silly addNameRange     '0.1.13',
+153 silly addNameRange     '0.1.14',
+153 silly addNameRange     '0.1.15',
+153 silly addNameRange     '0.1.16',
+153 silly addNameRange     '0.1.17',
+153 silly addNameRange     '0.1.18',
+153 silly addNameRange     '0.1.19',
+153 silly addNameRange     '0.1.20',
+153 silly addNameRange     '0.1.21',
+153 silly addNameRange     '0.1.22',
+153 silly addNameRange     '0.2.0',
+153 silly addNameRange     '0.2.1',
+153 silly addNameRange     '0.2.2',
+153 silly addNameRange     '0.2.3',
+153 silly addNameRange     '0.2.4',
+153 silly addNameRange     '0.2.5',
+153 silly addNameRange     '0.2.6',
+153 silly addNameRange     '0.2.7',
+153 silly addNameRange     '0.2.8',
+153 silly addNameRange     '0.2.9',
+153 silly addNameRange     '0.2.10',
+153 silly addNameRange     '0.3.0',
+153 silly addNameRange     '0.4.0',
+153 silly addNameRange     '0.4.1',
+153 silly addNameRange     '0.5.0',
+153 silly addNameRange     '0.6.0',
+153 silly addNameRange     '0.6.1',
+153 silly addNameRange     '0.6.2',
+153 silly addNameRange     '0.7.0',
+153 silly addNameRange     '0.8.0',
+153 silly addNameRange     '0.9.0' ] ]
+154 verbose addNamed [ 'async', '0.9.0' ]
+155 verbose addNamed [ '0.9.0', '0.9.0' ]
+156 silly lockFile 9a58a886-async-0-9-0 async@0.9.0
+157 verbose lock async@0.9.0 /Users/Henka/.npm/9a58a886-async-0-9-0.lock
+158 silly lockFile 9a58a886-async-0-9-0 async@0.9.0
+159 silly lockFile 9a58a886-async-0-9-0 async@0.9.0
+160 silly lockFile 7f39d2c2-async-0-9-0 async@^0.9.0
+161 silly lockFile 7f39d2c2-async-0-9-0 async@^0.9.0
+162 http 304 https://registry.npmjs.org/whereis
+163 silly registry.get cb [ 304,
+163 silly registry.get   { date: 'Mon, 02 Jun 2014 07:32:16 GMT',
+163 silly registry.get     server: 'Apache',
+163 silly registry.get     via: '1.1 varnish',
+163 silly registry.get     'last-modified': 'Mon, 02 Jun 2014 07:32:16 GMT',
+163 silly registry.get     'cache-control': 'max-age=1',
+163 silly registry.get     etag: '"B21CLLISBD7N614UTU0NJ4E90"',
+163 silly registry.get     'x-served-by': 'cache-fra1235-FRA',
+163 silly registry.get     'x-cache': 'MISS',
+163 silly registry.get     'x-cache-hits': '0',
+163 silly registry.get     'x-timer': 'S1401694336.798362,VS0,VE181',
+163 silly registry.get     vary: 'Accept',
+163 silly registry.get     'content-length': '0',
+163 silly registry.get     'keep-alive': 'timeout=10, max=50',
+163 silly registry.get     connection: 'Keep-Alive' } ]
+164 verbose etag whereis from cache
+165 silly lockFile e8ea15ac-whereis-0-2-1 whereis@0.2.1
+166 silly lockFile e8ea15ac-whereis-0-2-1 whereis@0.2.1
+167 verbose about to build /Users/Henka/node_modules/selenium-standalone
+168 info /Users/Henka/node_modules/selenium-standalone unbuild
+169 info preuninstall selenium-standalone@2.42.0-2.9.0
+170 info uninstall selenium-standalone@2.42.0-2.9.0
+171 verbose true,/Users/Henka/node_modules,/Users/Henka/node_modules unbuild selenium-standalone@2.42.0-2.9.0
+172 verbose /Users/Henka/node_modules/.bin,[object Object] binRoot
+173 info postuninstall selenium-standalone@2.42.0-2.9.0
+174 error Error: EACCES, open '/Users/Henka/.npm/whereis/0.2.1/package/package.json'
+174 error  { [Error: EACCES, open '/Users/Henka/.npm/whereis/0.2.1/package/package.json']
+174 error   errno: 3,
+174 error   code: 'EACCES',
+174 error   path: '/Users/Henka/.npm/whereis/0.2.1/package/package.json',
+174 error   parent: 'selenium-standalone' }
+175 error Please try running this command again as root/Administrator.
+176 error System Darwin 13.2.0
+177 error command "/Users/Henka/.nvm/v0.10.28/bin/node" "/Users/Henka/.nvm/v0.10.28/bin/npm" "install" "selenium-standalone@2.42.0-2.9.0"
+178 error cwd /Users/Henka/Arbeit/Promotion/_Projekte/Git/Merlot
+179 error node -v v0.10.28
+180 error npm -v 1.4.13
+181 error path /Users/Henka/.npm/whereis/0.2.1/package/package.json
+182 error code EACCES
+183 error errno 3
+184 error stack Error: EACCES, open '/Users/Henka/.npm/whereis/0.2.1/package/package.json'
+185 verbose exit [ 3, true ]
