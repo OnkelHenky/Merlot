@@ -1,9 +1,9 @@
 /**
  * Created by Henka on 07.06.14.
  */
-assert = require('assert');
-
-var BlueprintRunner;
+var BlueprintRunner,
+    ActorProvider = require('./actors/actorProvider').ActorProvider,
+    Merlot = require('./Merlot').Merlot;
 
 /**
  * @description
@@ -11,10 +11,13 @@ var BlueprintRunner;
  * @type {ActorBuilder}
  */
 BlueprintRunner = exports.BlueprintRunner = function(driver,webdriver) {
-    this._version_ = "0.0.1"; //Version number of the PathLogger
+
+    /*Information*/
+    this._type_    = "BlueprintRunner Object"; //Name of the object
 
     this.driver = {};
     this.webdriver = {};
+    this.actor = new ActorProvider.Actors["Paul"]; //Default actor
 
     if(driver){
       this.driver = driver;
@@ -24,22 +27,63 @@ BlueprintRunner = exports.BlueprintRunner = function(driver,webdriver) {
     }
 };
 
-BlueprintRunner.prototype.runWithActor = function (user_this_actor) {
-  var that = this,
-      actor,
-      by = that.webdriver.By;
+BlueprintRunner.prototype = new Merlot;
 
-    if(user_this_actor){
-        actor = user_this_actor;
+/**
+ * @description
+ * Define the actor, that shall be used during the blueprint test.
+ * @param actor {string} the name of the actor.
+ */
+BlueprintRunner.prototype.runWithThatActor = function (actor) {
+  var that = this;
+
+    if(actor && (typeof actor === 'string' || actor instanceof String)){
+
+        if(ActorProvider.Actors[actor]){
+            that.actor = new ActorProvider.Actors[actor];
+            console.log('Using "'+that.actor+'" as actor');
+        }else{
+            console.error(new Error('Actor with name "'+actor+'" not found'));
+            throw new Error('Actor with name "'+actor+'" not found')
+        }
+    }else{
+       console.error('actor not defined in runWithThatActor');
     }
-    /**
-     * The action builder is meant to be the foundation of the future mechanism
-     * to build (adhoc) different navigation patterns, used during (or in) a test run.
-     * @param TYPE_OF_ACTION, the type of action, like TAB navigation.
-     * @returns {driver.actions} action chain.
-     */
-    var actionBuilder = function (TYPE_OF_ACTION) {
-        var action_to_be_performed;
+};
+
+
+/**
+ *
+ * @param blueprint
+ */
+BlueprintRunner.prototype.runWithThatBlueprint = function (blueprint) {
+    var that = this;
+    that.blueprint = blueprint;
+};
+
+/**
+ * Let the actor try to find or reach the element, defined by the tag name.
+ * @param tagName
+ * @param ele
+ * @returns {*} a promise
+ */
+BlueprintRunner.prototype.actorTryToFindThisElement = function (tagName,ele) {
+    var that = this,
+        _actor = that.actor;
+
+  return  _actor.findElement.call(that,tagName,ele);
+};
+
+
+
+/**
+* The action builder is meant to be the foundation of the future mechanism
+* to build (adhoc) different navigation patterns, used during (or in) a test run.
+* @param TYPE_OF_ACTION, the type of action, like TAB navigation.
+* @returns {driver.actions} action chain.
+*/
+BlueprintRunner.prototype.actionBuilder = function (TYPE_OF_ACTION) {
+     var action_to_be_performed;
         switch (TYPE_OF_ACTION){
             case('3TAB'):
                 action_to_be_performed = that.driver.actions()
@@ -55,141 +99,36 @@ BlueprintRunner.prototype.runWithActor = function (user_this_actor) {
                 break;
         }
         return action_to_be_performed;
-    };
-
-    /**
-     * Helper function to check if a attribute is present
-     * @param webElement
-     * @param attribute
-     * @returns {boolean}
-     */
-    var isAttributePresent = function(webElement , attribute) {
-        var result = false;
-        try {
-            result = webElement.getAttribute('href');
-            if (result != null){
-                result = true;
-            }
-        } catch (exception) {
-            console.error('Error from "isAttributePresent": '+exception);
-        }
-        return result;
-    };
-
-    var tabSearch = function(tagName,ele){
-
-        var deferred = that.webdriver.promise.defer(),
-            webElement;
-
-
-        var helperFunction = function (ele) {
-            return actionBuilder(actor.navigationPattern.navStyle).perform()
-                .then(function () {
-                    if(webElement === undefined){
-                        webElement = that.driver.switchTo().activeElement();
-                    }else{
-                        that.webdriver.WebElement.equals(webElement,that.driver.switchTo().activeElement()).then(function (eq) {
-                            if(eq){
-                                return deferred.reject(new Error('Element with href= '+ele+' not found!'));
-                            }
-
-                        });
-
-                    }
-
-                    return that.driver.switchTo().activeElement();
-                })
-                .then(function (activeElement) {
-                    if (isAttributePresent(activeElement, ele.href)) {
-                        var isMatch =  activeElement.getAttribute('href')
-                            .then(function (text){
-                                // return (text === ele) ? deferred.fulfill(activeElement) : helperFunction(ele);
-                                return (text === ele.href) ? activeElement : helperFunction(ele);
-                            });
-
-                        return isMatch;
-
-                    }else{
-                        return helperFunction(ele);
-                    }
-                })
-        };
-        return helperFunction(ele);
-        //     helperFunction(ele);
-        //return deferred.promise;
-
-    };
-
-    var pointAndClick = function(tagName,ele){
-
-        var getLinkReference = function (_Plinks) {
-            var deferred = that.webdriver.promise.defer();
-            _Plinks.forEach(function(link) {
-                link.getAttribute('href').then(function(text){
-                    if(text === ele.href){
-                        //console.log("FOUND +++++++++++++++ "+text);
-                        deferred.fulfill(link);
-                        return;
-                    }
-                });
-            });
-            return deferred.promise;
-        };
-
-
-        var deferred = that.webdriver.promise.defer();
-            var links = that.driver.findElements(by.tagName('a'))
-                .then(getLinkReference)
-                .then(function (Plink) {
-                    deferred.fulfill(Plink);
-                });
-         return deferred.promise;
+};
 
 
 
+/**
+ * Let the actor perform a 'click'
+ * @param webEle
+ * @param type
+ */
+BlueprintRunner.prototype.click = function (webEle,type) {
+    var _actor = this.actor;
+    return  _actor.click.call(this,webEle,type);
+};
 
-    };
+/**
+ *
+ * @param where
+ * @param callback
+ */
+BlueprintRunner.prototype.goTo = function (where, callback) {
+    this.driver.get(where)
+           .then(function () {
+             callback();
+    });
+};
 
-    var searchForElement = function (tagName,ele) {
-
-        console.log('Actor is '+actor.name);
-        console.log(actor.name +' uses the navigation pattern: '+actor.navigationPattern.navStyle);
-
-        switch(actor.navigationPattern.navStyle){
-            case ('TAB'):
-                return tabSearch(tagName,ele);
-                break;
-            case ('POINT_AND_CLICK'):
-                return pointAndClick(tagName,ele);
-                break;
-            default :
-                break;
-        }
-
-
-    };
-
-
-    /*
-     * The test case
-     */
-that.driver.get('http://www.mi.hdm-stuttgart.de/mmb');
-    searchForElement('a',{href:'http://www.mi.hdm-stuttgart.de/mmb/kontakt'}).
-        then(function (webEle) {
-            //console.log('webEle = ' + webEle);
-            webEle.sendKeys(that.webdriver.Key.ENTER);
-
-        }).
-        then(null, function(err) {
-            console.error("An error was thrown! " + err);
-
-        });
-
-that.driver.getTitle().then(function(title) {
-        console.log('title = '+ title);
-        assert.equal("Kontakt - Mobile Medien", title);
-});
-
-    //that.driver.quit();
-
+/**
+ *
+ * @returns {*}
+ */
+BlueprintRunner.prototype.getPageTitle = function () {
+    return  this.driver.getTitle();
 };

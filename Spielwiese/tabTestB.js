@@ -12,7 +12,7 @@ var webdriver = require('selenium-webdriver'),
     path = require('path');
 
 var by = webdriver.By,
-    _pathToSeleniumJar = path.join(__dirname, '../lib/selenium-server-standalone-2.42.0.jar'),
+    _pathToSeleniumJar = path.join(__dirname, '../bin/selenium-server-standalone-2.42.0.jar'),
     _server = new SeleniumServer(_pathToSeleniumJar, {
         port: 4444
     });
@@ -58,8 +58,29 @@ var anna = actorBuilder.getActorWithProperties(annaProperties),
  *                  /Actor configuration  - END            *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+/* Start the test run
+blueRunner.runWithThatBlueprint(function () {
 
-/* Start the test run */
-blueRunner.runWithActor(paul);
+
+   driver.get('http://www.mi.hdm-stuttgart.de/mmb');
+    searchForElement('a',{href:'http://www.mi.hdm-stuttgart.de/mmb/kontakt'}).
+        then(function (webEle) {
+            webEle.sendKeys(that.webdriver.Key.ENTER);
+
+        }).
+        then(null, function(err) {
+            console.error("An error was thrown! " + err);
+        });
+
+    driver.getTitle().then(function(title) {
+        console.log('title = '+ title);
+        assert.equal("Kontakt - Mobile Medien", title);
+    });
+
+    driver.quit();
+});
+ */
+blueRunner.runWithThatActor(anna);
+blueRunner.run();
 
 

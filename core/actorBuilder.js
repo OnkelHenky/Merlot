@@ -2,7 +2,7 @@
  * Created by Henka on 07.06.14.
  */
 
-var Actor =  require('./actor').Actor;
+var Actor =  require('./actors/actor').Actor;
 
 var ActorBuilder;
 

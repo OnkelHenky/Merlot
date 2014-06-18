@@ -69,8 +69,8 @@ var spawn = require('child_process').spawn;
 
 var selenium = require('selenium-standalone');
 
-var _pathToSeleniumJar = path.join(__dirname,'../lib/selenium-server-standalone-2.42.0.jar');
-var _pathChromeDriver = path.join(__dirname,'../lib/chromedriver');
+var _pathToSeleniumJar = path.join(__dirname,'../bin/selenium-server-standalone-2.42.0.jar');
+var _pathChromeDriver = path.join(__dirname,'../bin/chromedriver');
 */
 /*
 var server = new SeleniumServer(_pathToSeleniumJar, {

@@ -12,7 +12,7 @@ var webdriver = require('selenium-webdriver'),
 
 var by = webdriver.By;
 var logger = new PathLogger();
-var _pathToSeleniumJar = path.join(__dirname, '../lib/selenium-server-standalone-2.42.0.jar');
+var _pathToSeleniumJar = path.join(__dirname, '../bin/selenium-server-standalone-2.42.0.jar');
 var server = new SeleniumServer(_pathToSeleniumJar, {
     port: 4444
 });
