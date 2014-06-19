@@ -24,7 +24,21 @@ Actor = exports.Actor =  function(properties) {
 
 };
 
+/**
+ * Get the core functionality
+ * @type {Merlot}
+ */
 Actor.prototype = new Merlot;
+
+
+/**
+ * @description
+ * @description Overrides prototype version of toString()
+ * @returns {string}
+ */
+Merlot.prototype.toString = function () {
+    return this.getName();
+};
 
 /**
  * @description Get the name of this actor

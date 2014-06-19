@@ -68,10 +68,8 @@ BlueprintRunner.prototype.runWithThatBlueprint = function (blueprint) {
  * @returns {*} a promise
  */
 BlueprintRunner.prototype.actorTryToFindThisElement = function (tagName,ele) {
-    var that = this,
-        _actor = that.actor;
-
-  return  _actor.findElement.call(that,tagName,ele);
+      var _actor = this.actor;
+  return  _actor.findElement.call(this,tagName,ele);
 };
 
 

@@ -3,21 +3,21 @@
  */
 
 
-var navigation = function () {
+module.exports = navigation = function () {
 
     this.Given(/^She goes on the website "([^"]*)"$/, function (arg1, callback) {
         this.visit(arg1, callback);
     });
 
-    this.When(/^She clicks on the link with href "([^"]*)"$/, function(arg1,callback) {
+    this.When(/^She clicks on the link with href "([^"]*)"$/, function(hrefAttr,callback) {
         //NOTE: Call callback() at the end of the step, or callback.pending() if the step is not yet implemented.
         var that = this,
             helper = {};
-        helper.href = arg1;
+        helper.href = hrefAttr;
 
         this.browser.actorTryToFindThisElement('a',helper,callback).
-            then(function (webEle) {
-               return that.browser.click(webEle,that.browser.webdriver.Key.ENTER);
+            then(function (webElement) {
+               return that.browser.click(webElement,that.browser.webdriver.Key.ENTER);
             }).
             then(function () {
                 callback();
@@ -28,12 +28,12 @@ var navigation = function () {
         //callback.pending();
     });
 
-    this.When(/^She clicks on the link with text "([^"]*)"$/, function(arg1,callback) {
+    this.When(/^She clicks on the link with text "([^"]*)"$/, function(linkText,callback) {
         var that = this,
             helper = {};
-        helper.text = arg1;
+        helper.text = linkText;
 
-        console.log('arg1 = '+arg1);
+        console.log('linkText = '+linkText);
         this.browser.actorTryToFindThisElement('a',helper,callback).
             then(function (webEle) {
                 that.browser.click(webEle,that.browser.webdriver.Key.ENTER);
@@ -46,12 +46,12 @@ var navigation = function () {
             });
     });
 
-    this.When(/^She clicks on the link with id "([^"]*)"$/, function(arg1,callback) {
+    this.When(/^She clicks on the link with id "([^"]*)"$/, function(linkId,callback) {
         var that = this,
             helper = {};
-        helper.id = arg1;
+        helper.id = linkId;
 
-        console.log('arg1 = '+arg1);
+        console.log('linkId = '+linkId);
         this.browser.actorTryToFindThisElement('a',helper,callback).
             then(function (webEle) {
                 that.browser.click(webEle,that.browser.webdriver.Key.ENTER);
@@ -70,7 +70,6 @@ var navigation = function () {
                 console.log('pageTitle = '+ pageTitle);
                 console.log('title = '+ title);
                 if (title === pageTitle) {
-
                     callback();
                 } else {
                     callback.fail(new Error("Expected to be on page with title " + title));
@@ -79,5 +78,3 @@ var navigation = function () {
             });
     });
 };
-
-module.exports = navigation;
