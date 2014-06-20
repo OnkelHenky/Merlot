@@ -7,8 +7,8 @@ var Actor =  require('./actor').Actor,
     Paul;
 
 /**
- * The prototype for an actor
- * @type {ActorBuilder}
+ * Paul
+ * @type {Paul}
  */
 Paul = exports.Paul =  function() {
 
@@ -18,17 +18,20 @@ Paul = exports.Paul =  function() {
     this.navigationPattern = {
         "navStyle" : "POINT_AND_CLICK"
     };
-
-    this.findElement = techniqueRepository.techniques['PointAndClick_Navigation'];
-
 };
 
+/**
+ * Get the actor basic features from the prototype
+ * @type {Actor}
+ */
 Paul.prototype = new Actor;
 
-Paul.prototype.click = function (webEle,type) {
+/**
+ * Technique used to navigate on the web application
+ */
+Paul.prototype.findElement = techniqueRepository.techniques['PointAndClick_Navigation'];
 
-  return new this.webdriver.ActionSequence(this.driver)
-        .mouseMove(webEle,{x: 0, y: 0})
-        .click(this.webdriver.Button.LEFT)
-        .perform();
-};
+/**
+ * Technique used to interact (click) with a component on the web application
+ */
+Paul.prototype.click = techniqueRepository.techniques['Click_Mouse'];

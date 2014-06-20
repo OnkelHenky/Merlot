@@ -32,7 +32,7 @@ var driver = new webdriver.Builder().
 var blueRunner = new BlueprintRunner(driver,webdriver);
 
 
-var World = function World(callback) {
+var World = exports.World= function World(callback) {
     this.browser = blueRunner; // this.browser will be available in step definitions
 
     this.visit = function(url, callback) {
@@ -45,5 +45,3 @@ var World = function World(callback) {
 
     callback();
 };
-
-exports.World = World;

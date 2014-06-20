@@ -16,7 +16,9 @@ Actor = exports.Actor =  function(properties) {
 
     /*Properties*/
     this.name = '';
-    this.navigationPattern = {};
+    this.navigationPattern = {
+        "navStyle" : ""
+    };
 
     if(properties){
         this.addPoperties(properties);

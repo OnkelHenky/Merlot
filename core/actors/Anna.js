@@ -6,11 +6,10 @@ var Actor =  require('./actor').Actor,
     Anna;
 
 /**
- * The prototype for an actor
- * @type {ActorBuilder}
+ * Anna
+ * @type {Anna}
  */
 Anna = exports.Anna =  function() {
-
 
     /*Properties*/
     this.name = 'Anna';
@@ -19,14 +18,20 @@ Anna = exports.Anna =  function() {
          "navStyle" : "TAB"
     };
 
-    this.findElement = techniqueRepository.techniques['Tab_Navigation'];
-
 };
 
+/**
+ * Get the actor basic features from the prototype
+ * @type {Actor}
+ */
 Anna.prototype = new Actor;
 
+/**
+ * Technique used to navigate on the web application
+ */
+Anna.prototype.findElement = techniqueRepository.techniques['Tab_Navigation'];
 
-Anna.prototype.click = function (webEle,type) {
-   return webEle.sendKeys(this.webdriver.Key.ENTER);
-};
-
+/**
+ * Technique used to interact (click) with a component on the web application
+ */
+Anna.prototype.click = techniqueRepository.techniques['Click_ReturnKey'];

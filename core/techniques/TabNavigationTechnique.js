@@ -4,7 +4,6 @@
 
 
 module.exports = tabNavigationTechnique = function (tagName,ele) {
-
     var that = this,
         _by = that.webdriver.By;
 

@@ -21,3 +21,6 @@ TechniqueRepository.techniques = new Array();
 TechniqueRepository.techniques['Tab_Navigation'] = require('./tabNavigationTechnique');
 TechniqueRepository.techniques['PointAndClick_Navigation'] = require('./pacNavigationTechnique');
 
+TechniqueRepository.techniques['Click_Mouse'] = require('./clickTechnique').byPointAndClick;
+TechniqueRepository.techniques['Click_ReturnKey'] = require('./clickTechnique').byUsingTheReturnKey;
+
