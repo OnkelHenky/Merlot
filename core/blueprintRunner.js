@@ -111,6 +111,12 @@ BlueprintRunner.prototype.click = function (webEle,type) {
     return  _actor.click.call(this,webEle,type);
 };
 
+
+BlueprintRunner.prototype.applyCriteria = function (webElement,cb) {
+    var _actor = this.actor;
+    _actor.criteriaBundle.checkCriterion(webElement,cb);
+
+};
 /**
  *
  * @param where

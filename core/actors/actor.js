@@ -16,6 +16,7 @@ Actor = exports.Actor =  function(properties) {
 
     /*Properties*/
     this.name = '';
+
     this.navigationPattern = {
         "navStyle" : ""
     };
@@ -85,5 +86,14 @@ Actor.prototype.findElement = function (tagName,ele) {
  * @param type
  */
 Actor.prototype.click = function (webEle,type) {
+    //TODO: Implement a useful method in actor prototype
+};
+
+/**
+ *
+ * @param webEle
+ * @param type
+ */
+Actor.prototype.criteriaBundle = function () {
     //TODO: Implement a useful method in actor prototype
 };

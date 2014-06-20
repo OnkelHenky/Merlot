@@ -4,6 +4,7 @@
 
 var Actor =  require('./actor').Actor,
     techniqueRepository = require('../techniques/techniqueRepository').TechniqueRepository,
+    CriteriaProvider = require('../criteria/criteriaProvider').CriteriaProvider,
     Paul;
 
 /**
@@ -35,3 +36,5 @@ Paul.prototype.findElement = techniqueRepository.techniques['PointAndClick_Navig
  * Technique used to interact (click) with a component on the web application
  */
 Paul.prototype.click = techniqueRepository.techniques['Click_Mouse'];
+
+Paul.prototype.criteriaBundle = new CriteriaProvider(['Void']).getCriteria();

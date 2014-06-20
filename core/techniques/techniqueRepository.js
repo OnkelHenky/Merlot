@@ -8,8 +8,8 @@
 var TechniqueRepository;
 
 /**
- * @description The prototype for an actor
- * @type {ActorBuilder}
+ *
+ * @type {TechniqueRepository}
  */
 TechniqueRepository = exports.TechniqueRepository =  function() {};
 TechniqueRepository.techniques = new Array();
@@ -18,9 +18,12 @@ TechniqueRepository.techniques = new Array();
 /*
  * The Techniques
  */
-TechniqueRepository.techniques['Tab_Navigation'] = require('./tabNavigationTechnique');
-TechniqueRepository.techniques['PointAndClick_Navigation'] = require('./pacNavigationTechnique');
 
-TechniqueRepository.techniques['Click_Mouse'] = require('./clickTechnique').byPointAndClick;
-TechniqueRepository.techniques['Click_ReturnKey'] = require('./clickTechnique').byUsingTheReturnKey;
+// Navigation
+TechniqueRepository.techniques['Tab_Navigation']            = require('./tabNavigationTechnique');
+TechniqueRepository.techniques['PointAndClick_Navigation']  = require('./pacNavigationTechnique');
+
+// Click
+TechniqueRepository.techniques['Click_Mouse']               = require('./clickTechnique').byPointAndClick;
+TechniqueRepository.techniques['Click_ReturnKey']           = require('./clickTechnique').byUsingTheReturnKey;
 

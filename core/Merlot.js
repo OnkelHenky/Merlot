@@ -3,7 +3,8 @@
  */
 
 
-var Merlot;
+var Merlot,
+    coloredJS = require('../lib/colored');
 
 /**
  * @description The prototype for an actor

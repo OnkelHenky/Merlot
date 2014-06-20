@@ -17,13 +17,20 @@ module.exports = navigation = function () {
 
         this.browser.actorTryToFindThisElement('a',helper,callback).
             then(function (webElement) {
+                var deferred = that.browser.webdriver.promise.defer();
+                    that.browser.applyCriteria(webElement, function (webElement) {
+                        deferred.fulfill(webElement);
+                    });
+                return deferred.promise;
+            }).
+            then(function (webElement) {
                return that.browser.click(webElement,that.browser.webdriver.Key.ENTER);
             }).
             then(function () {
                 callback();
             }).
             then(null, function(err) {
-                console.error("An error was thrown! " + err);
+                console.error("Merlot reported an error! " + err);
             });
         //callback.pending();
     });
