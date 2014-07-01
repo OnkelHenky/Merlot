@@ -4,10 +4,11 @@
  */
 
 var DOMElement,
-    Merlot = require('./Merlot').Merlot;
+    Merlot = require('./../Merlot').Merlot;
 
 /**
- *
+ * @description
+ * A representation of an HTML element - aka: WebElement or DOMElement
  * @type {DOMElement}
  */
 DOMElement = exports.DOMElement =  function(properties) {
@@ -67,7 +68,7 @@ DOMElement.prototype.getSearchAttribute = function () {
 
 /**
  *
- * @returns {_domElement.searchAttribute.attributeName|*|string}
+ * @returns {domElement.searchAttribute.attributeName|*|string}
  */
 DOMElement.prototype.getSearchAttributeName = function () {
     return (this.searchAttribute.attributeName) ? this.searchAttribute.attributeName: undefined;
@@ -75,15 +76,16 @@ DOMElement.prototype.getSearchAttributeName = function () {
 
 /**
  *
- * @returns {_domElement.searchAttribute.value|*|string|Number|number}
+ * @returns {domElement.searchAttribute.value|*|string|Number|number}
  */
 DOMElement.prototype.getSearchAttributeValue = function () {
    return (this.searchAttribute.value) ? this.searchAttribute.value: undefined;
 };
 
 /**
- *
- * @returns {string}
+ * @description
+ * Get a basic CSS selector, that represents this element
+ * @returns {string} , a basic CSS selector
  */
 DOMElement.prototype.getCSSSelector = function () {
   return this.getTagName()+"["+ this.getSearchAttributeName() + "='" + this.getSearchAttributeValue()+ "']";

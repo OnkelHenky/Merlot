@@ -3,7 +3,7 @@
  */
 var BlueprintRunner,
     ActorProvider = require('./actors/actorProvider').ActorProvider,
-    DOMElement = require('./DOMElement').DOMElement;
+    DOMElement = require('./auxilium/DOMElement').DOMElement;
     Merlot = require('./Merlot').Merlot;
 
 /**
