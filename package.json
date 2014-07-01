@@ -1,0 +1,8 @@
+{
+    "name": "Merlot",
+    "version": "0.0.1",
+    "dependencies": {
+        "selenium-webdriver": ">= 2.42.1",
+        "cucumber": ">= 0.4.0"
+    }
+}

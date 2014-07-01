@@ -69,8 +69,7 @@ BlueprintRunner.prototype.runWithThatActor = function (actor) {
 /**
  * @description
  * Let the actor try to find or reach the element, defined by the tag name.
- * @param tagName
- * @param ele
+ * @param domElement
  * @returns {*} a promise
  */
 BlueprintRunner.prototype.actorTryToFindThisElement = function (domElement) {

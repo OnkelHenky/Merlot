@@ -1,8 +1,15 @@
 /**
  * Created by Henka on 19.06.14.
+ *
+ * Contains all function to navigate to an given domElement using
+ * the 'TAB' navigation technique
  */
 
-
+/**
+ * @description
+ * 'TAB' navigation technique to find the element, defined as 'domElement'.
+ * @type {navigation}
+ */
 module.exports = tabNavigationTechnique = function (tagName,ele) {
     var that = this,
         _by = that.webdriver.By;
