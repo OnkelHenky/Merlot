@@ -4,3 +4,5 @@ workspace.xml
 Spielwiese/*
 .npm-debug.log
 .DS_Store
+node_modules
+*.log
