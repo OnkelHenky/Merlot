@@ -5,17 +5,23 @@
 
 module.exports = navigation = function () {
 
-    this.Given(/^She goes on the website "([^"]*)"$/, function (arg1, callback) {
-        this.visit(arg1, callback);
+    this.Given(/^She goes on the website "([^"]*)"$/, function (url, callback) {
+        this.visit(url, callback);
     });
 
     this.When(/^She clicks on the link with href "([^"]*)"$/, function(hrefAttr,callback) {
         //NOTE: Call callback() at the end of the step, or callback.pending() if the step is not yet implemented.
         var that = this,
-            helper = {};
-        helper.href = hrefAttr;
+             _domElement = this.browser.createDOMElement({
+                'tagName' : 'a',
+                'searchAttribute' : {
+                     'attributeName':  'href',
+                     'value': hrefAttr
+                 }
+            });
 
-        this.browser.actorTryToFindThisElement('a',helper,callback).
+        console.dir(_domElement);
+        this.browser.actorTryToFindThisElement(_domElement).
             then(function (webElement) {
                 var deferred = that.browser.webdriver.promise.defer();
                     that.browser.applyCriteria(webElement, function (webElement) {
@@ -37,11 +43,14 @@ module.exports = navigation = function () {
 
     this.When(/^She clicks on the link with text "([^"]*)"$/, function(linkText,callback) {
         var that = this,
-            helper = {};
-        helper.text = linkText;
-
-        console.log('linkText = '+linkText);
-        this.browser.actorTryToFindThisElement('a',helper,callback).
+            _domElement = this.browser.createDOMElement({
+                'tagName' : 'a',
+                'searchAttribute' : {
+                    'attributeName':  'text',
+                    'value': linkText
+                }
+            });
+        this.browser.actorTryToFindThisElement(_domElement).
             then(function (webEle) {
                 that.browser.click(webEle,that.browser.webdriver.Key.ENTER);
             }).
@@ -55,10 +64,42 @@ module.exports = navigation = function () {
 
     this.When(/^She clicks on the link with id "([^"]*)"$/, function(linkId,callback) {
         var that = this,
-            helper = {};
-        helper.id = linkId;
+            _domElement = this.browser.createDOMElement({
+                'tagName' : 'a',
+                'searchAttribute' : {
+                    'attributeName':  'id',
+                    'value': linkId
+                }
+            });
+        this.browser.actorTryToFindThisElement(_domElement).
+            then(function (webEle) {
+                 that.browser.click(webEle,that.browser.webdriver.Key.ENTER);
+            }).
+            then(function () {
+                callback();
+            }).
+            then(null, function(err) {
+                console.error("An error was thrown! " + err);
+            });
+    });
 
-        console.log('linkId = '+linkId);
+    this.When(/^She clicks on the link with "([^"]*)" = "([^"]*)"$/, function(identifiedBy,value,callback) {
+        var that = this,
+            helper = {};
+
+        console.log(identifiedBy+ ' = '+value);
+
+        switch (identifiedBy){
+            case "id":
+            case "text":
+            case "href":
+                helper[identifiedBy] = value;
+                break;
+            default:
+                callback.fail(new Error('"'+identifiedBy+'" is not valid, please use "id", "text" or "href" instead'));
+                break;
+        }
+
         this.browser.actorTryToFindThisElement('a',helper,callback).
             then(function (webEle) {
                 that.browser.click(webEle,that.browser.webdriver.Key.ENTER);

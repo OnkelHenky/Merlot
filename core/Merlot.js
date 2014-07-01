@@ -13,7 +13,7 @@ var Merlot,
 Merlot = exports.Merlot =  function(properties) {
 
     /*Information*/
-    this._version_ = "0.0.1", //Version number of the Actor
+    this._version_ = "0.0.1"; //Version number of the Actor
     this._type_    = "Merlot Object"; //Name of the object
 };
 

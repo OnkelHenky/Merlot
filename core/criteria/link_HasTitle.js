@@ -58,5 +58,6 @@ LinkHasTitle.prototype.criterion = function(webElement,callback){
     } else {
         throw new Error("Link hast no proper attribute title");
     }
+
     callback(webElement);
 };

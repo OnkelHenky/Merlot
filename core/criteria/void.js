@@ -35,6 +35,5 @@ VoidCriterion.prototype = new Criterion;
  */
 VoidCriterion.prototype.criterion = function(webElement,callback){
     console.log("Invoking '" +this.getName() + "' !");
-
     callback(webElement);
 };

@@ -21,7 +21,9 @@ TechniqueRepository.techniques = new Array();
 
 // Navigation
 TechniqueRepository.techniques['Tab_Navigation']            = require('./tabNavigationTechnique');
-TechniqueRepository.techniques['PointAndClick_Navigation']  = require('./pacNavigationTechnique');
+TechniqueRepository.techniques['PointAndClick_Navigation']  = require('./pacNavigationTechnique').pacNavigationTechnique;
+TechniqueRepository.techniques['XPath_Navigation']          = require('./pacXpathTechnique');
+TechniqueRepository.techniques['CSS_Navigation']            = require('./pacNavigationTechnique').pacCSSSelectorNavigationTechnique;
 
 // Click
 TechniqueRepository.techniques['Click_Mouse']               = require('./clickTechnique').byPointAndClick;
