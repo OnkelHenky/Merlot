@@ -17,6 +17,19 @@ Merlot = exports.Merlot =  function(properties) {
     this._type_    = "Merlot Object"; //Name of the object
 };
 
+
+/**
+ * Collection of useful function, that should occur in any
+ * @type {{}}
+ */
+Merlot.prototype.utile = {};
+/**
+ *
+ * @type {exports}
+ * @private
+ */
+Merlot.prototype.utile._fs_ = require('fs');
+
 /**
  * @description Get the current version of Merlot
  * @returns {string} the version number

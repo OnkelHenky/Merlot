@@ -39,45 +39,58 @@ BlueprintRunner = exports.BlueprintRunner = function(config) {
     this.webdriver = webdriver;
     this.actor = new ActorProvider.Actors["Paul"]; //Default actor
 
+    var self = this;
+
     if(config){
         if (config.seleniumPath && config.port && config.browser) {
-            this.config = config;
+
+            self.utile._fs_.exists(config.seleniumPath, function(exists) {
+
+                if (exists) {
+                    self.config = config;
+
+                    var  _pathToSeleniumJar = self.config.seleniumPath;
+                    _server = new SeleniumServer(_pathToSeleniumJar, {
+                        port: self.config.port
+
+                    });
+
+                    console.log("Using selenium from: "+_pathToSeleniumJar);
+
+                    // Start the selenium server
+                    _server.start();
+
+                    var _serverCapabilities = webdriver.Capabilities.chrome(); //default
+                    switch(self.config.browser){
+                        case 'chrome':
+                            _serverCapabilities = webdriver.Capabilities.chrome();
+                            break;
+                        case 'firefox':
+                            _serverCapabilities = webdriver.Capabilities.firefox();
+                            break;
+                        case 'safari':
+                            _serverCapabilities = webdriver.Capabilities.safari();
+                            break;
+                        case 'ie':
+                            break;
+                        default :
+                            _serverCapabilities = webdriver.Capabilities.chrome();
+                    }
+
+                    self.driver = new webdriver.Builder().
+                        usingServer(_server.address()).
+                        withCapabilities(_serverCapabilities).
+                        build();
+                } else {
+                    throw new Error('Unable to find selenium.jar under this location "'+config.seleniumPath+'"');
+                }
+            });
+
         }
     }
 
 
-    var  _pathToSeleniumJar = this.config.seleniumPath;
-    _server = new SeleniumServer(_pathToSeleniumJar, {
-        port: this.config.port
 
-    });
-
-    console.log("Using selenium from: "+_pathToSeleniumJar);
-
-    // Start the selenium server
-    _server.start();
-
-    var _serverCapabilities = webdriver.Capabilities.chrome(); //default
-    switch(this.config.browser){
-        case 'chrome':
-            _serverCapabilities = webdriver.Capabilities.chrome();
-            break;
-        case 'firefox':
-            _serverCapabilities = webdriver.Capabilities.firefox();
-            break;
-        case 'safari':
-            _serverCapabilities = webdriver.Capabilities.safari();
-            break;
-        case 'ie':
-            break;
-        default :
-            _serverCapabilities = webdriver.Capabilities.chrome();
-    }
-
-    this.driver = new webdriver.Builder().
-        usingServer(_server.address()).
-        withCapabilities(_serverCapabilities).
-        build();
 
 };
 
@@ -85,7 +98,7 @@ BlueprintRunner = exports.BlueprintRunner = function(config) {
  * Get all the stuff from Merlot prototype
  * @type {Merlot}
  */
-BlueprintRunner.prototype = new Merlot;
+BlueprintRunner.prototype = new Merlot();
 
 
 BlueprintRunner.prototype.addConfiguration = function (config) {

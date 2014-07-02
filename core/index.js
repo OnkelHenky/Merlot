@@ -3,6 +3,6 @@
  * Copyright by Alexander Henka
  */
 
-module.exports.merlotSteps =  require("./steps/blueprintSteps");
-module.exports.BlueprintRunner =  require('blueprintRunner').BlueprintRunner;
+module.exports.BlueprintSteps =  require("./steps/blueprintSteps");
+module.exports.BlueprintRunner =  require('./blueprintRunner').BlueprintRunner;
 
