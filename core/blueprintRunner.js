@@ -29,7 +29,7 @@ BlueprintRunner = exports.BlueprintRunner = function(config) {
     this._type_    = "BlueprintRunner Object"; //Name of the object
 
     this.config  = {
-        'seleniumPath': '../../bin/selenium-server-standalone-2.42.0.jar',
+        'seleniumPath': '',
         'port' : '4444',
         'browser' : 'chrome'
 
@@ -86,7 +86,11 @@ BlueprintRunner = exports.BlueprintRunner = function(config) {
                 }
             });
 
+        } else{
+            throw new Error("You must provide a blueprint configuration in the format:    "+ "{'seleniumPath': '/path/to/selenium.jar','port' : '4444','browser' : 'chrome'}");
         }
+    } else {
+        throw new Error("You must provide a blueprint configuration in the format:    "+ "{'seleniumPath': ','port' : '4444','browser' : 'chrome'}");
     }
 
 
