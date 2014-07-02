@@ -72,7 +72,7 @@ BlueprintRunner = exports.BlueprintRunner = function(config) {
                             _serverCapabilities = webdriver.Capabilities.safari();
                             break;
                         case 'ie':
-                            break;
+                            console.log('Internet Explorer i snot yet supported, using Chrome instead');
                         default :
                             _serverCapabilities = webdriver.Capabilities.chrome();
                     }
