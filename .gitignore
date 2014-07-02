@@ -1,7 +1,6 @@
-workspace.xml
-.idea/workspace.xml
 .idea/*
 Spielwiese/*
+bin/*
 test/*
 .npm-debug.log
 .DS_Store
