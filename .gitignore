@@ -1,6 +1,5 @@
 .idea/*
 Spielwiese/*
-bin/*
 test/*
 .npm-debug.log
 .DS_Store
