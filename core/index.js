@@ -4,4 +4,5 @@
  */
 
 module.exports.merlotSteps =  require("./steps/blueprintSteps");
-module.exports.merlotWorld =  require("./auxilium/blueWorld.js").MerlotWorld;
+module.exports.BlueprintRunner =  require('blueprintRunner').BlueprintRunner;
+

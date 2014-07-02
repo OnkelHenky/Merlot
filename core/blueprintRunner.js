@@ -1,34 +1,97 @@
 /**
  * Created by Henka on 07.06.14.
  */
+
+/*
+ * Require selenium stuff
+ */
+var webdriver = require('selenium-webdriver'),
+    path = require('path'),
+    SeleniumServer = require('selenium-webdriver/remote').SeleniumServer;
+
+/*
+ * Require Merlot stuff
+ */
 var BlueprintRunner,
     ActorProvider = require('./actors/actorProvider').ActorProvider,
     DOMElement = require('./auxilium/DOMElement').DOMElement;
     Merlot = require('./Merlot').Merlot;
+
 
 /**
  * @description
  * The export function for the user scenario blue print runner.
  * @type {ActorBuilder}
  */
-BlueprintRunner = exports.BlueprintRunner = function(driver,webdriver) {
+BlueprintRunner = exports.BlueprintRunner = function(config) {
 
     /*Information*/
     this._type_    = "BlueprintRunner Object"; //Name of the object
 
+    this.config  = {
+        'seleniumPath': '../../bin/selenium-server-standalone-2.42.0.jar',
+        'port' : '4444',
+        'browser' : 'chrome'
+
+    };
+
     this.driver = {};
-    this.webdriver = {};
+    this.webdriver = webdriver;
     this.actor = new ActorProvider.Actors["Paul"]; //Default actor
 
-    if(driver){
-      this.driver = driver;
+    if(config){
+        if (config.seleniumPath && config.port && config.browser) {
+            this.config = config;
+        }
     }
-    if(webdriver){
-        this.webdriver = webdriver;
+
+
+    var  _pathToSeleniumJar = this.config.seleniumPath;
+    _server = new SeleniumServer(_pathToSeleniumJar, {
+        port: this.config.port
+
+    });
+
+    console.log("Using selenium from: "+_pathToSeleniumJar);
+
+    // Start the selenium server
+    _server.start();
+
+    var _serverCapabilities = webdriver.Capabilities.chrome(); //default
+    switch(this.config.browser){
+        case 'chrome':
+            _serverCapabilities = webdriver.Capabilities.chrome();
+            break;
+        case 'firefox':
+            _serverCapabilities = webdriver.Capabilities.firefox();
+            break;
+        case 'safari':
+            _serverCapabilities = webdriver.Capabilities.safari();
+            break;
+        case 'ie':
+            break;
+        default :
+            _serverCapabilities = webdriver.Capabilities.chrome();
     }
+
+    this.driver = new webdriver.Builder().
+        usingServer(_server.address()).
+        withCapabilities(_serverCapabilities).
+        build();
+
 };
 
+/**
+ * Get all the stuff from Merlot prototype
+ * @type {Merlot}
+ */
 BlueprintRunner.prototype = new Merlot;
+
+
+BlueprintRunner.prototype.addConfiguration = function (config) {
+
+};
+
 
 /**
  * Create a new DOMElement with the given properties

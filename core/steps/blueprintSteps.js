@@ -3,13 +3,17 @@
  */
 
 /**
- *
+ * @description
+ * Provides all the needed blueprint steps
  * @type {blueprintSteps}
  */
 module.exports = blueprintSteps = function () {
 
+    /*
+     * Set the actor, tell the browser to run with a specifc actor
+     */
     this.Given(/^Actor is "([^"]*)"$/, function (thisActor, callback) {
-        this.theActorShellBe(thisActor);
+        this.browser.runWithThatActor(thisActor);
         callback();
     });
 

@@ -6,7 +6,7 @@
 module.exports = navigation = function () {
 
     this.Given(/^She goes on the website "([^"]*)"$/, function (url, callback) {
-        this.visit(url, callback);
+        this.browser.goTo(url, callback);
     });
 
     this.When(/^She clicks on the link with href "([^"]*)"$/, function(hrefAttr,callback) {
