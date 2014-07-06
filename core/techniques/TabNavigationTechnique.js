@@ -12,12 +12,9 @@
  */
 module.exports = tabNavigationTechnique = function (domElement) {
     var that = this,
-        _by = that.webdriver.By;
-
-    var deferred = that.webdriver.promise.defer(),
-        webElement;
-
-    var  action_to_be_performed = that.driver.actions().sendKeys(that.webdriver.Key.TAB);
+        deferred = that.webdriver.promise.defer(),
+        webElement,
+        action_to_be_performed = that.driver.actions().sendKeys(that.webdriver.Key.TAB);
 
     /**
      * Helper function to check if a attribute is present
@@ -26,16 +23,16 @@ module.exports = tabNavigationTechnique = function (domElement) {
      * @returns {boolean}
      */
     var isAttributePresent = function(webElement , attribute) {
-        var result = false;
+        var _result = false;
         try {
-            result = webElement.getAttribute(attribute);
-            if (result != null){
-                result = true;
+            _result = webElement.getAttribute(attribute);
+            if (_result != null){
+                _result = true;
             }
         } catch (exception) {
             console.error('Error from "isAttributePresent": '+exception);
         }
-        return result;
+        return _result;
     };
 
     /**
@@ -44,16 +41,16 @@ module.exports = tabNavigationTechnique = function (domElement) {
      * @returns {boolean}
      */
     var hasTextNode = function(webElement) {
-        var result = false;
+        var _result = false;
         try {
-            result = webElement.getText();
-            if (result != null){
-                result = true;
+            _result = webElement.getText();
+            if (_result != null){
+                _result = true;
             }
         } catch (exception) {
             console.error('Error from "hasTextNode": '+exception);
         }
-        return result;
+        return _result;
     };
 
 
