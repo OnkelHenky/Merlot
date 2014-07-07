@@ -41,27 +41,27 @@ BlueprintRunner = exports.BlueprintRunner = function(config) {
 
     var self = this;
 
-    if(config){
+    if(config) {
         if (config.seleniumPath && config.port && config.browser) {
 
-            self.utile._fs_.exists(config.seleniumPath, function(exists) {
-
-                if (exists) {
+            try {
+                // Check if selenium jar is available under the provided path
+                var _stats = self.utile._fs_.statSync(config.seleniumPath);
+                if (_stats.isFile()) {
                     self.config = config;
 
-                    var  _pathToSeleniumJar = self.config.seleniumPath;
+                    var _pathToSeleniumJar = self.config.seleniumPath,
                     _server = new SeleniumServer(_pathToSeleniumJar, {
                         port: self.config.port
-
                     });
 
-                    console.log("Using selenium from: "+_pathToSeleniumJar);
+                    console.log("Using selenium from: " + _pathToSeleniumJar);
 
                     // Start the selenium server
                     _server.start();
 
                     var _serverCapabilities = webdriver.Capabilities.chrome(); //default
-                    switch(self.config.browser){
+                    switch (self.config.browser) {
                         case 'chrome':
                             _serverCapabilities = webdriver.Capabilities.chrome();
                             break;
@@ -81,21 +81,16 @@ BlueprintRunner = exports.BlueprintRunner = function(config) {
                         usingServer(_server.address()).
                         withCapabilities(_serverCapabilities).
                         build();
-                } else {
-                    throw new Error('Unable to find selenium.jar under this location "'+config.seleniumPath+'"');
                 }
-            });
-
-        } else{
-            throw new Error("You must provide a blueprint configuration in the format:    "+ "{'seleniumPath': '/path/to/selenium.jar','port' : '4444','browser' : 'chrome'}");
+            } catch (ex) {
+                console.error('Unable to find selenium.jar: '+ ex['path']);
+                throw new Error('Selenium Server JAR not Found');
+            }
+        } else {
+            throw new Error("You must provide a blueprint configuration in the format:    " + "{'seleniumPath': ','port' : '4444','browser' : 'chrome'}");
         }
-    } else {
-        throw new Error("You must provide a blueprint configuration in the format:    "+ "{'seleniumPath': ','port' : '4444','browser' : 'chrome'}");
+
     }
-
-
-
-
 };
 
 /**
