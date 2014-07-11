@@ -17,7 +17,6 @@ var BlueprintRunner,
     DOMElement = require('./auxilium/DOMElement').DOMElement;
     Merlot = require('./Merlot').Merlot;
 
-
 /**
  * @description
  * The export function for the user scenario blue print runner.
@@ -41,56 +40,12 @@ BlueprintRunner = exports.BlueprintRunner = function(config) {
 
     var self = this;
 
-    if(config) {
-        if (config.seleniumPath && config.port && config.browser) {
-
-            try {
-                // Check if selenium jar is available under the provided path
-                var _stats = self.utile._fs_.statSync(config.seleniumPath);
-                if (_stats.isFile()) {
-                    self.config = config;
-
-                    var _pathToSeleniumJar = self.config.seleniumPath,
-                    _server = new SeleniumServer(_pathToSeleniumJar, {
-                        port: self.config.port
-                    });
-
-                    console.log("Using selenium from: " + _pathToSeleniumJar);
-
-                    // Start the selenium server
-                    _server.start();
-
-                    var _serverCapabilities = webdriver.Capabilities.chrome(); //default
-                    switch (self.config.browser) {
-                        case 'chrome':
-                            _serverCapabilities = webdriver.Capabilities.chrome();
-                            break;
-                        case 'firefox':
-                            _serverCapabilities = webdriver.Capabilities.firefox();
-                            break;
-                        case 'safari':
-                            _serverCapabilities = webdriver.Capabilities.safari();
-                            break;
-                        case 'ie':
-                            console.log('Internet Explorer i snot yet supported, using Chrome instead');
-                        default :
-                            _serverCapabilities = webdriver.Capabilities.chrome();
-                    }
-
-                    self.driver = new webdriver.Builder().
-                        usingServer(_server.address()).
-                        withCapabilities(_serverCapabilities).
-                        build();
-                }
-            } catch (ex) {
-                console.error('Unable to find selenium.jar: '+ ex['path']);
-                throw new Error('Selenium Server JAR not Found');
-            }
-        } else {
-            throw new Error("You must provide a blueprint configuration in the format:    " + "{'seleniumPath': ','port' : '4444','browser' : 'chrome'}");
-        }
-
+    if(config && (config.seleniumPath && config.port && config.browser)) {
+        this.addConfiguration(config);
+    } else {
+        throw new Error("You must provide a blueprint configuration in the format: " + "{'seleniumPath': '/path/to/selenium.jar','port' : '4444','browser' : 'chrome'}");
     }
+
 };
 
 /**
@@ -99,11 +54,56 @@ BlueprintRunner = exports.BlueprintRunner = function(config) {
  */
 BlueprintRunner.prototype = new Merlot();
 
-
+/**
+ * Adding the configuration for a new BlueprintRunner
+ * @param config
+ */
 BlueprintRunner.prototype.addConfiguration = function (config) {
+    var self = this;
+
+    try {
+        var _stats = self.utile._fs_.statSync(config.seleniumPath);
+        if (_stats.isFile()) {
+            self.config = config;
+            var _pathToSeleniumJar = self.config.seleniumPath,
+                _server = new SeleniumServer(_pathToSeleniumJar, {
+                    port: self.config.port
+
+                });
+
+            console.log("Using selenium from: " + _pathToSeleniumJar);
+            _server.start();
+
+            var _serverCapabilities = webdriver.Capabilities.chrome(); //default
+            switch (self.config.browser) {
+                case 'chrome':
+                    _serverCapabilities = webdriver.Capabilities.chrome();
+                    break;
+                case 'firefox':
+                    _serverCapabilities = webdriver.Capabilities.firefox();
+                    break;
+                case 'safari':
+                    _serverCapabilities = webdriver.Capabilities.safari();
+                    break;
+                case 'ie':
+                    console.log('Internet Explorer is not yet supported, using Chrome instead');
+                default :
+                    _serverCapabilities = webdriver.Capabilities.chrome();
+            }
+
+            self.driver = new webdriver.Builder().
+                usingServer(_server.address()).
+                withCapabilities(_serverCapabilities).
+                build();
+
+        }
+    } catch (ex) {
+        console.error('Selenium JAR not found at ' + ex['path']);
+        console.error('HINT: Check for typos');
+        throw new Error('Unable to find selenium.jar');
+    }
 
 };
-
 
 /**
  * Create a new DOMElement with the given properties
@@ -140,7 +140,6 @@ BlueprintRunner.prototype.runWithThatActor = function (actor) {
     }
 };
 
-
 /**
  * @description
  * Let the actor try to find or reach the element, defined by the tag name.
@@ -151,8 +150,6 @@ BlueprintRunner.prototype.actorTryToFindThisElement = function (domElement) {
       var _actor = this.actor;
   return  _actor.findElement.call(this,domElement);
 };
-
-
 
 /**
 * @description
@@ -179,7 +176,6 @@ BlueprintRunner.prototype.actionBuilder = function (TYPE_OF_ACTION) {
         }
         return action_to_be_performed;
 };
-
 
 
 /**
@@ -220,7 +216,6 @@ BlueprintRunner.prototype.enterText = function (webElement,text,callback) {
              callback();
          });
 };
-
 
 /**
  * @description

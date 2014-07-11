@@ -15,7 +15,7 @@ module.exports = navigation = function () {
              _domElement = this.browser.createDOMElement({
                 'tagName' : 'a',
                 'searchAttribute' : {
-                     'attributeName':  'href',
+                     "name":  'href',
                      'value': hrefAttr
                  }
             });
@@ -46,7 +46,7 @@ module.exports = navigation = function () {
             _domElement = this.browser.createDOMElement({
                 'tagName' : 'a',
                 'searchAttribute' : {
-                    'attributeName':  'text',
+                    "name":  'text',
                     'value': linkText
                 }
             });
@@ -67,7 +67,7 @@ module.exports = navigation = function () {
             _domElement = this.browser.createDOMElement({
                 'tagName' : 'a',
                 'searchAttribute' : {
-                    'attributeName':  'id',
+                    "name":  'id',
                     'value': linkId
                 }
             });

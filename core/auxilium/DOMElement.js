@@ -14,15 +14,15 @@ var DOMElement,
 DOMElement = exports.DOMElement =  function(properties) {
 
     /*Information*/
-    this._type_    = "DOMElement Object"; //Name of the object
+    this._type_                 = "DOMElement Object"; //Name of the object
 
     /*Properties*/
-    this.tagName                        = "";
+    this.tagName                = "";
 
-    // {'attributeName' : 'id', 'value': 'textfield123'}
-    this.searchAttribute                = {};
-    this.searchAttribute.value          = "";
-    this.searchAttribute.attributeName  = "";
+    // {'name' : 'id', 'value': 'textfield123'}
+    this.searchAttribute        = {};
+    this.searchAttribute.name   = "";
+    this.searchAttribute.value  = "";
 
     if(properties){
         this.addProperties(properties);
@@ -68,10 +68,10 @@ DOMElement.prototype.getSearchAttribute = function () {
 
 /**
  *
- * @returns {domElement.searchAttribute.attributeName|*|string}
+ * @returns {domElement.searchAttribute.name|*|string}
  */
 DOMElement.prototype.getSearchAttributeName = function () {
-    return (this.searchAttribute.attributeName) ? this.searchAttribute.attributeName: undefined;
+    return (this.searchAttribute.name) ? this.searchAttribute.name: undefined;
 };
 
 /**
