@@ -69,7 +69,6 @@ module.exports = tabNavigationTechnique = function (domElement) {
                     });
 
                 }
-
                 return that.driver.switchTo().activeElement();
             })
             .then(function (activeElement) {

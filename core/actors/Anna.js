@@ -10,7 +10,7 @@ var Actor =  require('./actor').Actor,
  * Anna
  * @type {Anna}
  */
-Anna = exports.Anna =  function() {
+exports.Anna = Anna = function() {
 
     /*Properties*/
     this.name = 'Anna';

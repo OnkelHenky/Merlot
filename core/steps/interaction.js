@@ -2,6 +2,7 @@
  * Created by Henka on 18.06.14.
  */
 
+var auxilia = require('../auxilium/auxiliaFunctions');
 
 module.exports = interaction = function () {
 
@@ -15,18 +16,19 @@ module.exports = interaction = function () {
 
     this.When(/^Enter "([^"]*)" into textfield with id "([^"]*)"$/, function(text, elementID ,callback) {
         var that = this,
-            helper = {};
-        helper.id = elementID;
+        _domElement = this.browser.createDOMElement({
+            'tagName' : 'input',
+            'searchAttribute' : {
+                "name":  'id',
+                'value': elementID
+            }
+        });
 
-        this.browser.actorTryToFindThisElement('input',helper,callback).
+        this.browser.actorTryToFindThisElement(_domElement).
             then(function (webElement) {
-                var deferred = that.browser.webdriver.promise.defer();
-                that.browser.enterText(webElement, text, function (webElement) {
-                    deferred.fulfill(webElement);
-                });
-                return deferred.promise;
+                 return auxilia.inputText.call(that,text,webElement);
             }).
-            then(function () {
+            then(function (prm) {
                 callback();
             }).
             then(null, function(err) {
@@ -35,6 +37,7 @@ module.exports = interaction = function () {
         //input[contains(@id,'suchbegriff') and type='text']
 
     });
+
 
     this.When(/^Enter that text "([^"]*)"$/, function(text,callback) {
         var deferred = that.browser.webdriver.promise.defer();

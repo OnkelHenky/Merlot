@@ -9,7 +9,7 @@ var Merlot = require('../Merlot').Merlot,
  * @description The prototype for an actor
  * @type {ActorBuilder}
  */
-Actor = exports.Actor =  function(properties) {
+exports.Actor = Actor =  function(properties) {
 
     /*Information*/
     this._type_    = "Actor Object"; //Name of the object

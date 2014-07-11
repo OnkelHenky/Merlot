@@ -27,6 +27,9 @@ module.exports.pacCSSSelectorNavigationTechnique = function (domElement) {
         this.driver.findElement(_by.css(_cssExpr)) //Returns the first one if more than one element can be retrieved
         .then(function (element) {
             _deferred.fulfill(element);
+        }).
+        then(null, function(err) {
+                console.error("Merlot reported an error! " + err + "trying to fetch element with via CSS Selector: "+_cssExpr);
         });
 
     return _deferred.promise;
