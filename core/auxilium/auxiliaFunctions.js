@@ -3,8 +3,11 @@
  * Copyright by Alexander Henka
  */
 
+
+var exports = module.exports;
+
 /**
- * Shoud be called like: inputText.call(this,text,webElement)
+ * Should be called like: inputText.call(this,text,webElement)
  * To define the scope context of 'this'
  * @param text
  * @param webElement
