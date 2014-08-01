@@ -56,14 +56,14 @@ module.exports.pacNavigationTechnique = function (domElement) {
                 element.getText()
                     .then(function(text){
                         if(text === domElement.getSearchAttributeValue()){
-                            _deferred.fulfill(link);
+                            _deferred.fulfill(element);
                         }
                     });
             }else{
                 element.getAttribute(domElement.getSearchAttributeName())
                     .then(function(text){
                         if(text === domElement.getSearchAttributeValue()){
-                            _deferred.fulfill(link);
+                            _deferred.fulfill(element);
                         }
                     });
             }

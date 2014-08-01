@@ -14,7 +14,7 @@ var webdriver = require('selenium-webdriver'),
  */
 var BlueprintRunner,
     ActorProvider = require('./actors/actorProvider').ActorProvider,
-    DOMElement = require('./auxilium/DOMElement').DOMElement;
+    DOMElement = require('./auxilium/DOMElement');
     Merlot = require('./Merlot').Merlot;
 
 /**
@@ -25,7 +25,7 @@ var BlueprintRunner,
 BlueprintRunner = exports.BlueprintRunner = function(config) {
 
     /*Information*/
-    this._type_    = "BlueprintRunner Object"; //Name of the object
+    this._type_    = "TestMaster Object"; //Name of the object
 
     this.config  = {
         'seleniumPath': '',
@@ -55,7 +55,7 @@ BlueprintRunner = exports.BlueprintRunner = function(config) {
 BlueprintRunner.prototype = new Merlot();
 
 /**
- * Adding the configuration for a new BlueprintRunner
+ * Adding the configuration for a new TestMaster
  * @param config
  */
 BlueprintRunner.prototype.addConfiguration = function (config) {
@@ -88,6 +88,7 @@ BlueprintRunner.prototype.addConfiguration = function (config) {
                 case 'ie':
                     console.log('Internet Explorer is not yet supported, using Chrome instead');
                 default :
+                    console.log(self.config.browser +' is not defined, using Chrome instead');
                     _serverCapabilities = webdriver.Capabilities.chrome();
             }
 

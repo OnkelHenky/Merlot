@@ -62,7 +62,7 @@ module.exports = tabNavigationTechnique = function (domElement) {
                 }else{
                     that.webdriver.WebElement.equals(webElement,that.driver.switchTo().activeElement()).then(function (eq) {
                         if(eq){
-                            var _errorText = 'Element with' +domElement.getSearchAttributeName()+'= '+domElement.getSearchAttributeValue()+'cloud not be found or reached!';
+                            var _errorText = 'Element with' +domElement.getSearchAttributeName()+' = '+domElement.getSearchAttributeValue()+'cloud not be found or reached!';
                             return deferred.reject(new Error(_errorText));
                         }
 

@@ -30,7 +30,7 @@ Paul.prototype = new Actor;
 /**
  * Technique used to navigate on the web application
  */
-Paul.prototype.findElement = techniqueRepository.techniques['CSS_Navigation'];
+Paul.prototype.findElement = techniqueRepository.techniques['PointAndClick_Navigation'];
 
 /**
  * Technique used to interact (click) with a component on the web application
