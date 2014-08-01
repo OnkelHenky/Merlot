@@ -120,7 +120,7 @@ BlueprintRunner.prototype.createDOMElement = function (properties) {
 
 /**
  * @description
- * Define the actor, that shall be used during the blueprint test.
+ * Define the actor, that shall be used during the blueprint spielwiese.
  * @param actor {string} the name of the actor.
  */
 BlueprintRunner.prototype.runWithThatActor = function (actor) {
@@ -154,7 +154,7 @@ BlueprintRunner.prototype.actorTryToFindThisElement = function (domElement) {
 /**
 * @description
 * The action builder is meant to be the foundation of the future mechanism
-* to build (adhoc) different navigation patterns, used during (or in) a test run.
+* to build (adhoc) different navigation patterns, used during (or in) a spielwiese run.
 * @param TYPE_OF_ACTION , the type of action, like TAB navigation.
 * @returns {driver.actions} action chain.
 */

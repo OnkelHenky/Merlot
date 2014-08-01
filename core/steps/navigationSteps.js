@@ -3,7 +3,7 @@
  */
 
 
-module.exports = navigation = function () {
+module.exports = navigationSteps = function () {
 
     this.Given(/^She goes on the website "([^"]*)"$/, function (url, callback) {
         this.browser.goTo(url, callback);

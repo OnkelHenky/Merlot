@@ -11,7 +11,7 @@ var DOMElement,
  * A representation of an HTML element - aka: WebElement or DOMElement
  * @type {DOMElement}
  */
-DOMElement = exports.DOMElement =  function(properties) {
+exports.DOMElement = DOMElement =  function(properties) {
 
     /*Information*/
     this._type_                 = "DOMElement Object"; //Name of the object

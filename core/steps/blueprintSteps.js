@@ -9,15 +9,12 @@
  */
 module.exports = blueprintSteps = function () {
 
-    /*
-     * Set the actor, tell the browser to run with a specifc actor
-     */
-    this.Given(/^Actor is "([^"]*)"$/, function (thisActor, callback) {
-        this.browser.runWithThatActor(thisActor);
-        callback();
-    });
+   /*
+    * invoking the other steps implementations
+    */
+   require('./utilitySteps').call(this);
+   require('./forms_and_inputSteps').call(this);
+   require('./navigationSteps').call(this);
 
-   require('./interaction').call(this);
-   require('./navigation').call(this);
 };
 
