@@ -35,7 +35,6 @@ module.exports = navigationSteps = function () {
                 callback();
             }).
             then(null, function(err) {
-                console.dir(err);
                 console.error("Merlot reported an error! " + err +" with DOMElement: "+_domElement);
               //  callback();
             });

@@ -49,63 +49,44 @@ module.exports.pacCSSSelectorNavigationTechnique = function (domElement) {
 module.exports.pacNavigationTechnique = function (domElement) {
     var that = this,
         _by = that.webdriver.By;
-
+    var _deferred = that.webdriver.promise.defer();
 
     var _getElementReference = function (elements) {
-        var _deferred = that.webdriver.promise.defer();
-        var count = 0;
-        var found = false;
 
 
-        function isDone(plusOne){
-            count += plusOne;
-            console.log('count = '+ count);
-            if(count >= elements.length){
-              if(!found){
-              _deferred.reject(new ElementNotFoundError("Element not Found!"));
-                }
+        function getReference(elements){
+            var element = elements.shift();
+
+             if(element === undefined){
+                 throw new ElementNotFoundError("Element not Found!");
+             }
+
+             if ('text' === domElement.getSearchAttributeName()){
+                element.getText() //NOTE. Async.
+                    .then(function(text){
+                        if(text === domElement.getSearchAttributeValue()){
+                            return _deferred.fulfill(element);
+                        }else{
+                           return getReference(elements);
+
+                        }
+
+                    });
+
+            }else{
+                element.getAttribute(domElement.getSearchAttributeName())//NOTE. Async.
+                    .then(function(text){
+                        if(text === domElement.getSearchAttributeValue()){
+                           return  _deferred.fulfill(element);
+                        }else{
+                            return getReference(elements);
+
+                        }
+
+                    });
             }
-
         }
-
-
-            elements.forEach(function(element) {
-                if ('text' === domElement.getSearchAttributeName()){
-                    element.getText() //NOTE. Async.
-                        .then(function(text){
-                            if(text === domElement.getSearchAttributeValue()){
-                                found = true;
-                                _deferred.fulfill(element);
-                            }else{
-                                isDone(1);
-                            }
-
-                        });
-
-                }else{
-                    element.getAttribute(domElement.getSearchAttributeName())//NOTE. Async.
-                        .then(function(text){
-                            if(text === domElement.getSearchAttributeValue()){
-                                found = true;
-                                _deferred.fulfill(element);
-                            }else{
-                                isDone(1);
-                            }
-
-                        });
-
-                }
-                console.log('count = '+ count);
-
-            });
-
-        /*
-        console.log('_referenceFound = ' + _referenceFound);
-        if(!_referenceFound){
-            console.log('!_referenceFound = ' + !_referenceFound);
-             var _errorText = 'Element with ' +domElement.getSearchAttributeName()+' = '+domElement.getSearchAttributeValue()+' cloud not be found or reached!';
-                 deferred.reject(new Error(_errorText));
-        }*/
+        getReference(elements);
         return _deferred.promise;
     };
 
