@@ -5,7 +5,7 @@
  * the 'TAB' navigation technique
  */
 
-
+var ElementNotFoundError = require('../auxilium/MerlotErrors').ElementNotFoundError;
 
 /**
  * @description
@@ -64,8 +64,9 @@ module.exports = tabNavigationTechnique = function (domElement) {
                 }else{
                     that.webdriver.WebElement.equals(webElement,that.driver.switchTo().activeElement()).then(function (eq) {
                         if(eq){
-                            var _errorText = 'Element with ' +domElement.getSearchAttributeName()+' = '+domElement.getSearchAttributeValue()+' cloud not be found or reached!';
-                            return deferred.reject(new Error(_errorText));
+                         //   throw new ElementNotFoundError("Element not Found!");
+                          //  var _errorText = 'Element with ' +domElement.getSearchAttributeName()+' = '+domElement.getSearchAttributeValue()+' cloud not be found or reached!';
+                            return deferred.reject(new Error(new ElementNotFoundError("ElementNotFoundError")));
                         }
 
                     });

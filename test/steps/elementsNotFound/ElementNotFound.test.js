@@ -65,13 +65,13 @@ describe('Test if the promises are all rejected if not element can be found', fu
 
         describe('Using TAB', function () {
             it('It is expected the promise to be rejected', function () {
-                return expect(TabNavTechnique.call(_browser, _domElement)).to.be.rejectedWith('Element with id = 123abc cloud not be found or reached!');
+                return expect(TabNavTechnique.call(_browser, _domElement)).to.be.rejectedWith('ElementNotFoundError');
             })
         });
 
         describe('Using PAC', function () {
             it('It is expected the promise to be rejected', function () {
-                return expect(PacNavTechnique.call(_browser, _domElement)).to.be.rejected;
+                return expect(PacNavTechnique.call(_browser, _domElement)).to.be.rejectedWith('ElementNotFoundError');
             })
         });
 

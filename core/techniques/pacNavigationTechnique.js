@@ -52,13 +52,10 @@ module.exports.pacNavigationTechnique = function (domElement) {
     var _deferred = that.webdriver.promise.defer();
 
     var _getElementReference = function (elements) {
-
-
         function getReference(elements){
             var element = elements.shift();
-
              if(element === undefined){
-                 throw new ElementNotFoundError("Element not Found!");
+                 throw new ElementNotFoundError("ElementNotFoundError");
              }
 
              if ('text' === domElement.getSearchAttributeName()){
@@ -82,7 +79,6 @@ module.exports.pacNavigationTechnique = function (domElement) {
                             return getReference(elements);
 
                         }
-
                     });
             }
         }
