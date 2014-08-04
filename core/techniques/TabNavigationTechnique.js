@@ -66,7 +66,7 @@ module.exports = tabNavigationTechnique = function (domElement) {
                         if(eq){
                          //   throw new ElementNotFoundError("Element not Found!");
                           //  var _errorText = 'Element with ' +domElement.getSearchAttributeName()+' = '+domElement.getSearchAttributeValue()+' cloud not be found or reached!';
-                            return deferred.reject(new Error(new ElementNotFoundError("ElementNotFoundError")));
+                            return deferred.reject(new Error(new ElementNotFoundError()));
                         }
 
                     });

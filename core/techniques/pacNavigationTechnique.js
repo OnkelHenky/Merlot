@@ -55,7 +55,7 @@ module.exports.pacNavigationTechnique = function (domElement) {
         function getReference(elements){
             var element = elements.shift();
              if(element === undefined){
-                 throw new ElementNotFoundError("ElementNotFoundError");
+                 throw new ElementNotFoundError();
              }
 
              if ('text' === domElement.getSearchAttributeName()){
@@ -88,7 +88,10 @@ module.exports.pacNavigationTechnique = function (domElement) {
 
     var resolveElementReference = function (domElementment) {
         if('id' === domElement.getSearchAttributeName()){
-          return that.driver.findElement(_by.id(domElement.getSearchAttributeValue()));
+       return that.driver.findElement(_by.id(domElement.getSearchAttributeValue())).
+              then(null,function (error) {
+                   throw new ElementNotFoundError();
+              });
         }else{
          console.dir(domElementment.getSearchAttribute());
          return that.driver.findElements(_by.tagName(domElement.getTagName()))
