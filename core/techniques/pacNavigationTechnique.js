@@ -6,12 +6,12 @@
  *
  */
 
-
+var ElementNotFoundError = require('../auxilium/MerlotErrors').ElementNotFoundError;
 /**
  * @description
  * 'Point and Click' navigation technique to find the element, defined as 'domElement'.
  * This function uses a CSS selector to navigate to the domElement given, defined in the 'domElement.getCSSSelector()'.
- * This function should be fast than 'pacNavigationTechnique'.
+ * This function should be faster than 'pacNavigationTechnique'.
  *
  * NOTE: Returns the first domElement if more than one element can be retrieved (01.07.2014)
  *
@@ -29,8 +29,9 @@ module.exports.pacCSSSelectorNavigationTechnique = function (domElement) {
             _deferred.fulfill(element);
         }).
         then(null, function(err) {
-               // console.error("Merlot reported an error! " + err + "trying to fetch element with via CSS Selector: "+_cssExpr);
-            _deferred.reject("Merlot reported an error! " + err + "trying to fetch element with via CSS Selector: "+_cssExpr);
+           // console.error("Merlot reported an error! " + err + "trying to fetch element with via CSS Selector: "+_cssExpr);
+            console.dir(err);
+            _deferred.reject(err + "trying to fetch element with via CSS Selector: "+_cssExpr);
         });
 
     return _deferred.promise;
@@ -43,32 +44,137 @@ module.exports.pacCSSSelectorNavigationTechnique = function (domElement) {
  * From the all the elements returned, the corresponding element is searched be the attributes:
  * 'id', 'href' or 'text'
  * @param domElement , the element that should be found by 'Point and Click'
- * @returns {*}
+ * @returns {*}, promise
  */
 module.exports.pacNavigationTechnique = function (domElement) {
     var that = this,
         _by = that.webdriver.By;
 
+
     var _getElementReference = function (elements) {
         var _deferred = that.webdriver.promise.defer();
+        var count = 0;
+        var found = false;
 
-        elements.forEach(function(element) {
-            if (domElement.getSearchAttributeName() === 'text'){
-                element.getText()
-                    .then(function(text){
-                        if(text === domElement.getSearchAttributeValue()){
-                            _deferred.fulfill(element);
-                        }
-                    });
-            }else{
-                element.getAttribute(domElement.getSearchAttributeName())
-                    .then(function(text){
-                        if(text === domElement.getSearchAttributeValue()){
-                            _deferred.fulfill(element);
-                        }
-                    });
+
+        function isDone(plusOne){
+            count += plusOne;
+            console.log('count = '+ count);
+            if(count >= elements.length){
+              if(!found){
+              _deferred.reject(new ElementNotFoundError("Element not Found!"));
+                }
             }
+
+        }
+
+
+            elements.forEach(function(element) {
+                if ('text' === domElement.getSearchAttributeName()){
+                    element.getText() //NOTE. Async.
+                        .then(function(text){
+                            if(text === domElement.getSearchAttributeValue()){
+                                found = true;
+                                _deferred.fulfill(element);
+                            }else{
+                                isDone(1);
+                            }
+
+                        });
+
+                }else{
+                    element.getAttribute(domElement.getSearchAttributeName())//NOTE. Async.
+                        .then(function(text){
+                            if(text === domElement.getSearchAttributeValue()){
+                                found = true;
+                                _deferred.fulfill(element);
+                            }else{
+                                isDone(1);
+                            }
+
+                        });
+
+                }
+                console.log('count = '+ count);
+
+            });
+
+        /*
+        console.log('_referenceFound = ' + _referenceFound);
+        if(!_referenceFound){
+            console.log('!_referenceFound = ' + !_referenceFound);
+             var _errorText = 'Element with ' +domElement.getSearchAttributeName()+' = '+domElement.getSearchAttributeValue()+' cloud not be found or reached!';
+                 deferred.reject(new Error(_errorText));
+        }*/
+        return _deferred.promise;
+    };
+
+    var resolveElementReference = function (domElementment) {
+        if('id' === domElement.getSearchAttributeName()){
+          return that.driver.findElement(_by.id(domElement.getSearchAttributeValue()));
+        }else{
+         console.dir(domElementment.getSearchAttribute());
+         return that.driver.findElements(_by.tagName(domElement.getTagName()))
+                .then(_getElementReference);
+        }
+    };
+
+    var deferred = that.webdriver.promise.defer();
+
+    if(domElement.hasValidTagName()){
+        resolveElementReference(domElement)
+        .then(function(eleRef) {
+            deferred.fulfill(eleRef);
+        })
+        .then(null, function (err) {
+            deferred.reject(err.name);
         });
+
+    }else{
+        deferred.reject('"'+domElement.getTagName()+'" is not a valid HTML tag name');
+    }
+
+    return deferred.promise;
+};
+
+/**
+ * @deprecated
+ * @description
+ * 'Point and Click' navigation technique to find the element, defined as 'domElement'.
+ * This function retrieves all element with the same tag name (defined in the 'domElement.getTagName()').
+ * From the all the elements returned, the corresponding element is searched be the attributes:
+ * 'id', 'href' or 'text'
+ * @param domElement , the element that should be found by 'Point and Click'
+ * @returns {*}
+ */
+module.exports.pacNavigationTechniqueDEP = function (domElement) {
+    var that = this,
+        _by = that.webdriver.By;
+
+    var _getElementReference = function (elements) {
+        console.dir(elements);
+        var _deferred = that.webdriver.promise.defer();
+        if(typeof array != "undefined" && array != null && array.length > 0){
+
+            elements.forEach(function(element) {
+                if (domElement.getSearchAttributeName() === 'text'){
+                    element.getText()
+                        .then(function(text){
+                            if(text === domElement.getSearchAttributeValue()){
+                                _deferred.fulfill(element);
+                            }
+                        });
+                }else{
+                    element.getAttribute(domElement.getSearchAttributeName())
+                        .then(function(text){
+                            if(text === domElement.getSearchAttributeValue()){
+                                _deferred.fulfill(element);
+                            }
+                        });
+                }
+            });
+
+        }
         return _deferred.promise;
     };
 
@@ -78,6 +184,9 @@ module.exports.pacNavigationTechnique = function (domElement) {
         .then(_getElementReference)
         .then(function(eleRef) {
             deferred.fulfill(eleRef);
+        })
+        .then(null, function (err) {
+            return deferred.reject(err);
         });
     return deferred.promise;
 

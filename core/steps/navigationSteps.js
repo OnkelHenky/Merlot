@@ -5,11 +5,11 @@
 
 module.exports = navigationSteps = function () {
 
-    this.Given(/^She goes on the website "([^"]*)"$/, function (url, callback) {
+    this.Given(/^Actor navigates to the website with URL: "([^"]*)"$/, function (url, callback) {
         this.browser.goTo(url, callback);
     });
 
-    this.When(/^She clicks on the link with href "([^"]*)"$/, function(hrefAttr,callback) {
+    this.When(/^The actor clicks on the link with href "([^"]*)"$/, function(hrefAttr,callback) {
         //NOTE: Call callback() at the end of the step, or callback.pending() if the step is not yet implemented.
         var that = this,
              _domElement = this.browser.createDOMElement({
@@ -20,7 +20,6 @@ module.exports = navigationSteps = function () {
                  }
             });
 
-        console.dir(_domElement);
         this.browser.actorTryToFindThisElement(_domElement).
             then(function (webElement) {
                 var deferred = that.browser.webdriver.promise.defer();
@@ -36,13 +35,14 @@ module.exports = navigationSteps = function () {
                 callback();
             }).
             then(null, function(err) {
-                console.error("Merlot reported an error! " + err);
-                callback();
+                console.dir(err);
+                console.error("Merlot reported an error! " + err +" with DOMElement: "+_domElement);
+              //  callback();
             });
         //callback.pending();
     });
 
-    this.When(/^She clicks on the link with text "([^"]*)"$/, function(linkText,callback) {
+    this.When(/^The actor clicks on the link with text "([^"]*)"$/, function(linkText,callback) {
         var that = this,
             _domElement = this.browser.createDOMElement({
                 'tagName' : 'a',
@@ -59,11 +59,11 @@ module.exports = navigationSteps = function () {
                 callback();
             }).
             then(null, function(err) {
-                console.error("An error was thrown! " + err);
+                console.error("Merlot reported an error!  " + err + " with DOMElement: "+_domElement);
             });
     });
 
-    this.When(/^She clicks on the link with id "([^"]*)"$/, function(linkId,callback) {
+    this.When(/^The actor clicks on the link with id "([^"]*)"$/, function(linkId,callback) {
         var that = this,
             _domElement = this.browser.createDOMElement({
                 'tagName' : 'a',
@@ -80,11 +80,11 @@ module.exports = navigationSteps = function () {
                 callback();
             }).
             then(null, function(err) {
-                console.error("An error was thrown! " + err);
+                console.error("Merlot reported an error!  " + err + " with DOMElement: " + _domElement);
             });
     });
 
-    this.When(/^She clicks on the link with "([^"]*)" = "([^"]*)"$/, function(identifiedBy,value,callback) {
+    this.When(/^The actor clicks on the link with "([^"]*)" = "([^"]*)"$/, function(identifiedBy,value,callback) {
         var that = this,
             helper = {};
 
@@ -93,6 +93,7 @@ module.exports = navigationSteps = function () {
         switch (identifiedBy){
             case "id":
             case "text":
+            case "name":
             case "href":
                 helper[identifiedBy] = value;
                 break;
@@ -113,7 +114,7 @@ module.exports = navigationSteps = function () {
             });
     });
 
-    this.Then(/^She should see "(.*)" in the title$/, function(title, callback) {
+    this.Then(/^The actor should see "([^"]*)" in the title$/, function(title, callback) {
         this.browser.getPageTitle()
             .then(function(pageTitle) {
                 console.log('pageTitle = '+ pageTitle);

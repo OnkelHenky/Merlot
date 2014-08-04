@@ -146,14 +146,14 @@ describe('Test if the navigation techniques can navigate to a element', function
                 return expect(PacNavTechnique.call(_browser, _domElement)).to.be.fulfilled;
             })
         });
-
-
+/*
+//TODO: turn off CSS Selector support. This feature needs more implementation.
         describe('Using CSS Selector', function(){
             it('It is expected that the promise is fulfilled', function(){
                 return expect(CSSNavTechnique.call(_browser, _domElement)).to.be.fulfilled;
             })
         });
-
+*/
 
         describe('Using TAB', function(){
             it('It is expected that the promise is fulfilled', function(){
@@ -186,13 +186,14 @@ describe('Test if the navigation techniques can navigate to a element', function
                 return expect(PacNavTechnique.call(_browser, _domElement)).to.be.fulfilled;
             })
         });
-
+/*
+ //TODO: turn off CSS Selector support. This feature needs more implementation.
         describe('Using CSS Selector', function(){
             it('It is expected that the promise is fulfilled', function(done){
                 return expect(CSSNavTechnique.call(_browser, _domElement)).to.be.fulfilled;
             })
         });
-
+*/
         describe('Using TAB', function(){
             it('It is expected that the promise is fulfilled', function(){
                 return expect(TabNavTechnique.call(_browser, _domElement)).to.be.fulfilled;

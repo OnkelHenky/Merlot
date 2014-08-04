@@ -11,7 +11,7 @@ var Actor =  require('./actor').Actor,
  * Paul
  * @type {Paul}
  */
-Paul = exports.Paul =  function() {
+module.exports.Paul = Paul =  function() {
 
     /*Properties*/
     this.name = 'Paul';

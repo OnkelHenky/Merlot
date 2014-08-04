@@ -8,7 +8,7 @@ var auxilia = require('../auxilium/auxiliaFunctions');
 
 module.exports = forms_and_input_Steps = function () {
 
-    this.When(/^Enter "([^"]*)" into textfield with id "([^"]*)"$/, function(text, elementID ,callback) {
+    this.When(/^The actor enters "([^"]*)" into textfield with id "([^"]*)"$/, function(text, elementID ,callback) {
         var that = this,
             _domElement = this.browser.createDOMElement({
                 'tagName' : 'input',
