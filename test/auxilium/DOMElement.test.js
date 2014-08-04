@@ -71,17 +71,17 @@ describe('DOM_Element', function(){
             assert.deepEqual(domElement.getSearchAttribute(), {
                 "name": 'id',
                 'value': "suchbegriff"
-            }  ,"get tag name");
+            }  ,"get search attribute");
         })
     });
     describe('Get the getSearchAttributeName of a DOMElement', function(){
         it('The function: "getSearchAttributeName()" of the should return "id"', function(){
-            assert.equal(domElement.getSearchAttributeName(), "id" ,"get tag name");
+            assert.equal(domElement.getSearchAttributeName(), "id" ,"get search attribute name");
         })
     });
     describe('Get the getSearchAttributeValue of a DOMElement', function(){
         it('The function: "getSearchAttributeValue()" of the should return "suchbegriff"', function(){
-            assert.equal(domElement.getSearchAttributeValue(), "suchbegriff" ,"get tag name");
+            assert.equal(domElement.getSearchAttributeValue(), "suchbegriff" ,"get search attribute value");
         })
     });
 });

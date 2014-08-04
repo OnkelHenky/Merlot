@@ -26,25 +26,6 @@ var _browser,
     _url,
     _domElement;
 
-
-/*
-
-        _browser.driver.get(_url)
-            .then(function () {
-               return PacNavTechnique.call(_browser,_domElement).should.be.fulfilled;
-            })
-            .then(function (element) {
-                Asserts({
-                    findInputField: function () {
-                        Assert.equal(2, 2);
-                    }
-
-                });
-            });
-*/
-      // Assert.equal("something", "something", "optional message");
-
-
 /*
 * The Tests
 */
@@ -67,24 +48,156 @@ describe('Test if the navigation techniques can navigate to a element', function
         });
     });
 
-    beforeEach(function () {
-        _browser.driver.get(_url);
+    describe('Navigate to a element by "@id"', function(){
+
+        before(function(){
+
+            _domElement = new DOMElement({
+                'tagName': 'input',
+                'searchAttribute': {
+                    "name": 'id',
+                    'value': "suchbegriff"
+                }
+            });
+        });
+
+
+        beforeEach(function () {
+            _browser.driver.get(_url);
+        });
+
+        describe('Using PAC', function(){
+            it('It is expected that the promise is fulfilled', function(){
+              return expect(PacNavTechnique.call(_browser, _domElement)).to.be.fulfilled;
+          })
+        });
+        describe('Using CSS Selector', function(){
+            it('It is expected that the promise is fulfilled', function(){
+                return expect(CSSNavTechnique.call(_browser, _domElement)).to.be.fulfilled;
+            })
+        });
+        describe('Using TAB', function(){
+            it('It is expected that the promise is fulfilled', function(){
+                return expect(TabNavTechnique.call(_browser, _domElement)).to.be.fulfilled;
+            })
+        });
+
     });
 
-    describe('Using PAC', function(){
-        it('Should fulfill the promise', function(){
-          return expect(PacNavTechnique.call(_browser, _domElement)).to.be.fulfilled;
-      })
-    });
-    describe('Using CSS Selector', function(){
-        it('Should fulfill the promise', function(){
-            return expect(CSSNavTechnique.call(_browser, _domElement)).to.be.fulfilled;
-        })
-    });
-    describe('Using TAB', function(){
-        it('Should fulfill the promise', function(){
-            return expect(TabNavTechnique.call(_browser, _domElement)).to.be.fulfilled;
-        })
+
+
+    describe('Navigate to a element by "@name"', function(){
+
+        before(function(){
+
+            _domElement = new DOMElement({
+                'tagName': 'input',
+                'searchAttribute': {
+                    "name": 'name',
+                    'value': "suchbegriff"
+                }
+            });
+        });
+
+
+        beforeEach(function () {
+            _browser.driver.get(_url);
+        });
+
+        describe('Using PAC', function(){
+            it('It is expected that the promise is fulfilled', function(){
+                return expect(PacNavTechnique.call(_browser, _domElement)).to.be.fulfilled;
+            })
+        });
+        describe('Using CSS Selector', function(){
+            it('It is expected that the promise is fulfilled', function(){
+                return expect(CSSNavTechnique.call(_browser, _domElement)).to.be.fulfilled;
+            })
+        });
+        describe('Using TAB', function(){
+            it('It is expected that the promise is fulfilled', function(){
+                return expect(TabNavTechnique.call(_browser, _domElement)).to.be.fulfilled;
+            })
+        });
+
     });
 
+
+    describe('Navigate to a link ("a")element by its "text value"', function(){
+
+        before(function(){
+
+            _domElement = new DOMElement({
+                'tagName': 'a',
+                'searchAttribute': {
+                    "name": 'text',
+                    'value': "Mitarbeitervorstellung"
+                }
+            });
+        });
+
+
+        beforeEach(function () {
+            _browser.driver.get(_url);
+        });
+
+        describe('Using PAC', function(){
+            it('It is expected that the promise is fulfilled', function(){
+                return expect(PacNavTechnique.call(_browser, _domElement)).to.be.fulfilled;
+            })
+        });
+
+
+        describe('Using CSS Selector', function(){
+            it('It is expected that the promise is fulfilled', function(){
+                return expect(CSSNavTechnique.call(_browser, _domElement)).to.be.fulfilled;
+            })
+        });
+
+
+        describe('Using TAB', function(){
+            it('It is expected that the promise is fulfilled', function(){
+                return expect(TabNavTechnique.call(_browser, _domElement)).to.be.fulfilled;
+            })
+        });
+
+    });
+
+    describe('Navigate to a link ("a")element by its "@href"', function(){
+
+        before(function(){
+
+            _domElement = new DOMElement({
+                'tagName': 'a',
+                'searchAttribute': {
+                    "name": 'href',
+                    'value': "http://www.hdm-stuttgart.de/news_tagcloud?schlagwort=Mitarbeitervorstellung"
+                }
+            });
+        });
+
+
+        beforeEach(function () {
+            _browser.driver.get(_url);
+        });
+
+        describe('Using PAC', function(){
+            it('It is expected that the promise is fulfilled', function(){
+                return expect(PacNavTechnique.call(_browser, _domElement)).to.be.fulfilled;
+            })
+        });
+
+        describe('Using CSS Selector', function(){
+            it('It is expected that the promise is fulfilled', function(done){
+                return expect(CSSNavTechnique.call(_browser, _domElement)).to.be.fulfilled;
+            })
+        });
+
+        describe('Using TAB', function(){
+            it('It is expected that the promise is fulfilled', function(){
+                return expect(TabNavTechnique.call(_browser, _domElement)).to.be.fulfilled;
+            })
+        });
+
+    });
 });

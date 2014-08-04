@@ -29,7 +29,8 @@ module.exports.pacCSSSelectorNavigationTechnique = function (domElement) {
             _deferred.fulfill(element);
         }).
         then(null, function(err) {
-                console.error("Merlot reported an error! " + err + "trying to fetch element with via CSS Selector: "+_cssExpr);
+               // console.error("Merlot reported an error! " + err + "trying to fetch element with via CSS Selector: "+_cssExpr);
+            _deferred.reject("Merlot reported an error! " + err + "trying to fetch element with via CSS Selector: "+_cssExpr);
         });
 
     return _deferred.promise;

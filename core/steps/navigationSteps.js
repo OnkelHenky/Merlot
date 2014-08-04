@@ -37,6 +37,7 @@ module.exports = navigationSteps = function () {
             }).
             then(null, function(err) {
                 console.error("Merlot reported an error! " + err);
+                callback();
             });
         //callback.pending();
     });
