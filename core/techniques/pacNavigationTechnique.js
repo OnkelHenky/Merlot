@@ -21,18 +21,23 @@ var ElementNotFoundError = require('../auxilium/MerlotErrors').ElementNotFoundEr
 module.exports.pacCSSSelectorNavigationTechnique = function (domElement) {
 
     var _by = this.webdriver.By,
-        _deferred = this.webdriver.promise.defer(),
-        _cssExpr = domElement.getCSSSelector();
+        _deferred = this.webdriver.promise.defer();
 
-        this.driver.findElement(_by.css(_cssExpr)) //Returns the first one if more than one element can be retrieved
+    /*
+     * Returns the first element if more than one element can be retrieved.
+     */
+     this.driver.findElement(_by.css(domElement.getCSSSelector()))
         .then(function (element) {
             _deferred.fulfill(element);
-        }).
-        then(null, function(err) {
-           // console.error("Merlot reported an error! " + err + "trying to fetch element with via CSS Selector: "+_cssExpr);
-            console.dir(err);
-            _deferred.reject(err + "trying to fetch element with via CSS Selector: "+_cssExpr);
-        });
+     })
+     /*
+     * Catching any error or exception thrown during the
+     * process of fetching(finding) an HTML Element.
+     * The promise will be rejected.
+     */
+     .then(null, function(err) {
+        _deferred.reject(err + "trying to fetch element with via CSS Selector: "+_cssExpr);
+     });
 
     return _deferred.promise;
 };
@@ -49,9 +54,18 @@ module.exports.pacCSSSelectorNavigationTechnique = function (domElement) {
 module.exports.pacNavigationTechnique = function (domElement) {
     var that = this,
         _by = that.webdriver.By;
-    var _deferred = that.webdriver.promise.defer();
 
+    /*
+     * Get the WebElement reference.
+     * This function is used recursively to handle the asynchronous calls of
+     * the Selenium WebDriver api.
+     * @param elements
+     * @returns {*}, a promise.
+     * @private
+     */
     var _getElementReference = function (elements) {
+        var _deferred = that.webdriver.promise.defer();
+
         function getReference(elements){
             var element = elements.shift();
              if(element === undefined){
@@ -87,27 +101,58 @@ module.exports.pacNavigationTechnique = function (domElement) {
     };
 
     var resolveElementReference = function (domElementment) {
-        if('id' === domElement.getSearchAttributeName()){
-       return that.driver.findElement(_by.id(domElement.getSearchAttributeValue())).
-              then(null,function (error) {
+        /*
+         * Get a element on the basis of its unique id.
+         */
+       if('id' === domElement.getSearchAttributeName()) {
+           return that.driver.findElement(_by.id(domElement.getSearchAttributeValue()))
+               .then(null, function (error) {
                    throw new ElementNotFoundError();
-              });
-        }else{
-         console.dir(domElementment.getSearchAttribute());
-         return that.driver.findElements(_by.tagName(domElement.getTagName()))
-                .then(_getElementReference);
+               });
+       } else if('name' === domElement.getSearchAttributeName()){
+            /*
+             * NOTE (05.08.2014) A.Henka:
+             * This returns the first element found with @name = 'SearchAttributeValue'.
+             * It is possible, that more than one HTML element exists with the name.
+             * Therefor use 'findElements' instead of 'findElement'
+             * - which is also handled by the 'else' block.
+             */
+           return that.driver.findElement(_by.name(domElement.getSearchAttributeValue()))
+                   .then(null,function (error) {
+                       throw new ElementNotFoundError();
+            });
+       }else{
+           /*
+            * NOTE (05.08.2014) A.Henka:
+            * This function uses 'findElements' instead of 'findElement' to retrive a
+            * Array of elements, corresponding with the 'SearchAttribute' of the DOMElement.
+            * In the PAC (Point and Click) navigation technique this is not coercively -
+            * since the process will be slower.
+            * But is still necessary for fetching elements based on the text chidl node of the
+            * HTML element or attributes as @value or @href.
+            */
+            return that.driver.findElements(_by.tagName(domElement.getTagName()))
+               .then(_getElementReference);
         }
     };
 
     var deferred = that.webdriver.promise.defer();
 
+    /*
+     * Check if the DOMElement has a valid HTML tag name
+     */
     if(domElement.hasValidTagName()){
         resolveElementReference(domElement)
         .then(function(eleRef) {
             deferred.fulfill(eleRef);
         })
+       /*
+        * Catching any error or exception thrown during the
+        * process of fetching(finding) an HTML Element.
+        * The promise will be rejected.
+        */
         .then(null, function (err) {
-            deferred.reject(err.name);
+             deferred.reject(err);
         });
 
     }else{
