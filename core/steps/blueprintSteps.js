@@ -10,8 +10,17 @@
 module.exports = blueprintSteps = function () {
 
    /*
-    * invoking the other steps implementations
+    * Invoking the cucumber hooks to process
+    * action before and after each scenario
     */
+   require('../auxilium/hooks').call(this);
+
+
+
+    /*
+     * Invoking the step implementations
+     * (The Steps)
+     */
    require('./utilitySteps').call(this);
    require('./forms_and_inputSteps').call(this);
    require('./navigationSteps').call(this);

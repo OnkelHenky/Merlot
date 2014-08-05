@@ -25,7 +25,7 @@ var BlueprintRunner,
 BlueprintRunner = exports.BlueprintRunner = function(config) {
 
     /*Information*/
-    this._type_    = "TestMaster Object"; //Name of the object
+    this._type_    = "BlueprintRunner Object"; //Name of the object
 
     this.config  = {
         'seleniumPath': '',
@@ -101,6 +101,7 @@ BlueprintRunner.prototype.addConfiguration = function (config) {
     } catch (ex) {
         console.error('Selenium JAR not found at ' + ex['path']);
         console.error('HINT: Check for typos');
+        self.driver.quit(); // quiting the driver, since we have an error.
         throw new Error('Unable to find selenium.jar');
     }
 
@@ -201,7 +202,6 @@ BlueprintRunner.prototype.click = function (webEle,type) {
 BlueprintRunner.prototype.applyCriteria = function (webElement,cb) {
     var _actor = this.actor;
     _actor.criteriaBundle.checkCriterion(webElement,cb);
-
 };
 
 /**
@@ -239,3 +239,11 @@ BlueprintRunner.prototype.goTo = function (where, callback) {
 BlueprintRunner.prototype.getPageTitle = function () {
     return  this.driver.getTitle();
 };
+
+/**
+ * Close the driver instance, which closes also the browser process.
+ */
+BlueprintRunner.prototype.closeDriver = function () {
+      this.driver.close();
+};
+

@@ -124,7 +124,7 @@ module.exports.pacNavigationTechnique = function (domElement) {
        }else{
            /*
             * NOTE (05.08.2014) A.Henka:
-            * This function uses 'findElements' instead of 'findElement' to retrive a
+            * This function uses 'findElements' instead of 'findElement' to retrieve a
             * Array of elements, corresponding with the 'SearchAttribute' of the DOMElement.
             * In the PAC (Point and Click) navigation technique this is not coercively -
             * since the process will be slower.
