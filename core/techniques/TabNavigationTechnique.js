@@ -55,18 +55,18 @@ module.exports = tabNavigationTechnique = function (domElement) {
         return _result;
     };
 
-
+    /*
+     * Recursive 'helper' function to retrieve the element defined in 'domElement'.
+     */
     var helperFunction = function (domElement) {
-        return action_to_be_performed.perform()
+     return action_to_be_performed.perform()
             .then(function () {
                 if(webElement === undefined){
                     webElement = that.driver.switchTo().activeElement();
                 }else{
                     that.webdriver.WebElement.equals(webElement,that.driver.switchTo().activeElement()).then(function (eq) {
                         if(eq){
-                         //   throw new ElementNotFoundError("Element not Found!");
-                          //  var _errorText = 'Element with ' +domElement.getSearchAttributeName()+' = '+domElement.getSearchAttributeValue()+' cloud not be found or reached!';
-                            return deferred.reject(new Error(new ElementNotFoundError()));
+                             return deferred.reject(new Error(new ElementNotFoundError()));
                         }
 
                     });
@@ -99,7 +99,6 @@ module.exports = tabNavigationTechnique = function (domElement) {
 
                 }
             })
-    };
+     };
     return helperFunction(domElement);
-
 };
