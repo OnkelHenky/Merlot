@@ -37,7 +37,6 @@ module.exports = navigationSteps = function () {
             then(null, function(err) {
                 callback.fail(new Error("Merlot reported an error! " + err +" with DOMElement: "+_domElement).message);
             });
-        //callback.pending();
     });
 
     this.When(/^The actor clicks on the link with text "([^"]*)"$/, function(linkText,callback) {
@@ -57,7 +56,7 @@ module.exports = navigationSteps = function () {
                 callback();
             }).
             then(null, function(err) {
-                console.error("Merlot reported an error!  " + err + " with DOMElement: "+_domElement);
+                callback.fail(new Error("Merlot reported an error! " + err +" with DOMElement: "+_domElement).message);
             });
     });
 
@@ -78,7 +77,7 @@ module.exports = navigationSteps = function () {
                 callback();
             }).
             then(null, function(err) {
-                console.error("Merlot reported an error!  " + err + " with DOMElement: " + _domElement);
+                callback.fail(new Error("Merlot reported an error! " + err +" with DOMElement: "+_domElement).message);
             });
     });
 
@@ -108,7 +107,7 @@ module.exports = navigationSteps = function () {
                 callback();
             }).
             then(null, function(err) {
-                console.error("An error was thrown! " + err);
+                callback.fail(new Error("Merlot reported an error! " + err +" with DOMElement: "+_domElement).message);
             });
     });
 

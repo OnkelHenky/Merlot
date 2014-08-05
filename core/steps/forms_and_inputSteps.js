@@ -26,12 +26,9 @@ module.exports = forms_and_input_Steps = function () {
                 callback();
             }).
             then(null, function(err) {
-                console.error("Merlot reported an error! " + err);
+                callback.fail(new Error("Merlot reported an error! " + err +" with DOMElement: "+_domElement).message);
             });
         //input[contains(@id,'suchbegriff') and type='text']
 
     });
-
-
 };
-
