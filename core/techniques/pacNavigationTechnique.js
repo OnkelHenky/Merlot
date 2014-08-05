@@ -21,12 +21,13 @@ var ElementNotFoundError = require('../auxilium/MerlotErrors').ElementNotFoundEr
 module.exports.pacCSSSelectorNavigationTechnique = function (domElement) {
 
     var _by = this.webdriver.By,
-        _deferred = this.webdriver.promise.defer();
+        _deferred = this.webdriver.promise.defer(),
+        _cssExpr = domElement.getCSSSelector();
 
     /*
      * Returns the first element if more than one element can be retrieved.
      */
-     this.driver.findElement(_by.css(domElement.getCSSSelector()))
+     this.driver.findElement(_by.css(_cssExpr))
         .then(function (element) {
             _deferred.fulfill(element);
      })
@@ -115,18 +116,23 @@ module.exports.pacNavigationTechnique = function (domElement) {
                .then(null, function (error) {
                    throw new ElementNotFoundError();
                });
-       } else if('name' === domElement.getSearchAttributeName()){
-            /*
-             * NOTE (05.08.2014) A.Henka:
-             * This returns the first element found with @name = 'SearchAttributeValue'.
-             * It is possible, that more than one HTML element exists with the name.
-             * Therefor use 'findElements' instead of 'findElement'
-             * - which is also handled by the 'else' block.
-             */
+       } else if('name' === domElement.getSearchAttributeName()) {
+           /*
+            * NOTE (05.08.2014) A.Henka:
+            * This returns the first element found with @name = 'SearchAttributeValue'.
+            * It is possible, that more than one HTML element exists with the name.
+            * Therefor use 'findElements' instead of 'findElement'
+            * - which is also handled by the 'else' block.
+            */
            return that.driver.findElement(_by.name(domElement.getSearchAttributeValue()))
-                   .then(null,function (error) {
-                       throw new ElementNotFoundError();
-            });
+               .then(null, function (error) {
+                   throw new ElementNotFoundError();
+               });
+       } else if(('a' === domElement.getSearchAttributeName()) && ('text' === domElementment.getSearchAttributeName())){
+           return that.driver.findElement(_by.linkText(domElement.getSearchAttributeValue()))
+               .then(null, function (error) {
+                   throw new ElementNotFoundError();
+               });
        }else{
            /*
             * NOTE (05.08.2014) A.Henka:

@@ -6,11 +6,11 @@
  */
 
 
-var TestMaster = require('../TEST_Master'),
-    DOMElement = require('../../core/auxilium/DOMElement'),
-    PacNavTechnique = require('../../core/techniques/pacNavigationTechnique').pacNavigationTechnique;
-    TabNavTechnique = require('../../core/techniques/tabNavigationTechnique');
-    CSSNavTechnique = require('../../core/techniques/pacNavigationTechnique').pacCSSSelectorNavigationTechnique;
+var TestMaster = require('../../TEST_Master'),
+    DOMElement = require('../../../core/auxilium/DOMElement'),
+    PacNavTechnique = require('../../../core/techniques/pacNavigationTechnique').pacNavigationTechnique;
+TabNavTechnique = require('../../../core/techniques/tabNavigationTechnique');
+CSSNavTechnique = require('../../../core/techniques/pacNavigationTechnique').pacCSSSelectorNavigationTechnique;
 
 var chai = require("chai");
 var chaiAsPromised = require("chai-as-promised"),
@@ -33,7 +33,7 @@ describe('Test if the navigation techniques can navigate to a element', function
 
     before(function(){
          _browser = new TestMaster({
-            'seleniumPath': require('path').join(__dirname, '../../spielwiese/bin/selenium-server-standalone-2.42.0.jar'),
+            'seleniumPath': require('path').join(__dirname, '../../../spielwiese/bin/selenium-server-standalone-2.42.0.jar'),
             'port' : '4444',
             'browser' : 'chrome'
         });

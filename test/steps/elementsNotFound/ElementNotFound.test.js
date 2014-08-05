@@ -8,7 +8,7 @@ var TestMaster = require('../../TEST_Master'),
     DOMElement = require('../../../core/auxilium/DOMElement'),
     PacNavTechnique = require('../../../core/techniques/pacNavigationTechnique').pacNavigationTechnique;
 TabNavTechnique = require('../../../core/techniques/tabNavigationTechnique');
-CSSNavTechnique = require('../../../core/techniques/pacNavigationTechnique').pacCSSSelectorNavigationTechnique
+CSSNavTechnique = require('../../../core/techniques/pacNavigationTechnique').pacCSSSelectorNavigationTechnique;
 
 var chai = require("chai");
 var chaiAsPromised = require("chai-as-promised"),
