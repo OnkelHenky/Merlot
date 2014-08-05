@@ -15,8 +15,6 @@ module.exports = blueprintSteps = function () {
     */
    require('../auxilium/hooks').call(this);
 
-
-
     /*
      * Invoking the step implementations
      * (The Steps)

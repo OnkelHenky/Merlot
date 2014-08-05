@@ -11,12 +11,12 @@
  */
 module.exports = hooks = function () {
     /*
-     * Close the selenium diver (browser) after all features
+     * Close the selenium driver (browser) after all features
      * of an scenario had been executed.
      */
     this.After(function(scenario, callback) {
-        console.log('After Hook');
-        this.browser.closeDriver();
+        console.log('after hook, closing selenium driver');
+        this.browser.closeDriver();   //closing the selenium driver (browser)
         /*
         if (scenario.failed) {
             console.log('FAILED');

@@ -72,6 +72,9 @@ module.exports.pacNavigationTechnique = function (domElement) {
                  throw new ElementNotFoundError();
              }
 
+            /*
+             * Text nodes of HTML element needs special treatment.
+             */
              if ('text' === domElement.getSearchAttributeName()){
                 element.getText() //NOTE. Async.
                     .then(function(text){
@@ -85,6 +88,9 @@ module.exports.pacNavigationTechnique = function (domElement) {
                     });
 
             }else{
+               /*
+                * Everything else
+                */
                 element.getAttribute(domElement.getSearchAttributeName())//NOTE. Async.
                     .then(function(text){
                         if(text === domElement.getSearchAttributeValue()){
