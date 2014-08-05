@@ -37,16 +37,10 @@ describe('Test if the promises are all rejected if not element can be found', fu
         });
         _url = "http://www.hdm-stuttgart.de/";
 
-        _domElement = new DOMElement({
-            'tagName': 'input',
-            'searchAttribute': {
-                "name": 'id',
-                'value': "suchbegriff"
-            }
-        });
+
     });
 
-    describe('Element not Found', function () {
+    describe('Element not Found and @id', function () {
 
         before(function () {
             _domElement = new DOMElement({
@@ -69,7 +63,73 @@ describe('Test if the promises are all rejected if not element can be found', fu
             })
         });
 
-        describe('Using PAC', function () {
+        describe('Using PACd', function () {
+            it('It is expected the promise to be rejected', function () {
+                return expect(PacNavTechnique.call(_browser, _domElement)).to.be.rejectedWith('ElementNotFoundError');
+            })
+        });
+
+
+
+    });
+
+    describe('Element not Found and @href', function () {
+
+        before(function () {
+            _domElement = new DOMElement({
+                'tagName': 'a',
+                'searchAttribute': {
+                    "name": 'href',
+                    'value': "123abc"
+                }
+            });
+        });
+
+
+        beforeEach(function () {
+            _browser.driver.get(_url);
+        });
+
+        describe('Using TAB', function () {
+            it('It is expected the promise to be rejected', function () {
+                return expect(TabNavTechnique.call(_browser, _domElement)).to.be.rejectedWith('ElementNotFoundError');
+            })
+        });
+
+        describe('Using PACd', function () {
+            it('It is expected the promise to be rejected', function () {
+                return expect(PacNavTechnique.call(_browser, _domElement)).to.be.rejectedWith('ElementNotFoundError');
+            })
+        });
+
+
+
+    });
+
+    describe('Element not Found and @name', function () {
+
+        before(function () {
+            _domElement = new DOMElement({
+                'tagName': 'a',
+                'searchAttribute': {
+                    "name": 'name',
+                    'value': "123abc"
+                }
+            });
+        });
+
+
+        beforeEach(function () {
+            _browser.driver.get(_url);
+        });
+
+        describe('Using TAB', function () {
+            it('It is expected the promise to be rejected', function () {
+                return expect(TabNavTechnique.call(_browser, _domElement)).to.be.rejectedWith('ElementNotFoundError');
+            })
+        });
+
+        describe('Using PACd', function () {
             it('It is expected the promise to be rejected', function () {
                 return expect(PacNavTechnique.call(_browser, _domElement)).to.be.rejectedWith('ElementNotFoundError');
             })
