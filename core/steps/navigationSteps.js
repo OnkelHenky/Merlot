@@ -2,6 +2,7 @@
  * Created by Henka on 18.06.14.
  */
 
+var tagNameDictionary = require('../auxilium/tagNameDictionary');
 
 module.exports = navigationSteps = function () {
 
@@ -9,99 +10,52 @@ module.exports = navigationSteps = function () {
         this.browser.goTo(url, callback);
     });
 
-    this.When(/^The actor clicks on the link with href "([^"]*)"$/, function(hrefAttr,callback) {
-        //NOTE: Call callback() at the end of the step, or callback.pending() if the step is not yet implemented.
+    this.When(/^The actor interacts with a "([^"]*)" element whose @([^"]*) is "([^"]*)"$/, function(elementName,identifiedBy,value,callback) {
         var that = this,
-             _domElement = this.browser.createDOMElement({
-                'tagName' : 'a',
-                'searchAttribute' : {
-                     "name":  'href',
-                     'value': hrefAttr
-                 }
-            });
+            _tagName = "",
+            _type = "",
+            _identifiedBy = "";
 
-        this.browser.actorTryToFindThisElement(_domElement).
-            then(function (webElement) {
-                var deferred = that.browser.webdriver.promise.defer();
-                    that.browser.applyCriteria(webElement, function (webElement) {
-                        deferred.fulfill(webElement);
-                    });
-                return deferred.promise;
-            }).
-            then(function (webElement) {
-               return that.browser.click(webElement,that.browser.webdriver.Key.ENTER);
-            }).
-            then(function () {
-                callback();
-            }).
-            then(null, function(err) {
-                callback.fail(new Error("Merlot reported an error! " + err +" with DOMElement: "+_domElement).message);
-            });
-    });
+        if(tagNameDictionary.hasOwnProperty(elementName)){
+            _tagName = tagNameDictionary[elementName].eleName;
+            _type = tagNameDictionary[elementName].type;
+            console.log('tag name = '+_tagName);
+        }else{
+            callback.fail(new Error('"'+elementName+'" is not a valid tag name'));
+        }
 
-    this.When(/^The actor clicks on the link with text "([^"]*)"$/, function(linkText,callback) {
-        var that = this,
-            _domElement = this.browser.createDOMElement({
-                'tagName' : 'a',
-                'searchAttribute' : {
-                    "name":  'text',
-                    'value': linkText
-                }
-            });
-        this.browser.actorTryToFindThisElement(_domElement).
-            then(function (webEle) {
-                that.browser.click(webEle,that.browser.webdriver.Key.ENTER);
-            }).
-            then(function () {
-                callback();
-            }).
-            then(null, function(err) {
-                callback.fail(new Error("Merlot reported an error! " + err +" with DOMElement: "+_domElement).message);
-            });
-    });
-
-    this.When(/^The actor clicks on the link with id "([^"]*)"$/, function(linkId,callback) {
-        var that = this,
-            _domElement = this.browser.createDOMElement({
-                'tagName' : 'a',
-                'searchAttribute' : {
-                    "name":  'id',
-                    'value': linkId
-                }
-            });
-        this.browser.actorTryToFindThisElement(_domElement).
-            then(function (webEle) {
-                 that.browser.click(webEle,that.browser.webdriver.Key.ENTER);
-            }).
-            then(function () {
-                callback();
-            }).
-            then(null, function(err) {
-                callback.fail(new Error("Merlot reported an error! " + err +" with DOMElement: "+_domElement).message);
-            });
-    });
-
-    this.When(/^The actor clicks on the link with "([^"]*)" = "([^"]*)"$/, function(identifiedBy,value,callback) {
-        var that = this,
-            helper = {};
-
-        console.log(identifiedBy+ ' = '+value);
 
         switch (identifiedBy){
             case "id":
             case "text":
             case "name":
             case "href":
-                helper[identifiedBy] = value;
+                _identifiedBy = identifiedBy;
                 break;
             default:
-                callback.fail(new Error('"'+identifiedBy+'" is not valid, please use "id", "text" or "href" instead'));
+                callback.fail(new Error('"'+identifiedBy+'" is not valid identifier - use "id", "text", "name" or "href" instead'));
                 break;
         }
 
-        this.browser.actorTryToFindThisElement('a',helper,callback).
-            then(function (webEle) {
-                that.browser.click(webEle,that.browser.webdriver.Key.ENTER);
+         var _domElement = this.browser.createDOMElement({
+                'tagName' : _tagName,
+                'type' : _type,
+                'searchAttribute' : {
+                    "name":  _identifiedBy,
+                    'value': value
+                }
+            });
+
+        this.browser.actorTryToFindThisElement(_domElement).
+            then(function (webElement) {
+                var deferred = that.browser.webdriver.promise.defer();
+                that.browser.applyCriteria(webElement, function (webElement) {
+                    deferred.fulfill(webElement);
+                });
+                return deferred.promise;
+            }).
+            then(function (webElement) {
+                return that.browser.click(webElement,that.browser.webdriver.Key.ENTER);
             }).
             then(function () {
                 callback();
@@ -111,7 +65,7 @@ module.exports = navigationSteps = function () {
             });
     });
 
-    this.Then(/^The actor should see "([^"]*)" in the title$/, function(title, callback) {
+    this.Then(/^The actor should be on a web page with "([^"]*)" in the title$/, function(title, callback) {
         this.browser.getPageTitle()
             .then(function(pageTitle) {
                 console.log('pageTitle = '+ pageTitle);

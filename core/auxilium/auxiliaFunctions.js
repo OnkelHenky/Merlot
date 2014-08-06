@@ -13,7 +13,7 @@ var exports = module.exports;
  * @param webElement
  * @returns {*}
  */
-exports.inputText = function(text,webElement) {
+module.exports.inputText = function(text,webElement) {
     var deferred = this.browser.webdriver.promise.defer();
     this.browser.enterText(webElement, text, function (webElement) {
         deferred.fulfill(webElement);

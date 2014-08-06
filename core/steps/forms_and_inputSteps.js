@@ -31,4 +31,34 @@ module.exports = forms_and_input_Steps = function () {
         //input[contains(@id,'suchbegriff') and type='text']
 
     });
+
+    this.When(/^The actor clicks on the img with id "([^"]*)"$/, function(elementID ,callback) {
+        var that = this,
+            _domElement = this.browser.createDOMElement({
+                'tagName' : 'img',
+                'searchAttribute' : {
+                    "name":  'id',
+                    'value': elementID
+                }
+            });
+
+        this.browser.actorTryToFindThisElement(_domElement).
+            then(function (webElement) {
+                var deferred = that.browser.webdriver.promise.defer();
+                that.browser.applyCriteria(webElement, function (webElement) {
+                    deferred.fulfill(webElement);
+                });
+                return deferred.promise;
+            }).
+            then(function (webElement) {
+                return that.browser.click(webElement,that.browser.webdriver.Key.ENTER);
+            }).
+            then(function () {
+                callback();
+            }).
+            then(null, function(err) {
+                callback.fail(new Error("Merlot reported an error! " + err +" with DOMElement: "+_domElement).message);
+            });
+
+    });
 };

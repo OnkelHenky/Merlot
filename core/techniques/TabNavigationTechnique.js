@@ -89,8 +89,8 @@ module.exports = tabNavigationTechnique = function (domElement) {
                 }else{
                     if (isAttributePresent(activeElement, domElement.getSearchAttributeName())) {
                         return activeElement.getAttribute(domElement.getSearchAttributeName())
-                            .then(function (text) {
-                                return (text === domElement.getSearchAttributeValue()) ? activeElement : helperFunction(domElement);
+                            .then(function (attributeValue) {
+                                return (attributeValue === domElement.getSearchAttributeValue()) ? activeElement : helperFunction(domElement);
                             });
 
                     } else {

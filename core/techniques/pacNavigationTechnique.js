@@ -83,11 +83,8 @@ module.exports.pacNavigationTechnique = function (domElement) {
                             return _deferred.fulfill(element);
                         }else{
                            return getReference(elements);
-
                         }
-
                     });
-
             }else{
                /*
                 * Everything else

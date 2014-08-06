@@ -14,12 +14,19 @@ var DOMElement,
 module.exports = DOMElement =  function(properties) {
 
     /*Information*/
+    //Type of this object
     this._type_                 = "DOMElement Object"; //Name of the object
 
     /*Properties*/
+    //Tag name of this element
     this.tagName                = "";
+    //Additional information of the DOMElement e.g. type='button' for tag <input>
+    this.type                   = "";
 
-    // {'name' : 'id', 'value': 'textfield123'}
+    /*
+     *
+     * {'name' : 'id', 'value': 'textfield123'}
+     */
     this.searchAttribute        = {};
     this.searchAttribute.name   = "";
     this.searchAttribute.value  = "";
@@ -213,6 +220,14 @@ DOMElement.prototype.getSearchAttributeName = function () {
  */
 DOMElement.prototype.getSearchAttributeValue = function () {
    return (this.searchAttribute.value) ? this.searchAttribute.value: undefined;
+};
+
+/**
+ *
+ * @returns {string|undefined}
+ */
+DOMElement.prototype.getType = function () {
+    return this.type || undefined;
 };
 
 /**
