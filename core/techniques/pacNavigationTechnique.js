@@ -87,7 +87,7 @@ module.exports.pacNavigationTechnique = function (domElement) {
                     });
             }else{
                /*
-                * Everything else
+                * Test for everything else
                 */
                 element.getAttribute(domElement.getSearchAttributeName())//NOTE. Async.
                     .then(function(text){
@@ -125,6 +125,11 @@ module.exports.pacNavigationTechnique = function (domElement) {
                .then(null, function (error) {
                    throw new ElementNotFoundError();
                });
+           /*
+            * Special case for hyperlinks "<a>" by the its link text.
+            * NOTE:
+            * Only those link elements with the exact same text value are retrieved.
+            */
        } else if(('a' === domElement.getSearchAttributeName()) && ('text' === domElementment.getSearchAttributeName())){
            return that.driver.findElement(_by.linkText(domElement.getSearchAttributeValue()))
                .then(null, function (error) {
@@ -147,11 +152,7 @@ module.exports.pacNavigationTechnique = function (domElement) {
 
     var deferred = that.webdriver.promise.defer();
 
-    /*
-     * Check if the DOMElement has a valid HTML tag name
-     */
-    if(domElement.hasValidTagName()){
-        resolveElementReference(domElement)
+    resolveElementReference(domElement)
         .then(function(eleRef) {
             deferred.fulfill(eleRef);
         })
@@ -163,10 +164,6 @@ module.exports.pacNavigationTechnique = function (domElement) {
         .then(null, function (err) {
              deferred.reject(err);
         });
-
-    }else{
-        deferred.reject('"'+domElement.getTagName()+'" is not a valid HTML tag name');
-    }
 
     return deferred.promise;
 };
