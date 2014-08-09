@@ -10,7 +10,22 @@ module.exports = navigationSteps = function () {
         this.browser.goTo(url, callback);
     });
 
+    this.Then(/^The actor should be on a web page with "([^"]*)" in the title$/, function(title, callback) {
+        this.browser.getPageTitle()
+            .then(function(pageTitle) {
+                console.log('pageTitle = '+ pageTitle);
+                console.log('title = '+ title);
+                if (title === pageTitle) {
+                    callback();
+                } else {
+                    callback.fail(new Error("Expected to be on page with title " + title));
+                }
+
+            });
+    });
+
     this.When(/^The actor interacts with a "([^"]*)" element whose @([^"]*) is "([^"]*)"$/, function(elementName,identifiedBy,value,callback) {
+
         var that = this,
             _tagName = "",
             _type = "",
@@ -30,6 +45,8 @@ module.exports = navigationSteps = function () {
             case "text":
             case "name":
             case "href":
+            case "value":
+            case "label":
                 _identifiedBy = identifiedBy;
                 break;
             default:
@@ -65,17 +82,4 @@ module.exports = navigationSteps = function () {
             });
     });
 
-    this.Then(/^The actor should be on a web page with "([^"]*)" in the title$/, function(title, callback) {
-        this.browser.getPageTitle()
-            .then(function(pageTitle) {
-                console.log('pageTitle = '+ pageTitle);
-                console.log('title = '+ title);
-                if (title === pageTitle) {
-                    callback();
-                } else {
-                    callback.fail(new Error("Expected to be on page with title " + title));
-                }
-
-            });
-    });
 };

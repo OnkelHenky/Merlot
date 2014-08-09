@@ -14,9 +14,9 @@ var ElementNotFoundError = require('../auxilium/MerlotErrors').ElementNotFoundEr
  */
 module.exports = tabNavigationTechnique = function (domElement) {
     var that = this,
-        deferred = that.webdriver.promise.defer(),
-        webElement,
-        action_to_be_performed = that.driver.actions().sendKeys(that.webdriver.Key.TAB);
+        _deferred = that.webdriver.promise.defer(),
+        _firstWebElement,
+        _presTAB = that.driver.actions().sendKeys(that.webdriver.Key.TAB);
 
     /**
      * Helper function to check if a attribute is present
@@ -55,26 +55,30 @@ module.exports = tabNavigationTechnique = function (domElement) {
         return _result;
     };
 
-    /*
-     * Recursive 'helper' function to retrieve the element defined in 'domElement'.
-     */
+
+ /* Recursive 'helper' function to retrieve the element defined in 'domElement' */
     var helperFunction = function (domElement) {
-     return action_to_be_performed.perform()
-            .then(function () {
-                if(webElement === undefined){
-                    webElement = that.driver.switchTo().activeElement();
+     return _presTAB.perform()
+            .then(function switchToActiveElement() {
+                if(undefined === _firstWebElement){
+                     /*Save the first element*/
+                    _firstWebElement = that.driver.switchTo().activeElement();
                 }else{
-                    that.webdriver.WebElement.equals(webElement,that.driver.switchTo().activeElement()).then(function (eq) {
+                    /* Check if have the first element again.
+                     * If the answer is true, we run into a loop and therefore cant reach the
+                     * element by using tab navigation.
+                     */
+                    that.webdriver.WebElement.equals(_firstWebElement,that.driver.switchTo().activeElement()).then(function (eq) {
                         if(eq){
-                             return deferred.reject(new Error(new ElementNotFoundError()));
+                            //Reject the promise of we have a loop
+                            return _deferred.reject(new Error(new ElementNotFoundError()));
                         }
-
                     });
-
                 }
+                 /*If we don't have a loop, return the active element*/
                 return that.driver.switchTo().activeElement();
             })
-            .then(function (activeElement) {
+            .then(function checkTheActiveElement(activeElement) {
 
                 if (domElement.getSearchAttributeValue() === 'text'){
                     if (hasTextNode(activeElement)) {

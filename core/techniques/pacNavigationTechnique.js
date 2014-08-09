@@ -7,6 +7,35 @@
  */
 
 var ElementNotFoundError = require('../auxilium/MerlotErrors').ElementNotFoundError;
+
+
+/**
+ * Find a WebElement by using an XPah expression
+ * @type {pacXpathNavigationTechnique}
+ */
+module.exports.pacXpathNavigationTechnique = function (domElement) {
+
+    var _by = this.webdriver.By,
+        _deferred = this.webdriver.promise.defer(),
+        _xpathExpr = domElement.getTypeExpression();
+
+    this.driver.findElement(_by.xpath(_xpathExpr))
+        .then(function (element) {
+            _deferred.fulfill(element);
+        })
+        /*
+         * Catching any error or exception thrown during the
+         * process of fetching(finding) an HTML Element.
+         * The promise will be rejected.
+         */
+        .then(null, function(err) {
+            _deferred.reject(err + "trying to fetch element with via XPATH Selector: "+_cssExpr);
+        });
+
+    return _deferred.promise;
+};
+
+
 /**
  * @description
  * 'Point and Click' navigation technique to find the element, defined as 'domElement'.
@@ -104,7 +133,7 @@ module.exports.pacNavigationTechnique = function (domElement) {
         return _deferred.promise;
     };
 
-    var resolveElementReference = function (domElementment) {
+    var resolveElementReference = function (domElement) {
         /*
          * Get a element on the basis of its unique id.
          */
@@ -130,7 +159,7 @@ module.exports.pacNavigationTechnique = function (domElement) {
             * NOTE:
             * Only those link elements with the exact same text value are retrieved.
             */
-       } else if(('a' === domElement.getSearchAttributeName()) && ('text' === domElementment.getSearchAttributeName())){
+       } else if(domElement.isHyperLink() && ('text' === domElement.getSearchAttributeName())){
            return that.driver.findElement(_by.linkText(domElement.getSearchAttributeValue()))
                .then(null, function (error) {
                    throw new ElementNotFoundError();
@@ -142,11 +171,17 @@ module.exports.pacNavigationTechnique = function (domElement) {
             * Array of elements, corresponding with the 'SearchAttribute' of the DOMElement.
             * In the PAC (Point and Click) navigation technique this is not coercively -
             * since the process will be slower.
-            * But is still necessary for fetching elements based on the text chidl node of the
+            * But is still necessary for fetching elements based on the text child node of the
             * HTML element or attributes as @value or @href.
             */
+           return that.driver.findElement(_by.xpath(domElement.getTypeExpression()))
+               .then(null, function (error) {
+                   throw new ElementNotFoundError();
+               });
+         /*
             return that.driver.findElements(_by.tagName(domElement.getTagName()))
                .then(_getElementReference);
+               */
         }
     };
 

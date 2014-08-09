@@ -156,6 +156,15 @@
     _validTagNames.button = {
         'eleName' : 'input' ,'type' : 'button'
     };
+    _validTagNames.submitbutton = {
+        'eleName' : 'input' ,'type' : 'submit'
+    };
+    _validTagNames.checkbox = {
+        'eleName' : 'input' ,'type' : 'checkbox'
+    };
+    _validTagNames.radiobutton = {
+        'eleName' : 'input' ,'type' : 'radiobutton'
+    };
 
    /*
     * Export the dictionary

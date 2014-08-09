@@ -3,11 +3,14 @@
  * Copyright by Alexander Henka
  */
 
+
+var ElementNotFoundError = require('../auxilium/MerlotErrors').ElementNotFoundError;
+
 /**
  * Find a WebElement by using an XPah expression
  * @type {pacXpathNavigationTechnique}
  */
-module.exports = pacXpathNavigationTechnique = function (xpathExpr) {
+module.exports.pacXpathNavigationTechnique = function (xpathExpr) {
 
     var _by = this.webdriver.By,
         _deferred = this.webdriver.promise.defer();

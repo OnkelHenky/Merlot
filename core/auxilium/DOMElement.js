@@ -24,7 +24,7 @@ module.exports = DOMElement =  function(properties) {
     //Tag name of this element
     this.tagName                = "";
     //Additional information of the DOMElement e.g. type='button' for tag <input>
-    this.type                   = "";
+    this.type;
 
     /*
      *
@@ -47,6 +47,22 @@ module.exports = DOMElement =  function(properties) {
 DOMElement.prototype = new Merlot;
 
 /**
+ * Check if the DOMElement is a hyperlink
+ * @returns {boolean}
+ */
+DOMElement.prototype.isHyperLink = function () {
+        return ('a' === this.getTagName());
+    };
+
+/**
+ * Check if function is button
+ * @returns {boolean}
+ */
+DOMElement.prototype.isButton = function () {
+    return (('input' === this.getTagName()) && ('button' === this.getType()));
+};
+
+/**
  * @description
  * Set the properties of a new DOMElement
  * @param properties
@@ -59,7 +75,6 @@ DOMElement.prototype.addProperties = function (properties) {
     });
 
 };
-
 /**
  *
  * @returns {string}
@@ -98,6 +113,20 @@ DOMElement.prototype.getSearchAttributeValue = function () {
  */
 DOMElement.prototype.getType = function () {
     return this.type || undefined;
+};
+
+/**
+ * Get the type expression of this DOMElement
+ * @returns {string}
+ */
+DOMElement.prototype.getTypeExpression = function () {
+    ////div[@id='..' and @class='...]
+    if(this.getType()){
+        return "//"+this.getTagName()+"[@type='"+this.getType()+"' and @"+this.getSearchAttributeName()+"='"+this.getSearchAttributeValue()+"']";
+    }else{
+        return "//"+this.getTagName()+"[@"+this.getSearchAttributeName()+"='"+this.getSearchAttributeValue()+"']";
+    }
+
 };
 
 /**
