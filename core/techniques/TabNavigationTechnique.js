@@ -16,6 +16,7 @@ module.exports = tabNavigationTechnique = function (domElement) {
     var that = this,
         _deferred = that.webdriver.promise.defer(),
         _firstWebElement,
+        /* executes a single Tab */
         _presTAB = that.driver.actions().sendKeys(that.webdriver.Key.TAB);
 
     /**
@@ -57,71 +58,90 @@ module.exports = tabNavigationTechnique = function (domElement) {
         return _result;
     };
 
-
- /* Recursive 'helper' function to retrieve the element defined in 'domElement' */
+    /* Recursive 'helper' function to retrieve
+     * the element defined in 'domElement' */
     var helperFunction = function (domElement) {
-     return _presTAB.perform()
-            .then(function switchToActiveElement() {
+     return _presTAB.perform().
+            then(function switchToActiveElement() {
                 if(undefined === _firstWebElement){
                      /*Save the first element*/
                     _firstWebElement = that.driver.switchTo().activeElement();
                 }else{
                     /* Check if have the first element again.
                      * If the answer is true, we run into a loop and therefore cant reach the
-                     * element by using tab navigation.
-                     */
+                     * element by using tab navigation.*/
                     that.webdriver.WebElement.equals(_firstWebElement,that.driver.switchTo().activeElement()).then(function (eq) {
                         if(eq){
-                            //Reject the promise of we have a loop
+                            /* Reject the promise of we have a loop */
                             return _deferred.reject(new Error(new ElementNotFoundError()));
                         }
                     });
                 }
                  /*If we don't have a loop, return the active element*/
                 return that.driver.switchTo().activeElement();
-            })
-            .then(function checkTheActiveElement(activeElement) {
-               return activeElement.getTagName()
-                    .then(function checkTheTagNameFirst(activeElementTagName) {
-                       // console.log('checkTheTagNameFirst');
-                            console.log('activeElementTagName = '+activeElementTagName);
-                          if(activeElementTagName === domElement.getTagName()){
-                              return activeElement;
-                          }else{
-                              return helperFunction(domElement);
-                          }
-                     })
-                    .then(function checkTheAttributes (activeElement) {
-                        if (domElement.getSearchAttributeName() === 'textNode'){
-                            if (hasTextNode(activeElement)) {
-                                return activeElement.getText()
-                                    .then(function (text) {
-                                        return (text === domElement.getSearchAttributeValue()) ? activeElement : helperFunction(domElement);
-                                    });
-                            } else {
-                                return helperFunction(domElement);
-                            }
-
-                        }else{
-                           var _attribute = isAttributePresent(activeElement, domElement.getSearchAttributeName());
-
-                           return (_attribute) ? _attribute.then(
-                                            function checkIfThisIsTheElementWereLookingFor(attributeValue) {
-                                                     return (attributeValue === domElement.getSearchAttributeValue()) ?
-                                                                activeElement : helperFunction(domElement)
-                                            })
-                                             : helperFunction(domElement);
-
-                           /*)
-                            if(_attribute){
-                              return _attribute.then(function checkIfThisIsTheElementWereLookingFor(attributeValue) {
-                                 return (attributeValue === domElement.getSearchAttributeValue()) ? activeElement : helperFunction(domElement);
-                               });
-                            }else{
-                              return helperFunction(domElement);
-                            }
-*/
+            }).
+            /* Check the active element after switching to it
+             * The active element 'activeElement' is provided as a promise
+             * from "switchToActiveElement()".
+             */
+            then(function checkTheActiveElement(activeElement) {
+             return activeElement.getTagName().
+                 /* Check if we have an element with the tag name,
+                  * that we are looking for.
+                  */
+                then(function checkTheTagNameFirst(activeElementTagName) {
+                    if(activeElementTagName === domElement.getTagName()){
+                        /* Return the active element if the active element
+                         * has the same tag name as 'domElement.getTagName()' */
+                        return activeElement;
+                    }else{
+                        /*Call the function recursively if '
+                         * !activeElementTagName === domElement.getTagName()' */
+                        return helperFunction(domElement);
+                    }
+                }).
+                /* Check the attributes of the tag names match */
+                then(function checkTheAttributes (activeElement) {
+                   /*
+                    * If the attribute that we are looking for is not
+                    * an attribute but the text node of the element
+                    * use the following code, this is necessary because
+                    * the function to get the text node differs from the
+                    * function to get ab elements attribute
+                    */
+                    if (domElement.getSearchAttributeName() === 'textNode'){
+                        if (hasTextNode(activeElement)) {
+                            return activeElement.getText()
+                                .then(function checkIfThisIsTheElementWereLookingFor(text) {
+                                    /* Return the active element if the this is the element with
+                                     * the text node we are looking for. */
+                                    return (text === domElement.getSearchAttributeValue()) ? activeElement : helperFunction(domElement);
+                                });
+                        } else {
+                            /* Call the function recursively if this
+                             * this is not the element */
+                            return helperFunction(domElement);
                         }
+
+                    }else{
+                        /* If it is an attribute, check if the current active element
+                         * has this attribute.
+                         * NOTE: the function isAttributePresent returns the attribute
+                         * of the active element has the attribute and false if not. */
+                        var _attribute = isAttributePresent(activeElement, domElement.getSearchAttributeName());
+                        if(_attribute){
+                            /* Return the active element if the this is the element with
+                             * the attribute we are looking for. */
+                             return _attribute.
+                                    then(function checkIfThisIsTheElementWereLookingFor(attributeValue){
+                                         return (attributeValue === domElement.getSearchAttributeValue()) ? activeElement : helperFunction(domElement)
+                                     });
+                        }else{
+                            /* Call the function recursively if this
+                             * this is not the element */
+                            helperFunction(domElement);
+                        }
+                    }
                 })
             });
      };
