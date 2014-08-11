@@ -28,7 +28,7 @@ var _browser,
 /*
  * The Tests
  */
-describe('Links - test if the navigation techniques can navigate to <a> element', function(){
+describe('Links - test if the navigation techniques can navigate to "a" element', function(){
 
     before(function(){
         _browser = new TestMaster({
@@ -36,7 +36,8 @@ describe('Links - test if the navigation techniques can navigate to <a> element'
             'port' : '4444',
             'browser' : 'chrome'
         });
-        _url = "http://www.mi.hdm-stuttgart.de/mmb";
+       // _url = "http://www.mi.hdm-stuttgart.de/mmb";
+        _url = "file:///Users/Henka/Arbeit/Development/JavaScript/Projekte/Merlot/spielwiese/testProject/html5-boilerplate/index.html";
     });
 
     describe('Navigate to a element by "link text"', function(){
@@ -47,7 +48,7 @@ describe('Links - test if the navigation techniques can navigate to <a> element'
                 'tagName': 'a',
                 'searchAttribute': {
                     "name": 'text',
-                    'value': "News"
+                    'value': "Hompage via link text"
                 }
             });
         });
@@ -74,6 +75,80 @@ describe('Links - test if the navigation techniques can navigate to <a> element'
         });
 
     });
+
+    describe('Navigate to a element by @href', function(){
+
+        before(function(){
+
+            _domElement = new DOMElement({
+                'tagName': 'a',
+                'searchAttribute': {
+                    "name": 'href',
+                    'value': "file:///Users/Henka/Arbeit/Development/JavaScript/Projekte/Merlot/spielwiese/testProject/html5-boilerplate/index.html"
+                }
+            });
+        });
+
+
+        beforeEach(function () {
+            _browser.driver.get(_url);
+        });
+
+        describe('Using PAC', function(){
+            it('It is expected that the promise is fulfilled', function(){
+                return expect(PacNavTechnique.call(_browser, _domElement)).to.be.fulfilled;
+            })
+        });
+        describe('Using CSS Selector', function(){
+            it('It is expected that the promise is fulfilled', function(){
+                return expect(CSSNavTechnique.call(_browser, _domElement)).to.be.fulfilled;
+            })
+        });
+        describe('Using TAB', function(){
+            it('It is expected that the promise is fulfilled', function(){
+                return expect(TabNavTechnique.call(_browser, _domElement)).to.be.fulfilled;
+            })
+        });
+
+    });
+
+    describe('Navigate to a element by @id', function(){
+
+        before(function(){
+
+            _domElement = new DOMElement({
+                'tagName': 'a',
+                'searchAttribute': {
+                    "name": 'id',
+                    'value': "homepagelink"
+                }
+            });
+        });
+
+
+        beforeEach(function () {
+            _browser.driver.get(_url);
+        });
+
+        describe('Using PAC', function(){
+            it('It is expected that the promise is fulfilled', function(){
+                return expect(PacNavTechnique.call(_browser, _domElement)).to.be.fulfilled;
+            })
+        });
+        describe('Using CSS Selector', function(){
+            it('It is expected that the promise is fulfilled', function(){
+                return expect(CSSNavTechnique.call(_browser, _domElement)).to.be.fulfilled;
+            })
+        });
+        describe('Using TAB', function(){
+            it('It is expected that the promise is fulfilled', function(){
+                return expect(TabNavTechnique.call(_browser, _domElement)).to.be.fulfilled;
+            })
+        });
+
+    });
+
+
 
 
 

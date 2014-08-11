@@ -24,7 +24,7 @@ module.exports = navigationSteps = function () {
             });
     });
 
-    this.When(/^The actor interacts with a "([^"]*)" element whose @([^"]*) is "([^"]*)"$/, function(elementName,identifiedBy,value,callback) {
+    this.When(/^The actor interacts with a "([^"]*)" element whose ([^"]*) is "([^"]*)"$/, function(elementName,identifiedBy,value,callback) {
 
         var that = this,
             _tagName = "",
@@ -41,12 +41,14 @@ module.exports = navigationSteps = function () {
 
 
         switch (identifiedBy){
-            case "id":
-            case "text":
-            case "name":
-            case "href":
-            case "value":
-            case "label":
+            case "@id":
+            case "@name":
+            case "@href":
+            case "@value":
+            case "@label":
+                _identifiedBy = identifiedBy.split("@")[1]; //cutting of the '@'
+                break;
+            case "textNode":
                 _identifiedBy = identifiedBy;
                 break;
             default:

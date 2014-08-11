@@ -120,15 +120,21 @@ DOMElement.prototype.getType = function () {
  * @returns {string}
  */
 DOMElement.prototype.getTypeExpression = function () {
-    ////div[@id='..' and @class='...]
-    if(this.getType()){
-        return "//"+this.getTagName()+"[@type='"+this.getType()+"' and @"+this.getSearchAttributeName()+"='"+this.getSearchAttributeValue()+"']";
-    }else{
-        return "//"+this.getTagName()+"[@"+this.getSearchAttributeName()+"='"+this.getSearchAttributeValue()+"']";
+    ////div[@id='..' and @class='...],  Property[text()='fail']
+    var xpathExpression = "//" + this.getTagName()+"[";
+
+    if(this.getType()) {
+        xpathExpression += "@type='" + this.getType() + "' and ";
+    }
+    if('textNode' === this.getSearchAttributeName()){
+       return xpathExpression += "text()='"+ this.getSearchAttributeValue() +"']";
+       // return "//"+this.getTagName()+"[@"+this.getSearchAttributeName()+"='"+this.getSearchAttributeValue()+"']";
     }
 
-};
+    xpathExpression += "@" + this.getSearchAttributeName() + "='" + this.getSearchAttributeValue() + "']";
 
+    return xpathExpression;
+};
 /**
  * @description
  * Get a basic CSS selector, that represents this element

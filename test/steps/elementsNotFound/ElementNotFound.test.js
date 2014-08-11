@@ -33,7 +33,7 @@ describe('Test if the promises are all rejected if not element can be found', fu
         _browser = new TestMaster({
             'seleniumPath': require('path').join(__dirname, '../../../spielwiese/bin/selenium-server-standalone-2.42.0.jar'),
             'port': '4444',
-            'browser': 'chrome'
+            'browser': 'firefox'
         });
         _url = "http://www.hdm-stuttgart.de/";
 

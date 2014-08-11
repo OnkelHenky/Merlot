@@ -171,14 +171,13 @@ module.exports.pacNavigationTechnique = function (domElement) {
             * Array of elements, corresponding with the 'SearchAttribute' of the DOMElement.
             * In the PAC (Point and Click) navigation technique this is not coercively -
             * since the process will be slower.
-            * But is still necessary for fetching elements based on the text child node of the
-            * HTML element or attributes as @value or @href.
+            * Using an xpath expression.
             */
            return that.driver.findElement(_by.xpath(domElement.getTypeExpression()))
                .then(null, function (error) {
                    throw new ElementNotFoundError();
                });
-         /*
+             /*
             return that.driver.findElements(_by.tagName(domElement.getTagName()))
                .then(_getElementReference);
                */

@@ -79,8 +79,7 @@ module.exports = tabNavigationTechnique = function (domElement) {
                 return that.driver.switchTo().activeElement();
             })
             .then(function checkTheActiveElement(activeElement) {
-
-                if (domElement.getSearchAttributeValue() === 'text'){
+                if (domElement.getSearchAttributeName() === 'textNode'){
                     if (hasTextNode(activeElement)) {
                         return activeElement.getText()
                             .then(function (text) {
