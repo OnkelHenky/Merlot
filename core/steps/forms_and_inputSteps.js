@@ -67,6 +67,7 @@ module.exports = forms_and_input_Steps = function () {
 
         var _domElement = this.browser.createDOMElement({
             'tagName' : _tagName,
+            'name' : _radiogroupName,
             'type' : _type,
             'searchAttribute' : {
                 "name":  _identifiedBy,
@@ -83,7 +84,8 @@ module.exports = forms_and_input_Steps = function () {
                 return deferred.promise;
             }).
             then(function (webElement) {
-                return that.browser.click(webElement,that.browser.webdriver.Key.ENTER);
+                console.log('webElement = '+webElement);
+                return "";//that.browser.click(webElement,that.browser.webdriver.Key.ENTER);
             }).
             then(function () {
                 callback();

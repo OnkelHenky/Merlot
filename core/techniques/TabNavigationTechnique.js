@@ -102,14 +102,29 @@ module.exports = tabNavigationTechnique = function (domElement) {
                 }).
                 /* Check the attributes of the tag names match */
                 then(function checkTheAttributes (activeElement) {
-                   /*
-                    * If the attribute that we are looking for is not
-                    * an attribute but the text node of the element
-                    * use the following code, this is necessary because
-                    * the function to get the text node differs from the
-                    * function to get ab elements attribute
-                    */
-                    if (domElement.getSearchAttributeName() === 'textNode'){
+                     // TODO: Later refactoring here! Maybe a more generic name to reflect all select elements
+                     if(domElement.isRadioButton()){
+                         var _nameAttribute = isAttributePresent(activeElement, 'name');
+                         if(_nameAttribute){
+                             /* Return the active element if the this is the element with
+                              * the attribute we are looking for. */
+                             return _nameAttribute.
+                                 then(function checkIfThisIsTheElementWereLookingFor(attributeValue){
+                                     return (domElement.isRadioButtonInGroup(attributeValue)) ? activeElement : helperFunction(domElement)
+                                 });
+                         }else{
+                             /* Call the function recursively if this
+                              * this is not the element */
+                             helperFunction(domElement);
+                         }
+                     /*
+                      * If the attribute that we are looking for is not
+                      * an attribute but the text node of the element
+                      * use the following code, this is necessary because
+                      * the function to get the text node differs from the
+                      * function to get ab elements attribute
+                      */
+                    } else if (domElement.getSearchAttributeName() === 'textNode'){
                         if (hasTextNode(activeElement)) {
                             return activeElement.getText()
                                 .then(function checkIfThisIsTheElementWereLookingFor(text) {
@@ -122,7 +137,6 @@ module.exports = tabNavigationTechnique = function (domElement) {
                              * this is not the element */
                             return helperFunction(domElement);
                         }
-
                     }else{
                         /* If it is an attribute, check if the current active element
                          * has this attribute.

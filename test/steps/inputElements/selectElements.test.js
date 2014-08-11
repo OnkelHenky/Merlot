@@ -161,10 +161,11 @@ describe('"SELECT" Test if the navigation techniques can navigate to "select" el
 
             _domElement = new DOMElement({
                 'tagName': 'input',
-                "type" : 'radio',
+                'type' : 'radio',
+                'name' : 'paymentmethod',
                 'searchAttribute': {
                     "name": 'id',
-                    'value': "mastercard"
+                    'value': "visa"
                 }
             });
         });
@@ -196,9 +197,19 @@ describe('"SELECT" Test if the navigation techniques can navigate to "select" el
 
         before(function(){
 
+            /*
+             'tagName' : _tagName,
+             'name' : _radiogroupName,
+             'type' : _type,
+             'searchAttribute' : {
+             "name":  _identifiedBy,
+             'value': value
+             }
+             */
             _domElement = new DOMElement({
                 'tagName': 'input',
-                "type" : 'radio',
+                'type' : 'radio',
+                'name' : 'paymentmethod',
                 'searchAttribute': {
                     "name": 'value',
                     'value': "AmericanExpress"

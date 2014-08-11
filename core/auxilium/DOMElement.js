@@ -23,6 +23,7 @@ module.exports = DOMElement =  function(properties) {
     /*Properties*/
     //Tag name of this element
     this.tagName                = "";
+    this.name;
     //Additional information of the DOMElement e.g. type='button' for tag <input>
     this.type;
 
@@ -55,11 +56,25 @@ DOMElement.prototype.isHyperLink = function () {
     };
 
 /**
- * Check if function is button
+ * Check if element is button
  * @returns {boolean}
  */
 DOMElement.prototype.isButton = function () {
     return (('input' === this.getTagName()) && ('button' === this.getType()));
+};
+
+
+DOMElement.prototype.isRadioButton = function () {
+    //TODO: Typecheck, to assure that 'group' is a string.
+    return (('input' === this.getTagName()) && ('radio' === this.getType()));
+};
+/**
+ * Check if the element is a radio button
+ * @returns {boolean}
+ */
+DOMElement.prototype.isRadioButtonInGroup = function (group) {
+    //TODO: Typecheck, to assure that 'group' is a string.
+    return (('input' === this.getTagName()) && ('radio' === this.getType()) && (this.getNameAttribute() === group));
 };
 
 /**
@@ -81,6 +96,14 @@ DOMElement.prototype.addProperties = function (properties) {
  */
 DOMElement.prototype.getTagName = function () {
     return (this.tagName) ? this.tagName: undefined;
+};
+
+/*
+ * Get the name attribute of the element
+ * @returns {*}
+ */
+DOMElement.prototype.getNameAttribute = function () {
+    return (this.name) ? this.name: undefined;
 };
 
 /**
