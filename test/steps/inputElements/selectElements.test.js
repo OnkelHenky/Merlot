@@ -6,6 +6,7 @@
 
 
 
+
 var TestMaster = require('../../TEST_Master'),
     DOMElement = require('../../../core/auxilium/DOMElement'),
     PacNavTechnique = require('../../../core/techniques/pacNavigationTechnique').pacNavigationTechnique;
@@ -29,7 +30,7 @@ var _browser,
 /*
  * The Tests
  */
-describe('"BUTTON" Test if the navigation techniques can navigate to a "button/input" element', function(){
+describe('"SELECT" Test if the navigation techniques can navigate to "select" elements', function(){
 
     before(function(){
         _browser = new TestMaster({
@@ -42,16 +43,16 @@ describe('"BUTTON" Test if the navigation techniques can navigate to a "button/i
 
     });
 
-    describe('Navigate to a "input" element with type="text" by "@id"', function(){
+    describe('Navigate to a "input" element with type="checkbox" by "@id"', function(){
 
         before(function(){
 
             _domElement = new DOMElement({
                 'tagName': 'input',
+                "type" : 'checkbox',
                 'searchAttribute': {
-                    "type" : 'text',
                     "name": 'id',
-                    'value': "username"
+                    'value': "cb1"
                 }
             });
         });
@@ -79,16 +80,17 @@ describe('"BUTTON" Test if the navigation techniques can navigate to a "button/i
 
     });
 
-    describe('Navigate to a "input" element with type="text" by "@name"', function(){
+
+    describe('Navigate to a "input" element with type="checkbox" by "@value" = "mushrooms"', function(){
 
         before(function(){
 
             _domElement = new DOMElement({
                 'tagName': 'input',
+                "type" : 'checkbox',
                 'searchAttribute': {
-                    "type" : 'text',
-                    "name": 'name',
-                    'value': "username"
+                    "name": 'value',
+                    'value': "mushrooms"
                 }
             });
         });
@@ -116,16 +118,16 @@ describe('"BUTTON" Test if the navigation techniques can navigate to a "button/i
 
     });
 
-    describe('Navigate to a "input" element with type="password" by "@id"', function(){
+    describe('Navigate to a "input" element with type="checkbox" by "@value" = "gpeppers"', function(){
 
         before(function(){
 
             _domElement = new DOMElement({
                 'tagName': 'input',
+                "type" : 'checkbox',
                 'searchAttribute': {
-                    "type" : 'password',
-                    "name": 'id',
-                    'value': "password"
+                    "name": 'value',
+                    'value': "gpeppers"
                 }
             });
         });
@@ -153,88 +155,16 @@ describe('"BUTTON" Test if the navigation techniques can navigate to a "button/i
 
     });
 
-    describe('Navigate to a "textarea" element  by "@id"', function(){
-
-        before(function(){
-
-            _domElement = new DOMElement({
-                'tagName': 'textarea',
-                'searchAttribute': {
-                    "name": 'id',
-                    'value': "textarea"
-                }
-            });
-        });
-
-
-        beforeEach(function () {
-            _browser.driver.get(_url);
-        });
-
-        describe('Using PAC', function(){
-            it('It is expected that the promise is fulfilled', function(){
-                return expect(PacNavTechnique.call(_browser, _domElement)).to.be.fulfilled;
-            })
-        });
-        describe('Using CSS Selector', function(){
-            it('It is expected that the promise is fulfilled', function(){
-                return expect(CSSNavTechnique.call(_browser, _domElement)).to.be.fulfilled;
-            })
-        });
-        describe('Using TAB', function(){
-            it('It is expected that the promise is fulfilled', function(){
-                return expect(TabNavTechnique.call(_browser, _domElement)).to.be.fulfilled;
-            })
-        });
-
-    });
-
-    describe('Navigate to a "textarea" element  by "@name"', function(){
-
-        before(function(){
-
-            _domElement = new DOMElement({
-                'tagName': 'textarea',
-                'searchAttribute': {
-                    "name": 'name',
-                    'value': "textarea"
-                }
-            });
-        });
-
-
-        beforeEach(function () {
-            _browser.driver.get(_url);
-        });
-
-        describe('Using PAC', function(){
-            it('It is expected that the promise is fulfilled', function(){
-                return expect(PacNavTechnique.call(_browser, _domElement)).to.be.fulfilled;
-            })
-        });
-        describe('Using CSS Selector', function(){
-            it('It is expected that the promise is fulfilled', function(){
-                return expect(CSSNavTechnique.call(_browser, _domElement)).to.be.fulfilled;
-            })
-        });
-        describe('Using TAB', function(){
-            it('It is expected that the promise is fulfilled', function(){
-                return expect(TabNavTechnique.call(_browser, _domElement)).to.be.fulfilled;
-            })
-        });
-
-    });
-
-    describe('Navigate to a "input" element with type="email" by "@id"', function(){
+    describe('Navigate to a "input" element with type="radio" by "@id" = "visa"', function(){
 
         before(function(){
 
             _domElement = new DOMElement({
                 'tagName': 'input',
+                "type" : 'radio',
                 'searchAttribute': {
-                    "type" : "email",
                     "name": 'id',
-                    'value': "email"
+                    'value': "mastercard"
                 }
             });
         });
@@ -262,16 +192,16 @@ describe('"BUTTON" Test if the navigation techniques can navigate to a "button/i
 
     });
 
-    describe('Navigate to a "input" element with type="date" by "@id"', function(){
+    describe('Navigate to a "input" element with type="radio" by "@value" = "AmericanExpress"', function(){
 
         before(function(){
 
             _domElement = new DOMElement({
                 'tagName': 'input',
+                "type" : 'radio',
                 'searchAttribute': {
-                    "type" : "date",
-                    "name": 'id',
-                    'value': "selectdate"
+                    "name": 'value',
+                    'value': "AmericanExpress"
                 }
             });
         });
@@ -299,16 +229,15 @@ describe('"BUTTON" Test if the navigation techniques can navigate to a "button/i
 
     });
 
-    describe('Navigate to a "input" element with type="search" by "@id"', function(){
+    describe('Navigate to a "select" element with by "@id" = "drinks"', function(){
 
         before(function(){
 
             _domElement = new DOMElement({
-                'tagName': 'input',
+                'tagName': 'select',
                 'searchAttribute': {
-                    "type" : "search",
                     "name": 'id',
-                    'value': "search"
+                    'value': "drinks"
                 }
             });
         });

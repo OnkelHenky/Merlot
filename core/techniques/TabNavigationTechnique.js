@@ -25,16 +25,18 @@ module.exports = tabNavigationTechnique = function (domElement) {
      * @returns {boolean}
      */
     var isAttributePresent = function(webElement , attribute) {
-        var _result = false;
+        var _result;
         try {
+
             _result = webElement.getAttribute(attribute);
-            if (_result != null){
-                _result = true;
+            if (_result !== null){
+                return _result;
             }
+
         } catch (exception) {
             console.error('Error from "isAttributePresent": '+exception);
         }
-        return _result;
+        return false;
     };
 
     /**
@@ -46,7 +48,7 @@ module.exports = tabNavigationTechnique = function (domElement) {
         var _result = false;
         try {
             _result = webElement.getText();
-            if (_result != null){
+            if (_result !== null){
                 _result = true;
             }
         } catch (exception) {
@@ -79,29 +81,49 @@ module.exports = tabNavigationTechnique = function (domElement) {
                 return that.driver.switchTo().activeElement();
             })
             .then(function checkTheActiveElement(activeElement) {
-                if (domElement.getSearchAttributeName() === 'textNode'){
-                    if (hasTextNode(activeElement)) {
-                        return activeElement.getText()
-                            .then(function (text) {
-                                return (text === domElement.getSearchAttributeValue()) ? activeElement : helperFunction(domElement);
-                            });
-                    } else {
-                        return helperFunction(domElement);
-                    }
+               return activeElement.getTagName()
+                    .then(function checkTheTagNameFirst(activeElementTagName) {
+                       // console.log('checkTheTagNameFirst');
+                            console.log('activeElementTagName = '+activeElementTagName);
+                          if(activeElementTagName === domElement.getTagName()){
+                              return activeElement;
+                          }else{
+                              return helperFunction(domElement);
+                          }
+                     })
+                    .then(function checkTheAttributes (activeElement) {
+                        if (domElement.getSearchAttributeName() === 'textNode'){
+                            if (hasTextNode(activeElement)) {
+                                return activeElement.getText()
+                                    .then(function (text) {
+                                        return (text === domElement.getSearchAttributeValue()) ? activeElement : helperFunction(domElement);
+                                    });
+                            } else {
+                                return helperFunction(domElement);
+                            }
 
-                }else{
-                    if (isAttributePresent(activeElement, domElement.getSearchAttributeName())) {
-                        return activeElement.getAttribute(domElement.getSearchAttributeName())
-                            .then(function (attributeValue) {
-                                return (attributeValue === domElement.getSearchAttributeValue()) ? activeElement : helperFunction(domElement);
-                            });
+                        }else{
+                           var _attribute = isAttributePresent(activeElement, domElement.getSearchAttributeName());
 
-                    } else {
-                        return helperFunction(domElement);
-                    }
+                           return (_attribute) ? _attribute.then(
+                                            function checkIfThisIsTheElementWereLookingFor(attributeValue) {
+                                                     return (attributeValue === domElement.getSearchAttributeValue()) ?
+                                                                activeElement : helperFunction(domElement)
+                                            })
+                                             : helperFunction(domElement);
 
-                }
-            })
+                           /*)
+                            if(_attribute){
+                              return _attribute.then(function checkIfThisIsTheElementWereLookingFor(attributeValue) {
+                                 return (attributeValue === domElement.getSearchAttributeValue()) ? activeElement : helperFunction(domElement);
+                               });
+                            }else{
+                              return helperFunction(domElement);
+                            }
+*/
+                        }
+                })
+            });
      };
     return helperFunction(domElement);
 };
