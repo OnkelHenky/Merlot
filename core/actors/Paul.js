@@ -31,6 +31,7 @@ Paul.prototype = new Actor;
  * Technique used to navigate on the web application
  */
 Paul.prototype.findElement = techniqueRepository.techniques['PointAndClick_Navigation'];
+Paul.prototype.interactWithElement = techniqueRepository.techniques['Click_SpaceKey'];
 //Paul.prototype.findElement = techniqueRepository.techniques['PointAndClick_Navigation'];
 
 /**

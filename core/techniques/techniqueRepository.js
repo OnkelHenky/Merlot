@@ -27,4 +27,5 @@ TechniqueRepository.techniques['KeyboardTechnique']         = require('./keyboar
 /* Click */
 TechniqueRepository.techniques['Click_Mouse']               = require('./clickTechnique').byPointAndClick;
 TechniqueRepository.techniques['Click_ReturnKey']           = require('./clickTechnique').byUsingTheReturnKey;
+TechniqueRepository.techniques['Click_SpaceKey']            = require('./clickTechnique').byUsingSpaceKey;
 

@@ -2,6 +2,8 @@
  * Created by Henka on 20.06.14.
  */
 
+//TODO: Eliminate the second parameter, 'key', in all the functions
+
 /**
  *
  * @param webEle
@@ -23,4 +25,14 @@ exports.byPointAndClick = function (webEle,key) {
  */
 exports.byUsingTheReturnKey = function (webEle,key) {
     return webEle.sendKeys(this.webdriver.Key.ENTER);
+};
+
+/**
+ *
+ * @param webEle
+ * @param key
+ * @returns {*}
+ */
+exports.byUsingSpaceKey = function (webEle,key) {
+    return webEle.sendKeys(this.webdriver.Key.SPACE);
 };
