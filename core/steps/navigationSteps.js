@@ -2,7 +2,7 @@
  * Created by Henka on 18.06.14.
  */
 
-var tagNameDictionary = require('../auxilium/tagNameDictionary');
+var _tagNameDictionary = require('../auxilium/tagNameDictionary');
 
 module.exports = navigationSteps = function () {
 
@@ -31,9 +31,9 @@ module.exports = navigationSteps = function () {
             _type = "",
             _identifiedBy = "";
 
-        if(tagNameDictionary.hasOwnProperty(elementName)){
-            _tagName = tagNameDictionary[elementName].eleName;
-            _type = tagNameDictionary[elementName].type;
+        if(_tagNameDictionary.hasOwnProperty(elementName)){
+            _tagName = _tagNameDictionary[elementName].eleName;
+            _type = _tagNameDictionary[elementName].type;
             console.log('tag name = '+_tagName);
         }else{
             callback.fail(new Error('"'+elementName+'" is not a valid tag name'));

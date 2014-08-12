@@ -33,7 +33,6 @@ module.exports = forms_and_input_Steps = function () {
     });
 
     this.When(/^The actor selects a option from the radiogroup "([^"]*)"  whose ([^"]*) is "([^"]*)"$/, function(radiogroupName,identifiedBy,value,callback) {
-
         var that = this,
             _tagName = "",
             _type = "",
@@ -74,7 +73,6 @@ module.exports = forms_and_input_Steps = function () {
             }
         });
 
-
         this.browser.actorTryToFindThisElement(_domElement).
             then(function findTheRadioButtonInTheRadioGroup(webElement){
                 /*Here we have the first element in the radio group*/
@@ -86,8 +84,6 @@ module.exports = forms_and_input_Steps = function () {
                 that.browser.applyCriteria(webElement, function (webElement) {
                     deferred.fulfill(webElement);
                 });
-
-
                 return deferred.promise;
 
             }). */
