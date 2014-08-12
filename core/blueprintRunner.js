@@ -218,6 +218,12 @@ BlueprintRunner.prototype.enterText = function (webElement,text,callback) {
          });
 };
 
+
+BlueprintRunner.prototype.findRadioButton = function (webElement,domElement) {
+    var _actor = this.actor;
+    return _actor.interactWithElement.call(this,webElement,domElement);
+};
+
 /**
  * @description
  * Got the the URL location, defined by the parameter 'where'
@@ -230,6 +236,8 @@ BlueprintRunner.prototype.goTo = function (where, callback) {
             callback();
         });
 };
+
+
 
 /**
  * @description

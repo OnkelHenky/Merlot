@@ -115,7 +115,7 @@ module.exports = tabNavigationTechnique = function (domElement) {
                          }else{
                              /* Call the function recursively if this
                               * this is not the element */
-                             helperFunction(domElement);
+                              return helperFunction(domElement);
                          }
                      /*
                       * If the attribute that we are looking for is not
@@ -126,8 +126,8 @@ module.exports = tabNavigationTechnique = function (domElement) {
                       */
                     } else if (domElement.getSearchAttributeName() === 'textNode'){
                         if (hasTextNode(activeElement)) {
-                            return activeElement.getText()
-                                .then(function checkIfThisIsTheElementWereLookingFor(text) {
+                            return activeElement.getText().
+                                 then(function checkIfThisIsTheElementWereLookingFor(text) {
                                     /* Return the active element if the this is the element with
                                      * the text node we are looking for. */
                                     return (text === domElement.getSearchAttributeValue()) ? activeElement : helperFunction(domElement);
@@ -153,7 +153,7 @@ module.exports = tabNavigationTechnique = function (domElement) {
                         }else{
                             /* Call the function recursively if this
                              * this is not the element */
-                            helperFunction(domElement);
+                             return helperFunction(domElement);
                         }
                     }
                 })

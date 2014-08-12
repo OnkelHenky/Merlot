@@ -163,7 +163,7 @@
         'eleName' : 'input' ,'type' : 'checkbox'
     };
     _validTagNames.radiobutton = {
-        'eleName' : 'input' ,'type' : 'radiobutton'
+        'eleName' : 'input' ,'type' : 'radio'
     };
 
    /*

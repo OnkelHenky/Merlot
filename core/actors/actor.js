@@ -17,9 +17,6 @@ exports.Actor = Actor =  function(properties) {
     /*Properties*/
     this.name = '';
 
-    this.navigationPattern = {
-        "navStyle" : ""
-    };
 
     if(properties){
         this.addPoperties(properties);
@@ -73,10 +70,17 @@ Actor.prototype.addPoperties = function(properties){
 
 /**
  *
- * @param tagName
- * @param ele
+ * @param webElement
  */
-Actor.prototype.findElement = function (tagName,ele) {
+Actor.prototype.findElement = function (domElement) {
+    //TODO: Implement a useful method in actor prototype
+};
+
+/**
+ *
+ * @param webElement
+ */
+Actor.prototype.interactWithElement = function (domElement) {
     //TODO: Implement a useful method in actor prototype
 };
 
@@ -85,7 +89,7 @@ Actor.prototype.findElement = function (tagName,ele) {
  * @param webEle
  * @param type
  */
-Actor.prototype.click = function (webEle,type) {
+Actor.prototype.click = function (domElement) {
     //TODO: Implement a useful method in actor prototype
 };
 

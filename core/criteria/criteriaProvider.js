@@ -31,7 +31,7 @@ CriteriaProvider.prototype.bundleCriteriaChain = function (criteria){
         if(!CriteriaRepository[criteria[criterion]]){
             console.error("ERROR: Criterion with name '"+criteria[criterion]+"' not found!");
             console.log("Hint: check if the criterion is specified in criteria repository.");
-            process.exit(1); /* exit the process, reason: task not found!*/
+            process.exit(1); /* exit the process - reason: criterion not found!*/
         }else{
             _nextCriteria = new CriteriaRepository[criteria[criterion]];
 

@@ -4,7 +4,8 @@
  */
 
 
-var auxilia = require('../auxilium/auxiliaFunctions');
+var auxilia = require('../auxilium/auxiliaFunctions'),
+    tagNameDictionary = require('../auxilium/tagNameDictionary');
 
 module.exports = forms_and_input_Steps = function () {
 
@@ -28,7 +29,6 @@ module.exports = forms_and_input_Steps = function () {
             then(null, function(err) {
                 callback.fail(new Error("Merlot reported an error! " + err +" with DOMElement: "+_domElement).message);
             });
-        //input[contains(@id,'suchbegriff') and type='text']
 
     });
 
@@ -40,14 +40,13 @@ module.exports = forms_and_input_Steps = function () {
             _radiogroupName = radiogroupName,
             _identifiedBy = "";
 
-        if(tagNameDictionary.hasOwnProperty("input")){
-            _tagName = tagNameDictionary["input"].eleName;
-            _type = tagNameDictionary["input"].type;
+        if(tagNameDictionary.hasOwnProperty("radiobutton")){
+            _tagName = tagNameDictionary["radiobutton"].eleName;
+            _type = tagNameDictionary["radiobutton"].type;
             console.log('tag name = '+_tagName);
         }else{
             callback.fail(new Error('"'+elementName+'" is not a valid tag name'));
         }
-
 
         switch (identifiedBy){
             case "@id":
@@ -55,7 +54,7 @@ module.exports = forms_and_input_Steps = function () {
             case "@href":
             case "@value":
             case "@label":
-                _identifiedBy = identifiedBy.split("@")[1]; //cutting of the '@'
+                _identifiedBy = identifiedBy.split("@")[1]; /* Cutting of the '@' */
                 break;
             case "textNode":
                 _identifiedBy = identifiedBy;
@@ -75,15 +74,25 @@ module.exports = forms_and_input_Steps = function () {
             }
         });
 
+
         this.browser.actorTryToFindThisElement(_domElement).
-            then(function (webElement) {
+            then(function findTheRadioButtonInTheRadioGroup(webElement){
+                /*Here we have the first element in the radio group*/
+                 return that.browser.findRadioButton(webElement,_domElement);
+            }).
+            /*   then(function (webElement) {
+                Here we have the first element in the radio group
                 var deferred = that.browser.webdriver.promise.defer();
                 that.browser.applyCriteria(webElement, function (webElement) {
                     deferred.fulfill(webElement);
                 });
+
+
                 return deferred.promise;
-            }).
+
+            }). */
             then(function (webElement) {
+                /*Here we have the first element in the radio group*/
                 console.log('webElement = '+webElement);
                 return "";//that.browser.click(webElement,that.browser.webdriver.Key.ENTER);
             }).
