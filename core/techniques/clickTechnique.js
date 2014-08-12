@@ -2,16 +2,14 @@
  * Created by Henka on 20.06.14.
  */
 
-//TODO: Eliminate the second parameter, 'key', in all the functions
-
 /**
  *
  * @param webEle
  * @param key
  * @returns {*}
  */
-exports.byPointAndClick = function (webEle,key) {
-    return new this.webdriver.ActionSequence(this.driver)
+exports.byPointAndClick = function (webEle) {
+     return new this.webdriver.ActionSequence(this.driver)
         .mouseMove(webEle,{x: 0, y: 0})
         .click(this.webdriver.Button.LEFT)
         .perform();
@@ -23,16 +21,14 @@ exports.byPointAndClick = function (webEle,key) {
  * @param key
  * @returns {*}
  */
-exports.byUsingTheReturnKey = function (webEle,key) {
+exports.byUsingTheReturnKey = function (webEle) {
     return webEle.sendKeys(this.webdriver.Key.ENTER);
 };
 
 /**
- *
  * @param webEle
- * @param key
  * @returns {*}
  */
-exports.byUsingSpaceKey = function (webEle,key) {
+exports.byUsingSpaceKey = function (webEle) {
     return webEle.sendKeys(this.webdriver.Key.SPACE);
 };

@@ -38,6 +38,5 @@ Anna.prototype.interactWithElement = techniqueRepository.techniques['KeyboardTec
  */
 Anna.prototype.click = techniqueRepository.techniques['Click_ReturnKey'];
 
-
-//Anna.prototype.criteriaBundle =  new CriteriaProvider(['WCAG_1.1.1','WCAG_2.2.1']).getCriteria();
+//TODO: Use WCAG success criterion - e.g., => new CriteriaProvider(['WCAG_1.1.1','WCAG_2.2.1']).getCriteria();
 Anna.prototype.criteriaBundle =  new CriteriaProvider(['Link_Has_Link_Text','Link_Has_Title']).getCriteria();

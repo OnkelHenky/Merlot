@@ -8,8 +8,10 @@ var Criterion = require('./criterion').Criterion,
     VoidCriterion;
 
 /**
+ * @class
+ * @constructor
  * @description
- * The LinkHasLinkText Criterion .
+ * The LinkHasLinkText Criterion
  */
 VoidCriterion = exports.VoidCriterion = function() {
 

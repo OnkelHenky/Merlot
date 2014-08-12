@@ -10,8 +10,6 @@
  */
 module.exports.keyboardInteractionTechnique = function (webElement,domElement) {
     var that = this,
-        _deferred = that.webdriver.promise.defer(),
-        _firstWebElement,
         _presSpace = that.driver.actions().sendKeys(that.webdriver.Key.SPACE),
         _presKeyDown = that.driver.actions().sendKeys(that.webdriver.Key.ARROW_DOWN),
         _presKeyUP = that.driver.actions().sendKeys(that.webdriver.Key.ARROW_UP);

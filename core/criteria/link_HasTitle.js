@@ -29,7 +29,6 @@ LinkHasTitle.prototype = new Criterion;
 
 /**
  * @description
- * This function should be overridden by any Criterion implementation.
  * @param webElement the web element to been investigated by this Criterion.
  * @param callback , the function that should be called after this Criterion has been checked.
  */
@@ -44,7 +43,10 @@ LinkHasTitle.prototype.criterion = function(webElement,callback){
                 result = true;
             }
         } catch (exception) {
-            console.error('Error from "isAttributePresent": '+exception);
+            //console.error('Error from "isAttributePresent": '+exception);
+            console.log('NO TITLE');
+            callback();
+           // console.error('Error from "isAttributePresent": '+exception);
         }
         return result;
     };
@@ -52,11 +54,12 @@ LinkHasTitle.prototype.criterion = function(webElement,callback){
     if (isAttributePresent(webElement, 'title')) {
          webElement.getAttribute('title')
             .then(function (text) {
-                console.log('The title of the link is: '+ text);
+                console.info('The title of the link is: '+ text);
             });
 
     } else {
-        throw new Error("Link hast no proper attribute title");
+      //  throw new Error("Link hast no proper attribute title");
+        console.log("No proper attribute title");
     }
 
     callback(webElement);

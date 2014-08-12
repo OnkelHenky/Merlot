@@ -78,15 +78,15 @@ module.exports = forms_and_input_Steps = function () {
                 /*Here we have the first element in the radio group*/
                  return that.browser.findRadioButton(webElement,_domElement);
             }).
-            /*   then(function (webElement) {
-                Here we have the first element in the radio group
+            then(function (webElement) {
+                /*Here we have the first element in the radio group*/
                 var deferred = that.browser.webdriver.promise.defer();
                 that.browser.applyCriteria(webElement, function (webElement) {
                     deferred.fulfill(webElement);
                 });
                 return deferred.promise;
 
-            }). */
+            }).
             then(function (webElement) {
                 /*Here we have the first element in the radio group*/
                 console.log('webElement = '+webElement);

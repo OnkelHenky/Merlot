@@ -44,7 +44,9 @@ LinkHasLinkText.prototype.criterion = function(webElement,callback){
                 result = true;
             }
         } catch (exception) {
-            console.error('Error from "hasTextNode": '+exception);
+            //console.error('Error from "hasTextNode": '+exception);
+            console.log('NO TEXT NODE ....');
+            callback();
         }
         return result;
     };
@@ -55,7 +57,8 @@ LinkHasLinkText.prototype.criterion = function(webElement,callback){
                 console.log('The text on the link is: '+ text);
             });
     }else{
-        throw new Error("Link hast no proper Text");
+        //throw new Error("Link hast no proper Text");
+        console.log("No proper attribute title");
     }
 
     callback(webElement);
