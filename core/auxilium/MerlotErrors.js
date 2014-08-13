@@ -13,7 +13,7 @@ var ElementNotFoundError,
  */
 module.exports.ElementNotFoundError =  ElementNotFoundError = function(msg) {
 
-   this.name = "ElementNotFoundError"
+   this.name = "ElementNotFoundError",
    this.message = "ElementNotFoundError";
 
    if(msg){
@@ -36,10 +36,14 @@ ElementNotFoundError.prototype.getMsg = function () {
     return (this.message)? this.message : this._type_;
 };
 
-
+/**
+ *
+ * @returns {*}
+ */
 ElementNotFoundError.prototype.toString = function () {
     return this.getMsg();
 };
+
 
 ElementNotFoundError.prototype.name = "ElementNotFoundError";
 ElementNotFoundError.prototype.message = "ElementNotFoundError";

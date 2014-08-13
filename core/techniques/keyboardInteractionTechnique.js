@@ -71,7 +71,6 @@ module.exports.keyboardInteractionTechnique = function (webElement,domElement) {
                                     return helperFunction(that.driver.switchTo().activeElement(),domElement);
                                 });
                         }
-                     //   return (attributeValue === domElement.getSearchAttributeValue()) ? activeElement : helperFunction(domElement)
                     });
             }else{
                 /* Call the function recursively if this

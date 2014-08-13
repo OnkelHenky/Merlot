@@ -39,7 +39,6 @@ BlueprintRunner = exports.BlueprintRunner = function(config) {
     this.webdriver = webdriver;
     this.actor = new ActorProvider.Actors["Paul"]; //Default actor
 
-    var self = this;
 
     if(config && (config.seleniumPath && config.port && config.browser)) {
         this.addConfiguration(config);
@@ -156,32 +155,6 @@ BlueprintRunner.prototype.actorTryToFindThisElement = function (domElement) {
   return  _actor.findElement.call(this,domElement);
 };
 
-/**
-* @description
-* The action builder is meant to be the foundation of the future mechanism
-* to build (adhoc) different navigation patterns, used during (or in) a spielwiese run.
-* @param TYPE_OF_ACTION , the type of action, like TAB navigation.
-* @returns {driver.actions} action chain.
-*/
-BlueprintRunner.prototype.actionBuilder = function (TYPE_OF_ACTION) {
-     var action_to_be_performed;
-        switch (TYPE_OF_ACTION){
-            case('3TAB'):
-                action_to_be_performed = that.driver.actions()
-                    .sendKeys(that.webdriver.Key.TAB)
-                    .sendKeys(that.webdriver.Key.TAB)
-                    .sendKeys(that.webdriver.Key.TAB);
-                break;
-            case('TAB'):
-                action_to_be_performed = that.driver.actions()
-                    .sendKeys(that.webdriver.Key.TAB);
-                break;
-            default :
-                break;
-        }
-        return action_to_be_performed;
-};
-
 
 /**
  * @description
@@ -257,7 +230,7 @@ BlueprintRunner.prototype.goTo = function (where, callback) {
  * @returns {*}
  */
 BlueprintRunner.prototype.getPageTitle = function () {
-    return  this.driver.getTitle();
+    return  this.driver.getPageTitle();
 };
 
 /**

@@ -30,7 +30,7 @@ LinkHasTitle.prototype = new Criterion;
 /**
  * @description
  * @param webElement the web element to been investigated by this Criterion.
- * @param callback , the function that should be called after this Criterion has been checked.
+ * @param callback  the function that should be called after this Criterion has been checked.
  */
 LinkHasTitle.prototype.criterion = function(webElement,callback){
     console.log("Invoking '" +this.getName() + "' !");
