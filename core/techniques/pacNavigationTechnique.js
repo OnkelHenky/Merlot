@@ -177,10 +177,7 @@ module.exports.pacNavigationTechnique = function (domElement) {
                .then(null, function (error) {
                    throw new ElementNotFoundError();
                });
-             /*
-            return that.driver.findElements(_by.tagName(domElement.getTagName()))
-               .then(_getElementReference);
-               */
+
         }
     };
 

@@ -230,7 +230,7 @@ BlueprintRunner.prototype.goTo = function (where, callback) {
  * @returns {*}
  */
 BlueprintRunner.prototype.getPageTitle = function () {
-    return  this.driver.getPageTitle();
+    return  this.driver.getTitle();
 };
 
 /**
