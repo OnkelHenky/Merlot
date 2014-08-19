@@ -23,7 +23,11 @@ CriteriaProvider = exports.CriteriaProvider = function(criteria) {
 
 CriteriaProvider.prototype = new Merlot;
 
-
+/**
+ * @description
+ * Build/Chain up a new cain of criteria
+ * @param criteria
+ */
 CriteriaProvider.prototype.bundleCriteriaChain = function (criteria){
     var  _firstCriteria,_currentCriteria, _nextCriteria;
 
