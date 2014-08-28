@@ -56,6 +56,14 @@ DOMElement.prototype.isHyperLink = function () {
     };
 
 /**
+ * Check if DOMElement is a selection tag 'drop down'
+ * @returns {boolean}
+ */
+DOMElement.prototype.isSelection = function () {
+    return (('select' === this.getTagName()));
+};
+
+/**
  * Check if element is button
  * @returns {boolean}
  */

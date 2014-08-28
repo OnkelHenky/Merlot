@@ -63,8 +63,36 @@ BlueprintRunner.prototype = new Merlot();
 BlueprintRunner.prototype.addConfiguration = function (config) {
     var self = this;
 
+    /*
+     * Helper function for making an instance of the webdriver
+     * If the the browser is 'chrome', special options for are passed
+     * to the webdriver, to avoid any errors in the browser.
+     */
+    function _serverBuilder(caps,server,browser){
+
+        var ChromeOptions =  require('selenium-webdriver/chrome').Options;
+        var _chromeOpt = new ChromeOptions().addArguments("test-type");
+
+        if('chrome' === browser){
+            return new webdriver.Builder().
+                usingServer(_server.address()).
+                withCapabilities(caps).
+                setChromeOptions(_chromeOpt);
+        }else{
+            return new webdriver.Builder().
+                usingServer(_server.address()).
+                withCapabilities(caps);
+        }
+
+
+    }
+
     try {
         var _stats = self.utile._fs_.statSync(config.seleniumPath);
+        /*
+         * Check if the given path to the selenium jar is pointing to an actual file.
+         * This throws an exception if the path is not pointing to a file
+         */
         if (_stats.isFile()) {
             self.config = config;
             var _pathToSeleniumJar = self.config.seleniumPath,
@@ -76,7 +104,7 @@ BlueprintRunner.prototype.addConfiguration = function (config) {
             console.log("Using selenium from: " + _pathToSeleniumJar);
             _server.start();
 
-            var _serverCapabilities = webdriver.Capabilities.chrome(); //default
+            var _serverCapabilities = webdriver.Capabilities.chrome();  //default
             switch (self.config.browser) {
                 case 'chrome':
                     _serverCapabilities = webdriver.Capabilities.chrome();
@@ -88,21 +116,19 @@ BlueprintRunner.prototype.addConfiguration = function (config) {
                     _serverCapabilities = webdriver.Capabilities.safari();
                     break;
                 case 'ie':
-                    console.log('Internet Explorer is not yet supported, using Chrome instead');
+                    console.info('Internet Explorer is not yet supported, using Chrome instead');
                 default :
                     console.log(self.config.browser +' is not defined, using Chrome instead');
                     _serverCapabilities = webdriver.Capabilities.chrome();
             }
 
-            self.driver = new webdriver.Builder().
-                usingServer(_server.address()).
-                withCapabilities(_serverCapabilities).
-                build();
+            self.driver = _serverBuilder(_serverCapabilities,_server,self.config.browser).build();
 
         }
     } catch (ex) {
-        console.error('Selenium JAR not found at ' + ex['path']);
-        console.error('HINT: Check for typos');
+        console.dir(ex);
+        console.log('Selenium JAR not found at ' + ex['path']);
+        console.log('HINT: Check for typos');
         self.driver.quit(); // quiting the driver, since we have an error.
         throw new Error('Unable to find selenium.jar');
     }
@@ -204,9 +230,20 @@ BlueprintRunner.prototype.enterText = function (webElement,text,callback) {
  * @param domElement
  * @returns {*} - A promise with the radio button.
  */
-BlueprintRunner.prototype.findRadioButton = function (webElement,domElement) {
+BlueprintRunner.prototype.interactWithElement = function (webElement,domElement) {
     var _actor = this.actor;
     return _actor.interactWithElement.call(this,webElement,domElement);
+};
+
+/**
+ *
+ * @param webElement
+ * @param domElement
+ * @returns {*}
+ */
+BlueprintRunner.prototype.interactWithSelection = function (webElement,domElement) {
+    var _actor = this.actor;
+   return _actor.interactWithSelection.call(this,webElement,domElement);
 };
 
 /**

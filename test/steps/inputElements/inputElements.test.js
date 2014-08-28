@@ -42,6 +42,15 @@ describe('"BUTTON" Test if the navigation techniques can navigate to a "button/i
 
     });
 
+
+    after(function() {
+        console.log("after");
+
+        _browser.closeDriver();
+
+        console.log("after_end");
+    });
+
     describe('Navigate to a "input" element with type="text" by "@id"', function(){
 
         before(function(){

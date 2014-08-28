@@ -72,6 +72,42 @@ module.exports.pacCSSSelectorNavigationTechnique = function (domElement) {
     return _deferred.promise;
 };
 
+
+/**
+ *
+ * @param selectionElement
+ * @param domElement
+ * @returns {promise}
+ */
+module.exports.pacSelectOption = function (selectionElement,domElement) {
+    var that = this,
+        _by = that.webdriver.By;
+
+    var _deferred = that.webdriver.promise.defer();
+
+    selectionElement.click().
+        then(function findTheOption() {
+            var _deferredOption = that.webdriver.promise.defer();
+                selectionElement.findElement(_by.xpath(domElement.getTypeExpression())).
+                    then(function chooseTheOption(option) {
+                        option.click();
+                        _deferredOption.fulfill(option);
+                    }).
+                    then(null, function (error) {
+                        throw new ElementNotFoundError();
+                    });
+            return _deferredOption.promise;
+        }).
+        then(function (option) {
+            _deferred.fulfill(option);
+        }).
+        then(null, function (error) {
+            _deferred.reject(error);
+        });
+
+    return _deferred.promise;
+};
+
 /**
  * @description
  * 'Point and Click' navigation technique to find the element, defined as 'domElement'.
@@ -173,6 +209,7 @@ module.exports.pacNavigationTechnique = function (domElement) {
             * since the process will be slower.
             * Using an xpath expression.
             */
+           console.log('XPATH = '+domElement.getTypeExpression());
            return that.driver.findElement(_by.xpath(domElement.getTypeExpression()))
                .then(null, function (error) {
                    throw new ElementNotFoundError();

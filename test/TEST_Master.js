@@ -55,6 +55,12 @@ var TestMaster;
 };
 
 
+TestMaster.prototype.closeDriver = function () {
+
+       this.driver.close();
+
+};
+
 /**
  * Adding the configuration for a new TestMaster
  * @param config

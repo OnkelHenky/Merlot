@@ -32,7 +32,7 @@ Anna.prototype = new Actor;
  */
 Anna.prototype.findElement = techniqueRepository.techniques['Tab_Navigation'];
 Anna.prototype.interactWithElement = techniqueRepository.techniques['KeyboardTechnique'];
-
+Anna.prototype.interactWithSelection = techniqueRepository.techniques['Keyboard_SelectOption'];
 /**
  * Technique used to interact (click) with a component on the web application
  */

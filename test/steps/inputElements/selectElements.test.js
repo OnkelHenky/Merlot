@@ -43,6 +43,15 @@ describe('"SELECT" Test if the navigation techniques can navigate to "select" el
 
     });
 
+
+    after(function() {
+        console.log("after");
+
+        _browser.closeDriver();
+
+        console.log("after_end");
+    });
+
     describe('Navigate to a "input" element with type="checkbox" by "@id"', function(){
 
         before(function(){
@@ -275,6 +284,5 @@ describe('"SELECT" Test if the navigation techniques can navigate to "select" el
         });
 
     });
-
 
 });

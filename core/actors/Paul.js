@@ -31,8 +31,13 @@ Paul.prototype = new Actor;
  * Technique used to navigate on the web application
  */
 Paul.prototype.findElement = techniqueRepository.techniques['PointAndClick_Navigation'];
-Paul.prototype.interactWithElement = techniqueRepository.techniques['Click_SpaceKey'];
-//Paul.prototype.findElement = techniqueRepository.techniques['PointAndClick_Navigation'];
+
+//Paul.prototype.interactWithElement = techniqueRepository.techniques['Click_SpaceKey'];
+Paul.prototype.interactWithElement = techniqueRepository.techniques['Click_Mouse'];
+
+Paul.prototype.interactWithSelection = techniqueRepository.techniques['PAC_SelectOption'];
+
+Paul.prototype.interactWithRadiobutton = techniqueRepository.techniques['Click_Mouse'];
 
 /**
  * Technique used to interact (click) with a component on the web application

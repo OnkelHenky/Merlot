@@ -29,3 +29,13 @@ TechniqueRepository.techniques['Click_Mouse']               = require('./clickTe
 TechniqueRepository.techniques['Click_ReturnKey']           = require('./clickTechnique').byUsingTheReturnKey;
 TechniqueRepository.techniques['Click_SpaceKey']            = require('./clickTechnique').byUsingSpaceKey;
 
+
+/*Input and Forms*/
+
+//Selection and Options
+TechniqueRepository.techniques['PAC_SelectOption']               = require('./pacNavigationTechnique').pacSelectOption;
+TechniqueRepository.techniques['Keyboard_SelectOption']          = require('./keyboardInteractionTechnique').keyboardcSelectOption;
+
+//TechniqueRepository.techniques['PAC_SelectOption']               = require('./pacNavigationTechnique').pacSelectOption;
+
+

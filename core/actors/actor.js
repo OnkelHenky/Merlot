@@ -84,6 +84,10 @@ Actor.prototype.interactWithElement = function (domElement) {
     //TODO: Implement a useful method in actor prototype
 };
 
+Actor.prototype.interactWithSelection = function (domElement) {
+    //TODO: Implement a useful method in actor prototype
+};
+
 /**
  *
  * @param webEle

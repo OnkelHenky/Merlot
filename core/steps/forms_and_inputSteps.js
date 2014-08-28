@@ -63,7 +63,7 @@ module.exports = forms_and_input_Steps = function () {
                 break;
         }
 
-        var _domElement = this.browser.createDOMElement({
+        var _RADIOdomElement = this.browser.createDOMElement({
             'tagName' : _tagName,
             'name' : _radiogroupName,
             'type' : _type,
@@ -72,11 +72,11 @@ module.exports = forms_and_input_Steps = function () {
                 'value': value
             }
         });
-
-        this.browser.actorTryToFindThisElement(_domElement).
+        /*Find the radio group first*/
+        this.browser.actorTryToFindThisElement(_RADIOdomElement).
             then(function findTheRadioButtonInTheRadioGroup(webElement){
                 /*Here we have the first element in the radio group*/
-                 return that.browser.findRadioButton(webElement,_domElement);
+                 return that.browser.interactWithElement(webElement,_RADIOdomElement);
             }).
             then(function (webElement) {
                 /*Here we have the first element in the radio group*/
@@ -96,10 +96,83 @@ module.exports = forms_and_input_Steps = function () {
                 callback();
             }).
             then(null, function(err) {
-                callback.fail(new Error("Merlot reported an error! " + err +" with DOMElement: "+_domElement).message);
+                callback.fail(new Error("Merlot reported an error! " + err +" with DOMElement: "+_RADIOdomElement).message);
             });
     });
 
+    this.When(/^The actor chooses "([^"]*)" from the selection whose ([^"]*) is "([^"]*)"$/, function(value,identifiedBy,identifierValue,callback) {
+        var that = this,
+            _tagName = "",
+            _type = "",
+            _identifiedBy = "";
+
+        if(tagNameDictionary.hasOwnProperty("select")){
+            _tagName = tagNameDictionary["select"].eleName;
+            _type = tagNameDictionary["select"].type;
+            console.log('tag name = '+_tagName);
+        }else{
+            callback.fail(new Error('"'+elementName+'" is not a valid tag name'));
+        }
+
+        switch (identifiedBy){
+            case "@id":
+            case "@name":
+            case "@href":
+            case "@value":
+            case "@label":
+                _identifiedBy = identifiedBy.split("@")[1]; /* Cutting of the '@' */
+                break;
+            case "textNode":
+                _identifiedBy = identifiedBy;
+                break;
+            default:
+                callback.fail(new Error('"'+identifiedBy+'" is not valid identifier - use "id", "text", "name" or "href" instead'));
+                break;
+        }
+
+        var _SELECTdomElement = this.browser.createDOMElement({
+            'tagName' : _tagName,
+            'type' : _type,
+            'searchAttribute' : {
+                "name":  _identifiedBy,
+                'value': identifierValue
+            }
+        });
+
+        var _SELECTOptionElement = this.browser.createDOMElement({
+            'tagName' : "option",
+            'type' : _type,
+            'searchAttribute' : {
+                "name":  "textNode",
+                'value': value
+            }
+        });
+
+
+        this.browser.actorTryToFindThisElement(_SELECTdomElement).
+           then(function applyCriteria(foundSelectionElement) {
+                var deferred = that.browser.webdriver.promise.defer();
+                that.browser.applyCriteria(foundSelectionElement, function (foundSelectionElement,err) {
+                    if(err){
+                      deferred.reject(err);
+                    }
+                    deferred.fulfill(foundSelectionElement);
+                });
+                return deferred.promise;
+            }).
+            then(function interactWithSelectionAndChooseOption(selectionElement) {
+                console.log("FIND THE OPTION");
+                console.dir(selectionElement);
+                return that.browser.interactWithSelection(selectionElement,_SELECTOptionElement);
+            }).
+            then(function onOk() {
+                callback();
+            }).
+            then(null, function onError(err) {
+                callback.fail(new Error("Merlot reported an error! " + err +" with DOMElement: "+_SELECTdomElement).message);
+            });
+
+    });
 
 
     this.When(/^The actor clicks on the img with id "([^"]*)"$/, function(elementID ,callback) {
