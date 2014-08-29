@@ -188,9 +188,10 @@ BlueprintRunner.prototype.createDOMElement = function (properties) {
  * @param actor {string} the name of the actor.
  */
 BlueprintRunner.prototype.runWithThatActor = function (actor) {
-  var that = this;
+  var that = this,
+      _aux = that.utile._aux_;
 
-    if(actor && (typeof actor === 'string' || actor instanceof String)){
+    if(_aux.isString(actor)){
 
         if(ActorProvider.Actors[actor]){
             that.actor = new ActorProvider.Actors[actor];

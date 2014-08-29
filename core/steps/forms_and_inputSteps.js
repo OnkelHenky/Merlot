@@ -131,7 +131,7 @@ module.exports = forms_and_input_Steps = function () {
             _tagName = "",
             _type = "",
             _radiogroupName = radiogroupName,
-            _identifiedBy = "";
+            _resolvedIdentifiedBy =  that.browser.resolveAttributeName(identifiedBy);
 
         if(tagNameDictionary.hasOwnProperty("radiobutton")){
             _tagName = tagNameDictionary["radiobutton"].eleName;
@@ -141,28 +141,13 @@ module.exports = forms_and_input_Steps = function () {
             callback.fail(new Error('"'+elementName+'" is not a valid tag name'));
         }
 
-        switch (identifiedBy){
-            case "@id":
-            case "@name":
-            case "@href":
-            case "@value":
-            case "@label":
-                _identifiedBy = identifiedBy.split("@")[1]; /* Cutting of the '@' */
-                break;
-            case "textNode":
-                _identifiedBy = identifiedBy;
-                break;
-            default:
-                callback.fail(new Error('"'+identifiedBy+'" is not valid identifier - use "id", "text", "name" or "href" instead'));
-                break;
-        }
 
         var _RADIOdomElement = this.browser.createDOMElement({
             'tagName' : _tagName,
             'name' : _radiogroupName,
             'type' : _type,
             'searchAttribute' : {
-                "name":  _identifiedBy,
+                "name":  _resolvedIdentifiedBy,
                 'value': value
             }
         });
@@ -198,7 +183,7 @@ module.exports = forms_and_input_Steps = function () {
         var that = this,
             _tagName = "",
             _type = "",
-            _identifiedBy = "";
+            _resolvedIdentifiedBy = that.browser.resolveAttributeName(identifiedBy);
 
         if(tagNameDictionary.hasOwnProperty("select")){
             _tagName = tagNameDictionary["select"].eleName;
@@ -208,27 +193,11 @@ module.exports = forms_and_input_Steps = function () {
             callback.fail(new Error('"'+elementName+'" is not a valid tag name'));
         }
 
-        switch (identifiedBy){
-            case "@id":
-            case "@name":
-            case "@href":
-            case "@value":
-            case "@label":
-                _identifiedBy = identifiedBy.split("@")[1]; /* Cutting of the '@' */
-                break;
-            case "textNode":
-                _identifiedBy = identifiedBy;
-                break;
-            default:
-                callback.fail(new Error('"'+identifiedBy+'" is not valid identifier - use "id", "text", "name" or "href" instead'));
-                break;
-        }
-
         var _SELECTdomElement = this.browser.createDOMElement({
             'tagName' : _tagName,
             'type' : _type,
             'searchAttribute' : {
-                "name":  _identifiedBy,
+                "name":  _resolvedIdentifiedBy,
                 'value': identifierValue
             }
         });
