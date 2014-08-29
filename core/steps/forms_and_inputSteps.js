@@ -9,7 +9,7 @@ var auxilia = require('../auxilium/auxiliaFunctions'),
 
 module.exports = forms_and_input_Steps = function () {
 
-    this.When(/^The actor enters "([^"]*)" into textfield with id "([^"]*)"$/, function(text, elementID ,callback) {
+    this.When(/^The actor enters "([^"]*)" into textfield whose ([^"]*) is "([^"]*)"$/, function(text, elementID ,callback) {
         var that = this,
             _domElement = this.browser.createDOMElement({
                 'tagName' : 'input',
@@ -90,7 +90,6 @@ module.exports = forms_and_input_Steps = function () {
         if(that.browser.actor.getPassword() !== undefined){
             _password  = that.browser.actor.getPassword();
             console.log('Password = ' + _password);
-
 
         if(tagNameDictionary.hasOwnProperty("textField")){
             _tagName = tagNameDictionary["textField"].eleName;
