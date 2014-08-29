@@ -14,7 +14,6 @@ var Criterion = require('./criterion').Criterion,
 LinkHasLinkText = exports.LinkHasLinkText = function() {
 
     /*Information*/
-    this._type_    = "Criterion Object"; //Name of the object
     this.name = 'Link has a proper link text';
 
 };

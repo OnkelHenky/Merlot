@@ -14,7 +14,6 @@ var Criterion = require('./criterion').Criterion,
 LinkHasTitle = exports.LinkHasTitle = function() {
 
     /*Information*/
-    this._type_    = "Criterion Object"; //Name of the object
     this.name = 'Link has a proper link title';
 
 };
@@ -29,11 +28,12 @@ LinkHasTitle.prototype = new Criterion;
 
 /**
  * @description
+ * Check if a link has a proper title
  * @param webElement the web element to been investigated by this Criterion.
  * @param callback  the function that should be called after this Criterion has been checked.
  */
 LinkHasTitle.prototype.criterion = function(webElement,callback){
-    console.log("Invoking '" +this.getName() + "' !");
+    console.info("Invoking '" +this.getName() + "' !");
 
     var isAttributePresent = function(webElement , attribute) {
         var result = false;

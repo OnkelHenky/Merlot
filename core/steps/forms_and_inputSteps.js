@@ -161,8 +161,6 @@ module.exports = forms_and_input_Steps = function () {
                 return deferred.promise;
             }).
             then(function interactWithSelectionAndChooseOption(selectionElement) {
-                console.log("FIND THE OPTION");
-                console.dir(selectionElement);
                 return that.browser.interactWithSelection(selectionElement,_SELECTOptionElement);
             }).
             then(function onOk() {
@@ -196,10 +194,10 @@ module.exports = forms_and_input_Steps = function () {
             then(function (webElement) {
                 return that.browser.click(webElement,that.browser.webdriver.Key.ENTER);
             }).
-            then(function () {
+            then(function onOk() {
                 callback();
             }).
-            then(null, function(err) {
+            then(null, function onError(err) {
                 callback.fail(new Error("Merlot reported an error! " + err +" with DOMElement: "+_domElement).message);
             });
 

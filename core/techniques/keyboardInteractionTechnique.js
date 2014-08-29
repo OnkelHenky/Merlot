@@ -152,8 +152,8 @@ module.exports.keyboardInteractionTechnique = function (webElement,domElement) {
  */
 module.exports.keyboardcSelectOption = function (selectionElement,domElement) {
     var that = this,
-        _by = that.webdriver.By;
-    var _deferred = that.webdriver.promise.defer();
+        _by = that.webdriver.By,
+        _deferred = that.webdriver.promise.defer();
 
     selectionElement.findElements(_by.tagName("option")).
         then(function (options) {
@@ -169,18 +169,5 @@ module.exports.keyboardcSelectOption = function (selectionElement,domElement) {
              });
     });
 
-    /*
-
-     options.forEach(function (option) {
-
-     //   option.sendKeys(_keyDown);
-     option.click();
-     //   option.sendKeys("");
-     //   driver.executeScript("arguments[0].focus();",option);
-     //   driver.executeScript("arguments[0].focus();",option);
-
-     });
-
-     */
     return _deferred.promise;
 };

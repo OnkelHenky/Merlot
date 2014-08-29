@@ -15,8 +15,8 @@ module.exports = hooks = function () {
      * of an scenario had been executed.
      */
     this.After(function(scenario, callback) {
-        console.log('after hook, closing selenium driver');
-      //  this.browser.closeDriver();   //closing the selenium driver (browser)
+        console.info('after hook, closing selenium driver');
+        this.browser.closeDriver();   //closing the selenium driver (browser)
         /*
         if (scenario.failed) {
             console.log('FAILED');
