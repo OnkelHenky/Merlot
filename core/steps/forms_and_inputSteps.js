@@ -32,6 +32,100 @@ module.exports = forms_and_input_Steps = function () {
 
     });
 
+    this.When(/^The actor enters the username into textfield whose ([^"]*) is "([^"]*)"$/, function(identifiedBy, value ,callback) {
+        var that = this,
+            _username, // that.browser.actor.getUsername() || "NOPE, no userName", //callback.fail(new ReferenceError("No username defined for this actor, use 'Given Username is 'username'' in the cucumber scenario definition, to set a username ").message),
+            _tagName,
+            _type,
+            _resolvedAttributeName = that.browser.resolveAttributeName(identifiedBy);
+
+        if(that.browser.actor.getUsername() !== undefined){
+
+            _username  = that.browser.actor.getUsername();
+            console.log('Username = ' + _username);
+
+
+        if(tagNameDictionary.hasOwnProperty("textField")){
+            _tagName = tagNameDictionary["textField"].eleName;
+            _type = tagNameDictionary["textField"].type;
+            console.info('tag name = '+_tagName);
+        }else{
+            callback.fail(new Error('"'+elementName+'" is not a valid tag name'));
+        }
+
+            _domElement = this.browser.createDOMElement({
+                'tagName' : _tagName,
+                'type': _type,
+                'searchAttribute' : {
+                    "name":  _resolvedAttributeName,
+                    'value': value
+                }
+            });
+
+        this.browser.actorTryToFindThisElement(_domElement).
+            then(function (webElement) {
+                return auxilia.inputText.call(that,_username,webElement);
+            }).
+            then(function onOk(prm) {
+                callback();
+            }).
+            then(null, function onError(err) {
+                callback.fail(new Error("Merlot reported an error! " + err +" with DOMElement: "+_domElement).message);
+            });
+
+
+        }else{
+            callback.fail(new Error("No username defined for this actor, use 'Given Username is 'username'' in the cucumber scenario definition, to set a username ").message);
+        }
+
+    });
+
+    this.When(/^The actor enters the password into textfield whose ([^"]*) is "([^"]*)"$/, function(identifiedBy, value ,callback) {
+        var that = this,
+            _password, // that.browser.actor.getPassword() || "NOPE, no PW",//callback.fail(new ReferenceError("No password defined for this actor, use 'Given Password is 'password'' in the cucumber scenario definition, to set a password ").message),
+            _tagName,
+            _type,
+            _resolvedAttributeName = that.browser.resolveAttributeName(identifiedBy);
+
+        if(that.browser.actor.getPassword() !== undefined){
+            _password  = that.browser.actor.getPassword();
+            console.log('Password = ' + _password);
+
+
+        if(tagNameDictionary.hasOwnProperty("textField")){
+            _tagName = tagNameDictionary["textField"].eleName;
+            _type = tagNameDictionary["textField"].type;
+            console.info('tag name = '+_tagName);
+        }else{
+            callback.fail(new Error('"'+elementName+'" is not a valid tag name'));
+        }
+
+        _domElement = this.browser.createDOMElement({
+            'tagName' : _tagName,
+            'type': _type,
+            'searchAttribute' : {
+                "name":  _resolvedAttributeName,
+                'value': value
+            }
+        });
+
+        this.browser.actorTryToFindThisElement(_domElement).
+            then(function (webElement) {
+                return auxilia.inputText.call(that,_password,webElement);
+            }).
+            then(function onOk(prm) {
+                callback();
+            }).
+            then(null, function onError(err) {
+                callback.fail(new Error("Merlot reported an error! " + err +" with DOMElement: "+_domElement).message);
+            });
+
+        }else{
+            callback.fail(new Error("No password defined for this actor, use 'Given Password is 'password'' in the cucumber scenario definition, to set a password ").message);
+        }
+
+    });
+
     this.When(/^The actor selects a option from the radiogroup "([^"]*)"  whose ([^"]*) is "([^"]*)"$/, function(radiogroupName,identifiedBy,value,callback) {
         var that = this,
             _tagName = "",
@@ -171,7 +265,6 @@ module.exports = forms_and_input_Steps = function () {
             });
 
     });
-
 
     this.When(/^The actor clicks on the img with id "([^"]*)"$/, function(elementID ,callback) {
         var that = this,

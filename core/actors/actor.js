@@ -17,6 +17,8 @@ exports.Actor = Actor =  function(properties) {
     /*Properties*/
     this.name = '';
 
+    this.username = void 0;  //default value is 'undefined'
+    this.password = void 0;  //default value is 'undefined'
 
     if(properties){
         this.addPoperties(properties);
@@ -67,6 +69,51 @@ Actor.prototype.addPoperties = function(properties){
         that[key] = properties[key];
     });
 };
+
+/**
+ * @description
+ * Set the username fot this actor.
+ * The username may by used for login credentials.
+ * @param username
+ */
+Actor.prototype.setUsername = function (username) {
+    this.username = username;
+};
+
+/**
+ * @description
+ * Get the username fot this actor.
+ * The username may by used for login credentials.
+ * This function returns undefined is no username is defined
+ * fot this actor.
+ * @returns {*} the username
+ */
+Actor.prototype.getUsername = function () {
+    return this.username;
+};
+
+/**
+ * @description
+ * Set the password fot this actor.
+ * The password may by used for login credentials.
+ * @param password
+ */
+Actor.prototype.setPassword = function (password) {
+    this.password = password;
+};
+
+/**
+ * @description
+ * Get the password fot this actor.
+ * The password may by used for login credentials.
+ * This function returns undefined is no password is defined
+ * fot this actor.
+ * @returns {*} the password
+ */
+Actor.prototype.getPassword = function () {
+    return this.password;
+};
+
 
 /**
  *

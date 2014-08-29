@@ -165,6 +165,12 @@
     _validTagNames.radiobutton = {
         'eleName' : 'input' ,'type' : 'radio'
     };
+    _validTagNames.passwordField = {
+        'eleName' : 'input' ,'type' : 'password'
+    };
+    _validTagNames.textField = {
+        'eleName' : 'input' ,'type' : 'text'
+    };
 
    /*
     * Export the dictionary

@@ -4,8 +4,6 @@
  */
 
 
-var auxilia = require('../auxilium/auxiliaFunctions');
-
 /**
  * Utility steps are steps that are used for defining the framework for the scenario to be tested.
  * Like the actor that is used or user name and password.
@@ -21,14 +19,14 @@ module.exports = utility_Steps = function () {
 
     //Setting the user name, used in a scenario, 'globally'
     this.Given(/^Username is "([^"]*)"$/, function (username, callback) {
-        //TODO: Implementation here
-        callback.pending();
+        this.browser.setLoginCredentialsForActor('username', username);
+        callback();
     });
 
     //Setting the password, used in a scenario, 'globally'
     this.Given(/^Password is "([^"]*)"$/, function (password, callback) {
-        //TODO: Implementation here
-        callback.pending();
+        this.browser.setLoginCredentialsForActor('password', password);
+        callback();
     });
 
 

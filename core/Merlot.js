@@ -18,20 +18,29 @@ module.exports.Merlot = Merlot =  function(properties) {
 };
 
 /**
- * Collection of useful function, that should occur in any
+ * @description
+ * Collection of useful function, that should occur in any Merlot object
  * @type {{}}
  */
 Merlot.prototype.utile = {};
 
 /**
+ * @description
  * File system support.
  * @type {exports}
- * @private
  */
 Merlot.prototype.utile._fs_ = require('fs');
 
 /**
- * @description Get the current version of Merlot
+ * @description
+ * Access to the auxilia functions for all Merlot objects
+ * @type {exports}
+ */
+Merlot.prototype.utile._aux_ = require('./auxilium/auxiliaFunctions');
+
+/**
+ * @description
+ * Get the current version of Merlot
  * @returns {string} the version number
  */
 Merlot.prototype.getVersion = function () {

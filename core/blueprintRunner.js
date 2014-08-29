@@ -57,6 +57,39 @@ BlueprintRunner.prototype = new Merlot();
 
 /**
  * @description
+ * Resolving the identifier of an DOMElement by cutting if the '@' form the cucumber scenario steps
+ * Example: if you have a step like: 'The actor chooses "Saab" from the selection whose @id is "cars"'
+ * The '@' in '@id' indicates the the attribute: 'id' with the value 'cars' should be selected.
+ * The '@' is just an abbreviation for attribute and must be cut of before further processing.
+ * @param identifiedBy
+ * @returns {*} the resolved identifier
+ */
+BlueprintRunner.prototype.resolveAttributeName = function (identifiedBy) {
+    var self = this,
+        _resolvedIdentifiedBy;
+
+    switch (identifiedBy){
+        case "@id":
+        case "@name":
+        case "@href":
+        case "@value":
+        case "@label":
+            _resolvedIdentifiedBy =  identifiedBy.split("@")[1]; /* Cutting of the '@' */
+            break;
+        case "textNode":
+            _resolvedIdentifiedBy = identifiedBy;
+            break;
+        default:
+            throw new Error('"'+identifiedBy+'" is not valid identifier - use "id", "text", "name" or "href" instead');
+            break;
+    }
+
+    return _resolvedIdentifiedBy;
+
+};
+
+/**
+ * @description
  * Adding the configuration for a new BlueprintRunner object
  * @param {{a: number, b: string, c}} config - Tetet
  */
@@ -161,12 +194,41 @@ BlueprintRunner.prototype.runWithThatActor = function (actor) {
 
         if(ActorProvider.Actors[actor]){
             that.actor = new ActorProvider.Actors[actor];
-            console.log('Using "'+that.actor+'" as actor');
+            console.info('Using "'+that.actor+'" as actor');
         }else{
-            throw new Error('Actor with name "'+actor+'" not found')
+            throw new ReferenceError('Actor with name "'+actor+'" not found')
         }
     }else{
-        throw new Error('Actor with name "'+actor+'" not defined');
+        throw new TypeError('Actor with name "'+actor+'" not defined');
+    }
+};
+
+/**
+ * @description
+ * Set the login credentials, username and password, for the defined actor.
+ * @param type
+ * @param value
+ */
+BlueprintRunner.prototype.setLoginCredentialsForActor = function (type,value) {
+    var that = this,
+        _aux = that.utile._aux_;
+
+    if(that.actor){
+        if(_aux.isString(type) && _aux.isString(value)) {
+            switch (type) {
+                case 'username':
+                    that.actor.setUsername(value);
+                    break;
+                case 'password':
+                    that.actor.setPassword(value)
+                    break
+                default:
+                    throw new TypeError("Type "+ type + " for 'setLoginCredentialsForActor is not allowed, use 'username' or 'password'");
+                    break;
+            }
+        }
+    }else{
+        throw new TypeError("No actor defined in the blueprintRunner, therefor you cant set any LoginCredentials ");
     }
 };
 
