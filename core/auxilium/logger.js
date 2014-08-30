@@ -1,6 +1,10 @@
 /**
  * Created by Alexander Henka on 29.08.14.
  * Copyright by Alexander Henka
+ *
+ * A logger for Merlot using colored.js by 'pfleidi'
+ * Source at: https://github.com/pfleidi/colored.js
+ *
  */
 
 var Logger,
@@ -62,8 +66,9 @@ Logger.prototype.addProperties = function (properties) {
 };
 
 /**
- *
- * @param stuff
+ * @description
+ * Plain logging if debug mode is one (= true)
+ * @param stuff the text to log on the console
  * @returns {boolean|*}
  */
 Logger.prototype.log = function (stuff) {
@@ -74,8 +79,10 @@ Logger.prototype.log = function (stuff) {
 };
 
 /**
- *
- * @param stuff
+ * @description
+ * Info level logging if debug mode is one (= true)
+ * Info output will be indicated by cyan color
+ * @param stuff the info text
  * @returns {boolean|*}
  */
 Logger.prototype.info = function (stuff) {
@@ -86,8 +93,10 @@ Logger.prototype.info = function (stuff) {
 };
 
 /**
- *
- * @param stuff
+ * @description
+ * Error level logging if debug mode is one (= true)
+ * Error output will be indicated by red color, and bold text
+ * @param stuff , the error text
  * @returns {boolean|*}
  */
 Logger.prototype.error = function (stuff) {
