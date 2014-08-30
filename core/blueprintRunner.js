@@ -7,6 +7,7 @@
  */
 var webdriver = require('selenium-webdriver'),
     path = require('path'),
+    Logger = require('./auxilium/logger').Logger,
     SeleniumServer = require('selenium-webdriver/remote').SeleniumServer;
 
 /*
@@ -31,10 +32,13 @@ BlueprintRunner = exports.BlueprintRunner = function(config) {
     this.config  = {
         'seleniumPath': '',
         'port' : '4444',
-        'browser' : 'chrome'
+        'browser' : 'chrome',
+        'debug' : true
 
     };
 
+    /*Properties*/
+    this.logger =
     this.driver = {};
     this.webdriver = webdriver;
     this.actor = new ActorProvider.Actors["Paul"]; //Default actor
@@ -43,7 +47,8 @@ BlueprintRunner = exports.BlueprintRunner = function(config) {
     if(config && (config.seleniumPath && config.port && config.browser)) {
         this.addConfiguration(config);
     } else {
-        throw new Error("You must provide a blueprint configuration in the format: " + "{'seleniumPath': '/path/to/selenium.jar','port' : '4444','browser' : 'chrome'}");
+        this.addConfiguration(this.config);
+        //throw new Error("You must provide a blueprint configuration in the format: " + "{'seleniumPath': '/path/to/selenium.jar','port' : '4444','browser' : 'chrome'}");
     }
 
 };
@@ -96,6 +101,11 @@ BlueprintRunner.prototype.resolveAttributeName = function (identifiedBy) {
 BlueprintRunner.prototype.addConfiguration = function (config) {
     var self = this;
 
+
+    if(config.debug !== undefined){
+        this.logger = (config.debug) ? new Logger({'debug' : true}):new Logger({'debug' : false});
+    }
+
     /*
      * Helper function for making an instance of the webdriver
      * If the the browser is 'chrome', special options for are passed
@@ -134,7 +144,7 @@ BlueprintRunner.prototype.addConfiguration = function (config) {
 
                 });
 
-            console.log("Using selenium from: " + _pathToSeleniumJar);
+            this.logger.info("Using selenium from: " + _pathToSeleniumJar);
             _server.start();
 
             var _serverCapabilities = webdriver.Capabilities.chrome();  //default
@@ -149,9 +159,9 @@ BlueprintRunner.prototype.addConfiguration = function (config) {
                     _serverCapabilities = webdriver.Capabilities.safari();
                     break;
                 case 'ie':
-                    console.info('Internet Explorer is not yet supported, using Chrome instead');
+                    this.logger.info('Internet Explorer is not yet supported, using Chrome instead');
                 default :
-                    console.log(self.config.browser +' is not defined, using Chrome instead');
+                    this.logger.info(self.config.browser +' is not defined, using Chrome instead');
                     _serverCapabilities = webdriver.Capabilities.chrome();
             }
 

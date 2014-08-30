@@ -3,8 +3,8 @@
  */
 
 
-var Merlot,
-    coloredJS = require('../lib/colored');
+var Merlot;
+
 
 /**
  * @description The prototype for an actor
@@ -30,6 +30,14 @@ Merlot.prototype.utile = {};
  * @type {exports}
  */
 Merlot.prototype.utile._fs_ = require('fs');
+
+/**
+ * @description
+ * System function support.
+ * @type {exports}
+ * @private
+ */
+Merlot.prototype.utile._sys_ = require('sys');
 
 /**
  * @description
