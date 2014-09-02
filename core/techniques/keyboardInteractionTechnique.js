@@ -56,38 +56,12 @@ module.exports.keyboardInteractionTechnique = function (webElement,domElement) {
         return _result;
     };
 
-/*
- var findRadioButton = function (activeElement, domElement) {
- console.dir(domElement.getNameAttribute());
- var _attribute = isAttributePresent(activeElement, domElement.getSearchAttributeName());
- if(_attribute){
-    return _attribute.
-        then(function checkIfThisIsTheElementWereLookingFor(attributeValue){
-            if(attributeValue === domElement.getSearchAttributeValue()){
-                return activeElement
-            }else{
-                _presKeyDown.perform().
-                    then(function getTheNextRadioButton() {
-                        return findRadioButton(that.driver.switchTo().activeElement(),domElement);
-                    });
-            }
-        });
-}else{
-    _presKeyDown.perform().
-        then(function getTheNextRadioButton() {
-            return findRadioButton(that.driver.switchTo().activeElement(),domElement);
-        });
-}
-};
-
-
-*/
-
     /* Recursive 'helper' function to retrieve
      * the element defined in 'domElement' */
      var findRadioButton = function (activeElement, domElement) {
         activeElement.
             then(function () {
+                var _noLoopPromise =  that.webdriver.promise.defer();
                 if (undefined === _firstWebElement) {
                     _firstWebElement = activeElement;
                 } else {
@@ -106,10 +80,11 @@ module.exports.keyboardInteractionTechnique = function (webElement,domElement) {
                                     }
                                 });
                             }
-                            return  _lastActiveElement = activeElement;
+                            _lastActiveElement = activeElement;
+                            _noLoopPromise.fulfill(_lastActiveElement);
                         })
                 }
-                return activeElement;
+                _noLoopPromise.promise;
         }).
         then(function () {
          var _attribute = isAttributePresent(activeElement, domElement.getSearchAttributeName());
