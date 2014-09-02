@@ -54,7 +54,7 @@ LinkHasTitle.prototype.criterion = function(webElement,callback){
     if (isAttributePresent(webElement, 'title')) {
          webElement.getAttribute('title')
             .then(function (text) {
-                console.info('The title of the link is: '+ text);
+                 console.info('The title of the link is: '+ text);
             });
 
     } else {

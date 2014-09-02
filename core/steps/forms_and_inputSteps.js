@@ -34,6 +34,7 @@ module.exports = forms_and_input_Steps = function () {
 
     this.When(/^The actor enters the username into textfield whose ([^"]*) is "([^"]*)"$/, function(identifiedBy, value ,callback) {
         var that = this,
+            _logger = this.browser.logger,
             _username, // that.browser.actor.getUsername() || "NOPE, no userName", //callback.fail(new ReferenceError("No username defined for this actor, use 'Given Username is 'username'' in the cucumber scenario definition, to set a username ").message),
             _tagName,
             _type,
@@ -42,13 +43,13 @@ module.exports = forms_and_input_Steps = function () {
         if(that.browser.actor.getUsername() !== undefined){
 
             _username  = that.browser.actor.getUsername();
-            console.log('Username = ' + _username);
+           // _logger.log('Username = ' + _username);
 
 
         if(tagNameDictionary.hasOwnProperty("textField")){
             _tagName = tagNameDictionary["textField"].eleName;
             _type = tagNameDictionary["textField"].type;
-            console.info('tag name = '+_tagName);
+          //  _logger.info('tag name = '+_tagName);
         }else{
             callback.fail(new Error('"'+elementName+'" is not a valid tag name'));
         }
@@ -89,12 +90,10 @@ module.exports = forms_and_input_Steps = function () {
 
         if(that.browser.actor.getPassword() !== undefined){
             _password  = that.browser.actor.getPassword();
-            console.log('Password = ' + _password);
 
         if(tagNameDictionary.hasOwnProperty("textField")){
             _tagName = tagNameDictionary["textField"].eleName;
             _type = tagNameDictionary["textField"].type;
-            console.info('tag name = '+_tagName);
         }else{
             callback.fail(new Error('"'+elementName+'" is not a valid tag name'));
         }
@@ -135,7 +134,6 @@ module.exports = forms_and_input_Steps = function () {
         if(tagNameDictionary.hasOwnProperty("radiobutton")){
             _tagName = tagNameDictionary["radiobutton"].eleName;
             _type = tagNameDictionary["radiobutton"].type;
-            console.log('tag name = '+_tagName);
         }else{
             callback.fail(new Error('"'+elementName+'" is not a valid tag name'));
         }
@@ -167,7 +165,6 @@ module.exports = forms_and_input_Steps = function () {
             }).
             then(function (webElement) {
                 /*Here we have the first element in the radio group*/
-                console.log('webElement = '+webElement);
                 return "";//that.browser.click(webElement,that.browser.webdriver.Key.ENTER);
             }).
             then(function () {

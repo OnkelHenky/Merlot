@@ -13,8 +13,6 @@ module.exports = navigationSteps = function () {
     this.Then(/^The actor should be on a web page with "([^"]*)" in the title$/, function(title, callback) {
         this.browser.getPageTitle()
             .then(function(pageTitle) {
-                console.log('pageTitle = '+ pageTitle);
-                console.log('title = '+ title);
                 if (title === pageTitle) {
                     callback();
                 } else {
@@ -34,7 +32,6 @@ module.exports = navigationSteps = function () {
         if(_tagNameDictionary.hasOwnProperty(elementName)){
             _tagName = _tagNameDictionary[elementName].eleName;
             _type = _tagNameDictionary[elementName].type;
-            console.log('tag name = '+_tagName);
         }else{
             callback.fail(new Error('"'+elementName+'" is not a valid tag name'));
         }

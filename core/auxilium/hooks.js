@@ -22,7 +22,7 @@ module.exports = hooks = function () {
 
         if(_logger.getLogLevel() < 3){
            _logger.info("Closing selenium driver");
-           _logger.info("To keep the browser up and running set Merlot log level 3 (Error level) in the Blueprint config");
+          // _logger.info("To keep the browser up and running set Merlot log level 3 (Error level) in the Blueprint config");
            this.browser.closeDriver(); //closing the selenium driver (browser)
         }
 

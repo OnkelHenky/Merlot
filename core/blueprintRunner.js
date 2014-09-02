@@ -41,7 +41,7 @@ BlueprintRunner = exports.BlueprintRunner = function(config) {
     this.aux = this.utile._aux_; //From Merlot object
 
     /*Properties*/
-    this.logger =
+    this.logger = new Logger({'logLevel' : 0});
     this.driver = {};
     this.webdriver = webdriver;
     this.actor = new ActorProvider.Actors["Paul"]; //Default actor
@@ -183,9 +183,9 @@ BlueprintRunner.prototype.addConfiguration = function (config) {
 
         }
     } catch (ex) {
-        console.dir(ex);
-        console.log('Selenium JAR not found at ' + ex['path']);
-        console.log('HINT: Check for typos');
+        this.logger.dir(ex);
+        this.logger.log('Selenium JAR not found at ' + ex['path']);
+        this.logger.log('HINT: Check for typos');
         self.driver.quit(); // quiting the driver, since we have an error.
         throw new Error('Unable to find selenium.jar');
     }
@@ -219,7 +219,7 @@ BlueprintRunner.prototype.runWithThatActor = function (actor) {
 
         if(ActorProvider.Actors[actor]){
             that.actor = new ActorProvider.Actors[actor];
-            console.info('Using "'+that.actor+'" as actor');
+            this.logger.info('Using "'+that.actor+'" as actor');
         }else{
             throw new ReferenceError('Actor with name "'+actor+'" not found')
         }

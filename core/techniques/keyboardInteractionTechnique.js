@@ -81,7 +81,6 @@ module.exports.keyboardInteractionTechnique = function (webElement,domElement) {
             }
         };
 
-
         interactFunctions.selection = function (activeElement, domElement) {
             console.dir(domElement.getNameAttribute());
             var _attribute = isAttributePresent(activeElement, domElement.getSearchAttributeName());
