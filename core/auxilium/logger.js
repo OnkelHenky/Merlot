@@ -115,13 +115,3 @@ Logger.prototype.error = function (stuff) {
         this.sys.puts(_style.extras.underline(_style.extras.bold(_style.foreground.red("Error:")))+ " " + stuff);
     }
 };
-
-
-
-
-
-
-
-
-
-
