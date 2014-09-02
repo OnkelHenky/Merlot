@@ -37,6 +37,9 @@ BlueprintRunner = exports.BlueprintRunner = function(config) {
 
     };
 
+    /*'short cut' properties*/
+    this.aux = this.utile._aux_; //From Merlot object
+
     /*Properties*/
     this.logger =
     this.driver = {};
@@ -95,15 +98,26 @@ BlueprintRunner.prototype.resolveAttributeName = function (identifiedBy) {
 
 /**
  * @description
- * Adding the configuration for a new BlueprintRunner object
- * @param {{a: number, b: string, c}} config - Tetet
+ * Adding the configuration for a new BlueprintRunner object.
+ * Example config object in JSON format.
+ * {
+ *   'seleniumPath': require('path').join(__dirname, '../../bin/selenium-server-standalone-2.42.0.jar'),
+ *   'port' : '4444',
+ *   'browser' : 'chrome',
+ *   'logLevel' : 3
+ *  };
+ * @param {{a: number, b: string}} config
  */
 BlueprintRunner.prototype.addConfiguration = function (config) {
     var self = this;
 
-
-    if(config.debug !== undefined){
-        this.logger = (config.debug) ? new Logger({'debug' : true}):new Logger({'debug' : false});
+    /*
+     * Enable Merlot debug logger if the config contains the property
+     * 'config.logLevel' with a valid 'numeric' value.
+     *  1 = Only Logs; 2 = Logs and Info; 3 =  Logs, Info and Errors
+     */
+    if(config.logLevel !== undefined && this.aux.isNumber(config.logLevel)){
+        this.logger = new Logger({'logLevel' :config.logLevel});
     }
 
     /*

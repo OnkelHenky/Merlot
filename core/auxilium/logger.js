@@ -23,8 +23,7 @@ exports.Logger = Logger = function(properties) {
     this._type_    = "Logger Object"; //Name of the object
 
     /*Properties*/
-    this.debug = false; // if debug = true => log stuff.
-    this.logLevel = 1; // 1 = Only Logs; 2 = Logs and Info; 3 =  Logs, Info and Errors
+    this.logLevel = 0; // 1 = Only Logs; 2 = Logs and Info; 3 =  Logs, Info and Errors
     this.sys = this.utile._sys_; //Shortcut to _sys_ from object 'Merlot'
     this.style  = Colored;
 
@@ -40,15 +39,6 @@ exports.Logger = Logger = function(properties) {
  * @type {Merlot}
  */
 Logger.prototype = new Merlot();
-
-/**
- * @description
- * Check if the debug mode is turend on
- * @returns {boolean|*}
- */
-Logger.prototype.isDebugModeOn = function () {
-  return this.debug;
-};
 
 /**
  * @description
@@ -83,7 +73,7 @@ Logger.prototype.addProperties = function (properties) {
  */
 Logger.prototype.log = function (stuff) {
     var _style = this.style;
-    if(this.isDebugModeOn() && this.getLogLevel() >= 1) {
+    if(this.getLogLevel() >= 1) {
         this.sys.puts(_style.foreground.green(stuff));
     }
 };
@@ -97,7 +87,7 @@ Logger.prototype.log = function (stuff) {
  */
 Logger.prototype.info = function (stuff) {
     var _style = this.style;
-    if(this.isDebugModeOn() && this.getLogLevel() >= 2) {
+    if(this.getLogLevel() >= 2) {
         this.sys.puts(_style.extras.underline(_style.foreground.cyan("Info:")) + " " + stuff);
     }
 };
@@ -111,7 +101,7 @@ Logger.prototype.info = function (stuff) {
  */
 Logger.prototype.error = function (stuff) {
     var _style = this.style;
-    if(this.isDebugModeOn() && this.getLogLevel() === 3) {
+    if(this.getLogLevel() === 3) {
         this.sys.puts(_style.extras.underline(_style.extras.bold(_style.foreground.red("Error:")))+ " " + stuff);
     }
 };

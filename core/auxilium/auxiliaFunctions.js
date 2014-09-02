@@ -32,3 +32,14 @@ module.exports.inputText = function(text,webElement) {
 module.exports.isString = function(stringToTest) {
    return (stringToTest && (typeof stringToTest === 'string' || stringToTest instanceof String));
 };
+
+/**
+ * @description
+ * Check if a property is a number
+ * @param numberToTest
+ * @returns {boolean}
+ */
+module.exports.isNumber = function(numberToTest) {
+    return !isNaN(numberToTest);
+};
+
