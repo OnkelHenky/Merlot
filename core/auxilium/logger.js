@@ -24,15 +24,13 @@ exports.Logger = Logger = function(properties) {
 
     /*Properties*/
     this.debug = false; // if debug = true => log stuff.
+    this.logLevel = 1; // 1 = Only Logs; 2 = Logs and Info; 3 =  Logs, Info and Errors
     this.sys = this.utile._sys_; //Shortcut to _sys_ from object 'Merlot'
     this.style  = Colored;
 
     if(properties){
-        this.addProperties(properties);
+       this.addProperties(properties);
     }
-
-
-
 };
 
 
@@ -50,6 +48,18 @@ Logger.prototype = new Merlot();
  */
 Logger.prototype.isDebugModeOn = function () {
   return this.debug;
+};
+
+/**
+ * @description
+ * The log level
+ * 1 = Show only normal debug logs
+ * 2 = Debug and info logs
+ * 3 = Debug, info and Errors logs
+ * @returns {number} the loglevel
+ */
+Logger.prototype.getLogLevel = function () {
+    return this.logLevel;
 };
 
 /**
@@ -72,9 +82,9 @@ Logger.prototype.addProperties = function (properties) {
  * @returns {boolean|*}
  */
 Logger.prototype.log = function (stuff) {
-    var style = this.style;
-    if(this.isDebugModeOn()) {
-        this.sys.puts(style.foreground.green(stuff));
+    var _style = this.style;
+    if(this.isDebugModeOn() && this.getLogLevel() >= 1) {
+        this.sys.puts(_style.foreground.green(stuff));
     }
 };
 
@@ -86,9 +96,9 @@ Logger.prototype.log = function (stuff) {
  * @returns {boolean|*}
  */
 Logger.prototype.info = function (stuff) {
-    var style = this.style;
-    if(this.isDebugModeOn()) {
-        this.sys.puts(style.extras.underline(style.foreground.cyan("Info:")) + " " + stuff);
+    var _style = this.style;
+    if(this.isDebugModeOn() && this.getLogLevel() >= 2) {
+        this.sys.puts(_style.extras.underline(_style.foreground.cyan("Info:")) + " " + stuff);
     }
 };
 
@@ -100,9 +110,9 @@ Logger.prototype.info = function (stuff) {
  * @returns {boolean|*}
  */
 Logger.prototype.error = function (stuff) {
-    var style = this.style;
-    if(this.isDebugModeOn()) {
-        this.sys.puts(style.extras.underline(style.extras.bold(style.foreground.red("Error:")))+ " " + stuff);
+    var _style = this.style;
+    if(this.isDebugModeOn() && this.getLogLevel() === 3) {
+        this.sys.puts(_style.extras.underline(_style.extras.bold(_style.foreground.red("Error:")))+ " " + stuff);
     }
 };
 
