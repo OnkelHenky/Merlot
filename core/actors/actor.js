@@ -127,7 +127,7 @@ Actor.prototype.findElement = function (domElement) {
  *
  * @param webElement
  */
-Actor.prototype.interactWithElement = function (domElement) {
+Actor.prototype.interactWithRadioButton = function (domElement) {
     //TODO: Implement a useful method in actor prototype
 };
 

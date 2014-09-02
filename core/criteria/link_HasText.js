@@ -53,7 +53,7 @@ LinkHasLinkText.prototype.criterion = function(webElement,callback){
     if(hasTextNode(webElement)) {
         webElement.getText()
             .then(function (text) {
-                tconsole.log('The text on the link is: '+ text);
+                console.log('The text on the link is: '+ text);
             });
     }else{
         //throw new Error("Link hast no proper Text");

@@ -159,5 +159,6 @@ module.exports = tabNavigationTechnique = function (domElement) {
                 })
             });
      };
+
     return helperFunction(domElement);
 };

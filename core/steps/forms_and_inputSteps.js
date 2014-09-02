@@ -124,12 +124,12 @@ module.exports = forms_and_input_Steps = function () {
 
     });
 
-    this.When(/^The actor selects a option from the radiogroup "([^"]*)"  whose ([^"]*) is "([^"]*)"$/, function(radiogroupName,identifiedBy,value,callback) {
+    this.When(/^The actor selects the option whose ([^"]*) is "([^"]*)" from the radiogroup "([^"]*)"$/, function(identifiedBy,value,radiogroupName,callback) {
         var that = this,
             _tagName = "",
             _type = "",
             _radiogroupName = radiogroupName,
-            _resolvedIdentifiedBy =  that.browser.resolveAttributeName(identifiedBy);
+            _resolvedAttributeName =  that.browser.resolveAttributeName(identifiedBy);
 
         if(tagNameDictionary.hasOwnProperty("radiobutton")){
             _tagName = tagNameDictionary["radiobutton"].eleName;
@@ -144,7 +144,7 @@ module.exports = forms_and_input_Steps = function () {
             'name' : _radiogroupName,
             'type' : _type,
             'searchAttribute' : {
-                "name":  _resolvedIdentifiedBy,
+                "name":  _resolvedAttributeName,
                 'value': value
             }
         });
@@ -152,7 +152,7 @@ module.exports = forms_and_input_Steps = function () {
         this.browser.actorTryToFindThisElement(_RADIOdomElement).
             then(function findTheRadioButtonInTheRadioGroup(webElement){
                 /*Here we have the first element in the radio group*/
-                 return that.browser.interactWithElement(webElement,_RADIOdomElement);
+                 return that.browser.interactWithRadioButton(webElement,_RADIOdomElement);
             }).
             then(function (webElement) {
                 /*Here we have the first element in the radio group*/
@@ -171,9 +171,11 @@ module.exports = forms_and_input_Steps = function () {
                 callback();
             }).
             then(null, function(err) {
-                callback.fail(new Error("Merlot reported an error! " + err +" with DOMElement: "+_RADIOdomElement).message);
+                that.browser.logger.error(err.name + ": " + err.message);
+                callback.fail(err.name + ": " + err.message);
             });
     });
+
 
     this.When(/^The actor chooses "([^"]*)" from the selection whose ([^"]*) is "([^"]*)"$/, function(value,identifiedBy,identifierValue,callback) {
         var that = this,

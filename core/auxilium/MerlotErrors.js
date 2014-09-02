@@ -11,13 +11,15 @@ var ElementNotFoundError,
  *
  * @type {ElementNotFoundError}
  */
-module.exports.ElementNotFoundError =  ElementNotFoundError = function(msg) {
+module.exports.ElementNotFoundError =  ElementNotFoundError = function(domElement) {
 
-   this.name = "ElementNotFoundError",
+   this._type_  = "ElementNotFoundError";
+
+   this.name = "ElementNotFoundError";
    this.message = "ElementNotFoundError";
 
-   if(msg){
-     this.message = msg;
+   if(domElement){
+     this.message = domElement.toString();
    }
 
 };
@@ -41,7 +43,15 @@ ElementNotFoundError.prototype.getMsg = function () {
  * @returns {*}
  */
 ElementNotFoundError.prototype.toString = function () {
-    return this.getMsg();
+    return this.getName+this.getMsg();
+};
+
+/**
+ *
+ * @returns {string}
+ */
+ElementNotFoundError.prototype.getType = function () {
+    return this._type_;
 };
 
 

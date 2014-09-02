@@ -82,6 +82,8 @@ BlueprintRunner.prototype.resolveAttributeName = function (identifiedBy) {
         case "@href":
         case "@value":
         case "@label":
+        case "@css":
+        case "@style":
             _resolvedIdentifiedBy =  identifiedBy.split("@")[1]; /* Cutting of the '@' */
             break;
         case "textNode":
@@ -317,9 +319,9 @@ BlueprintRunner.prototype.enterText = function (webElement,text,callback) {
  * @param domElement
  * @returns {*} - A promise with the radio button.
  */
-BlueprintRunner.prototype.interactWithElement = function (webElement,domElement) {
+BlueprintRunner.prototype.interactWithRadioButton = function (webElement,domElement) {
     var _actor = this.actor;
-    return _actor.interactWithElement.call(this,webElement,domElement);
+    return _actor.interactWithRadioButton.call(this,webElement,domElement);
 };
 
 /**
