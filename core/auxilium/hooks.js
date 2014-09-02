@@ -4,6 +4,7 @@
  */
 
 /**
+ * @description
  * A bunch of before and after hooks of the cucumber framework.
  * To run setup code and clean up code before and after an scenario
  * is being executed.
@@ -15,19 +16,16 @@ module.exports = hooks = function () {
      * of an scenario had been executed.
      */
     this.After(function(scenario, callback) {
-        console.info('after hook, closing selenium driver');
-        //TODO: Add debug feature to turn the closing of the driver in the settings ON and OFF
-        // this.browser.closeDriver();   //closing the selenium driver (browser)
-        /*
-        if (scenario.failed) {
-            console.log('FAILED');
+        var _logger = this.browser.logger;
 
-        }
-        else {
-            console.log('NOT FAILED');
+        _logger.info("Finished scenario: '"+scenario.getName()+"'");
 
+        if(_logger.getLogLevel() < 3){
+           _logger.info("Closing selenium driver");
+           _logger.info("To keep the browser up and running set Merlot log level 3 (Error level) in the Blueprint config");
+           this.browser.closeDriver(); //closing the selenium driver (browser)
         }
-        */
+
         callback();
     });
 
