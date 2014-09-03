@@ -61,22 +61,24 @@ module.exports.keyboardInteractionTechnique = function (webElement,domElement) {
      var findRadioButton = function (activeElement, domElement) {
         activeElement.
             then(function () {
-                var _noLoopPromise =  that.webdriver.promise.defer();
+                var _noLoopPromise = that.webdriver.promise.defer();
                 if (undefined === _firstWebElement) {
-                    _firstWebElement = activeElement;
+                    _firstWebElement = _lastActiveElement = activeElement;
+                    _noLoopPromise.fulfill(_firstWebElement);
                 } else {
-                    that.webdriver.WebElement.equals(_firstWebElement, activeElement)
-                        .then(function (eq) {
+                    /* Reject the promise if we have a loop (triggered in Firefox)*/
+                    that.webdriver.WebElement.equals(_firstWebElement, activeElement).
+                        then(function (eq) {
                             if (eq) {
-                                /* Reject the promise if we have a loop (triggered in Firefox)*/
-                                return _deferred.reject(new ElementNotFoundError(domElement));
+                                _noLoopPromise.reject(new ElementNotFoundError(domElement));
                             }
-                        }).then(function () {
+                        }).
+                        then(function () {
                             if (undefined !== _lastActiveElement) {
                                 /* Reject the promise if we are still on the same element (triggered in Chrome & Safari)*/
                                 that.webdriver.WebElement.equals(_lastActiveElement, activeElement).then(function (eq) {
                                     if (eq) {
-                                        return _deferred.reject(new ElementNotFoundError(domElement));
+                                        _noLoopPromise.reject(new ElementNotFoundError(domElement));
                                     }
                                 });
                             }
@@ -84,7 +86,7 @@ module.exports.keyboardInteractionTechnique = function (webElement,domElement) {
                             _noLoopPromise.fulfill(_lastActiveElement);
                         })
                 }
-                _noLoopPromise.promise;
+               return _noLoopPromise.promise;
         }).
         then(function () {
          var _attribute = isAttributePresent(activeElement, domElement.getSearchAttributeName());
@@ -142,7 +144,7 @@ module.exports.keyboardcSelectOption = function (selectionElement,domElement) {
 
     selectionElement.findElements(_by.tagName("option")).
         then(function (options) {
-//TODO exchange the 'some' function.
+        /*TODO exchange the 'some' function.*/
              options.some(function lookForTheRightElement(option, index, options) {
                 option.getText()
                     .then(function(optionText){
