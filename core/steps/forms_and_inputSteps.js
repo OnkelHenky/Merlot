@@ -167,10 +167,10 @@ module.exports = forms_and_input_Steps = function () {
                 /*Here we have the first element in the radio group*/
                 return "";//that.browser.click(webElement,that.browser.webdriver.Key.ENTER);
             }).
-            then(function () {
+            then(function onOK() {
                 callback();
             }).
-            then(null, function(err) {
+            then(null, function onError(err) {
                 that.browser.logger.error(err.name + ": " + err.message);
                 callback.fail(err.name + ": " + err.message);
             });

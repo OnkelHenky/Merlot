@@ -31,6 +31,8 @@ Anna.prototype = new Actor;
  * Technique used to navigate on the web application
  */
 Anna.prototype.findElement = techniqueRepository.techniques['Tab_Navigation'];
+
+
 Anna.prototype.interactWithRadioButton = techniqueRepository.techniques['KeyboardTechnique'];
 Anna.prototype.interactWithSelection = techniqueRepository.techniques['Keyboard_SelectOption'];
 /**
