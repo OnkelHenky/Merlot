@@ -147,12 +147,25 @@
     });
 
 
-   /*
-    * Additional tag names
-    */
+   /* * * * * * * * * * * * *
+    * Additional tag names  *
+    * * * * * * * * * * * * */
+
+    /*
+     * 'hyperlink' and 'link', are common names for an 'a' element
+     */
     _validTagNames.hyperlink = {
         'eleName' : 'a' ,'type' : false
     };
+
+    _validTagNames.link = {
+        'eleName' : 'a' ,'type' : false
+    };
+
+
+    /*
+     * Different types of 'input' elements
+     */
     _validTagNames.button = {
         'eleName' : 'input' ,'type' : 'button'
     };

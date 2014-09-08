@@ -13,12 +13,106 @@ module.exports = navigationSteps = function () {
     this.Then(/^The actor should be on a web page with "([^"]*)" in the title$/, function(title, callback) {
         this.browser.getPageTitle()
             .then(function(pageTitle) {
+                console.log('page Tile = '+pageTitle);
                 if (title === pageTitle) {
                     callback();
                 } else {
-                    callback.fail(new Error("Expected to be on page with title " + title));
+                //   callback.fail(new Error("Expected to be on page with title " + title + "but was on: '"+pageTitle+"'"));
                 }
 
+            }).
+            then(null, function (err) {
+                callback.fail(err);
+            });
+    });
+
+    this.Then(/^The actor switches to the opening tap in the browser$/, function(callback) {
+        var that = this,
+            _currentWindowHandle = void 0;
+
+        this.browser.getCurrentWindowHandle().
+            then(function(currentWindowHandle) {
+                _currentWindowHandle = currentWindowHandle;
+            });
+        this.browser.getAllWindowHandles().
+            then(function (allHandlers) {
+                var deferred = that.browser.webdriver.promise.defer();
+                console.log('Current ' + _currentWindowHandle);
+                console.dir(allHandlers);
+                allHandlers.forEach(function (handle) {
+                    if(_currentWindowHandle != handle){
+                        deferred.fulfill(handle);
+
+                    }
+                });
+                return deferred.promise;
+            }).
+            then(function (handle) {
+                console.log('Habnlde = '+handle);
+               return that.browser.switchToNewHandle(handle);
+            }).
+            then(function () {
+
+                that.browser.getCurrentWindowHandle().
+                    then(function(currentWindowHandle) {
+                       console.log('currentWindowHandle ' +currentWindowHandle);
+                        return currentWindowHandle;
+                    });
+            }).
+            then(function waitForPageInTheNewTabToBeReady() {
+                var _by = that.browser.webdriver.By;
+                //waitForPageToBeReady
+               // return that.browser.waitForElementToBeReady(_by.tagName('title'),5000)
+                return that.browser.waitForPageToBeReady(5000)
+            }).
+            then(function onOK() {
+                callback();
+            }).
+            then(null, function OnError(err) {
+                callback.fail(err);
+            })
+
+    });
+
+    this.When(/^The actor interacts with a hyperlink whose ([^"]*) is "([^"]*)"$/, function(identifiedBy,value,callback) {
+
+        var that = this,
+            _tagName = "",
+            _type = "",
+            _resolvedAttributeName = that.browser.resolveAttributeName(identifiedBy);
+
+        if(_tagNameDictionary.hasOwnProperty("hyperlink")){
+            _tagName = _tagNameDictionary["hyperlink"].eleName;
+            _type = _tagNameDictionary["hyperlink"].type;
+        }else{
+            callback.fail(new Error("'hyperlink' is not a valid tag name"));
+        }
+
+        var _domElement = this.browser.createDOMElement({
+            'tagName' : _tagName,
+            'type' : _type,
+            'searchAttribute' : {
+                "name":  _resolvedAttributeName,
+                'value': value
+            }
+        });
+
+        this.browser.actorTryToFindThisElement(_domElement).
+            then(function (webElement) {
+                var deferred = that.browser.webdriver.promise.defer();
+                that.browser.applyCriteria(webElement, function (webElement) {
+                    deferred.fulfill(webElement);
+                });
+                return deferred.promise;
+            }).
+            then(function (webElement) {
+                return that.browser.click(webElement,that.browser.webdriver.Key.ENTER);
+            }).
+            then(function () {
+                callback();
+            }).
+            then(null, function(err) {
+                callback.fail(new Error("Merlot reported an error! " + err +" with DOMElement: "+_domElement).message);
             });
     });
 
@@ -27,7 +121,7 @@ module.exports = navigationSteps = function () {
         var that = this,
             _tagName = "",
             _type = "",
-            _identifiedBy = "";
+            _resolvedAttributeName = that.browser.resolveAttributeName(identifiedBy);
 
         if(_tagNameDictionary.hasOwnProperty(elementName)){
             _tagName = _tagNameDictionary[elementName].eleName;
@@ -36,28 +130,11 @@ module.exports = navigationSteps = function () {
             callback.fail(new Error('"'+elementName+'" is not a valid tag name'));
         }
 
-
-        switch (identifiedBy){
-            case "@id":
-            case "@name":
-            case "@href":
-            case "@value":
-            case "@label":
-                _identifiedBy = identifiedBy.split("@")[1]; //cutting of the '@'
-                break;
-            case "textNode":
-                _identifiedBy = identifiedBy;
-                break;
-            default:
-                callback.fail(new Error('"'+identifiedBy+'" is not valid identifier - use "id", "text", "name" or "href" instead'));
-                break;
-        }
-
          var _domElement = this.browser.createDOMElement({
                 'tagName' : _tagName,
                 'type' : _type,
                 'searchAttribute' : {
-                    "name":  _identifiedBy,
+                    "name":  _resolvedAttributeName,
                     'value': value
                 }
             });

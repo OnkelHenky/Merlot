@@ -86,11 +86,11 @@ BlueprintRunner.prototype.resolveAttributeName = function (identifiedBy) {
         case "@style":
             _resolvedIdentifiedBy =  identifiedBy.split("@")[1]; /* Cutting of the '@' */
             break;
-        case "textNode":
-            _resolvedIdentifiedBy = identifiedBy;
+        case ">text":
+            _resolvedIdentifiedBy = "textNode"; //identifiedBy.split(">")[1]; /* Cutting of the '>' */
             break;
         default:
-            throw new Error('"'+identifiedBy+'" is not valid identifier - use "id", "text", "name" or "href" instead');
+            throw new Error('"'+identifiedBy+'" is not valid identifier! e.g.; "@id", "@name", "@value" or ">text", to get the text node value');
             break;
     }
 
@@ -248,7 +248,7 @@ BlueprintRunner.prototype.setLoginCredentialsForActor = function (type,value) {
                     break;
                 case 'password':
                     that.actor.setPassword(value)
-                    break
+                    break;
                 default:
                     throw new TypeError("Type "+ type + " for 'setLoginCredentialsForActor is not allowed, use 'username' or 'password'");
                     break;
@@ -353,11 +353,76 @@ BlueprintRunner.prototype.goTo = function (where, callback) {
 /**
  * @description
  * Get the title of the web page
- * @returns {*}
+ * @returns {*}  a promise
  */
 BlueprintRunner.prototype.getPageTitle = function () {
     return  this.driver.getTitle();
 };
+
+/**
+ * @description
+ * Get the handle of the current window
+ * @returns {*}  a promise
+ */
+BlueprintRunner.prototype.getCurrentWindowHandle = function () {
+    return  this.driver.getWindowHandle();
+};
+
+/**
+ * @description
+ * Get all handles of all windows, or tabs
+ * @returns {*} a promise
+ */
+BlueprintRunner.prototype.getAllWindowHandles = function () {
+    return this.driver.getAllWindowHandles();
+};
+
+/**
+ * @description
+ * Switch to the window with the goven handle
+ * @param handle the handle
+ * @returns {*} a promise
+ */
+BlueprintRunner.prototype.switchToNewHandle = function (handle) {
+    return  this.driver.switchTo().window(handle);
+};
+
+/**
+ * @description
+ * Waiting for an element to be present or ready .
+ * @param locator the locator used to find the element
+ * @param TIMEOUT the time in milliseconds to wait for the element
+ * @returns {*}  a promise
+ */
+BlueprintRunner.prototype.waitForElementToBeReady = function (locator,TIMEOUT) {
+    var  _driver = this.driver;
+    return _driver.wait(function() {
+            return _driver.isElementPresent(locator);
+        }, TIMEOUT);
+};
+
+/**
+ * @description
+ * Wait for a page to be ready when document.readyState is 'complete'
+ * @param TIMEOUT the time in milliseconds to wait for the page to be ready
+ * @returns {*} a promise
+ */
+BlueprintRunner.prototype.waitForPageToBeReady = function (TIMEOUT) {
+   var  _driver = this.driver,
+         that = this;
+   return _driver.wait(function() {
+        var _defferd = that.webdriver.promise.defer();
+        _driver.executeScript("return document.readyState").
+                then(function (state) {
+                    if('complete' === state){
+                        _defferd.fulfill(true);
+                    }
+                });
+        return _defferd.promise;
+   }, TIMEOUT);
+};
+
+
 
 /**
  * @description
