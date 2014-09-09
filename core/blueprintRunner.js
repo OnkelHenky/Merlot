@@ -33,6 +33,8 @@ BlueprintRunner = exports.BlueprintRunner = function(config) {
         'seleniumPath': '',
         'port' : '4444',
         'browser' : 'chrome',
+        'pageTimeout' : 5000,
+        'elementTimeout' : 5000,
         'debug' : true
 
     };
@@ -113,6 +115,7 @@ BlueprintRunner.prototype.resolveAttributeName = function (identifiedBy) {
 BlueprintRunner.prototype.addConfiguration = function (config) {
     var self = this;
 
+
     /*
      * Enable Merlot debug logger if the config contains the property
      * 'config.logLevel' with a valid 'numeric' value.
@@ -182,6 +185,11 @@ BlueprintRunner.prototype.addConfiguration = function (config) {
             }
 
             self.driver = _serverBuilder(_serverCapabilities,_server,self.config.browser).build();
+
+
+        var timeouts =  new  self.webdriver.WebDriver.Timeouts(self.driver);
+             timeouts.pageLoadTimeout(5000); //set timer to wait for pages to be loaded
+             timeouts.implicitlyWait(3000); //wait 3 seconds for every element to retrieve
 
         }
     } catch (ex) {
@@ -384,8 +392,8 @@ BlueprintRunner.prototype.getAllWindowHandles = function () {
  * @returns {*} a promise
  */
 BlueprintRunner.prototype.switchToNewHandle = function (handle) {
-    this.driver.close();
-    return  this.driver.switchTo().window(handle);
+    // this.driver.close(); /*closing old handle*/
+   return this.driver.switchTo().window(handle);
 };
 
 /**
@@ -397,9 +405,9 @@ BlueprintRunner.prototype.switchToNewHandle = function (handle) {
  */
 BlueprintRunner.prototype.waitForElementToBeReady = function (locator,TIMEOUT) {
     var  _driver = this.driver;
-    return _driver.wait(function() {
+    return _driver.wait(function() {  //wait until ...
             return _driver.isElementPresent(locator);
-        }, TIMEOUT,"Element was not ready after "+TIMEOUT+" milliseconds");
+    }, TIMEOUT,"Element was not ready after "+TIMEOUT+" milliseconds");
 };
 
 /**
@@ -412,58 +420,17 @@ BlueprintRunner.prototype.waitForPageToBeReady = function (TIMEOUT) {
    var  _driver = this.driver,
          that = this;
 
+   function isPageReady(){
+      return _driver.executeScript("return document.readyState").
+             then(function (state) {
+                 return ('complete' === state);
+             });
+   }
 
-    function isLoaded(){
-   //   var _defferd = that.webdriver.promise.defer();
-
-   //  _driver.executeAsyncScript(" arguments[arguments.length - 1]('MUHAHAHA');").
-  return _driver.executeScript("return document.readyState").
-   //  _driver.executeAsyncScript("document.addEventListener('DOMContentLoaded', function() { console.log('MIMIMIM'); arguments[arguments.length - 1]() }, false);").
-   //
-    // _driver.executeScript("window.setInterval(function () { if(document.readyState === 'complete' ){ return true;}},200);").
-         then(function (state) {
-             console.log('state  = '+state);
-                if('complete' === state) {
-                 //   console.log('STATE TRUE = '+state);
-                 //   _defferd.fulfill(true);
-                    return true;
-                }else{
-                  //  console.log('STATE FALSE = '+state);
-                   return false
-                }
-
-
-        });
-
-
-
-     //  return _defferd.promise;
-    }
-
-
-/*
-    return  _driver.wait(function() {
-      // var _defferd = that.webdriver.promise.defer();
-                _driver.executeScript("console.log('MIIIIIIII'); return document.readyState").
-                     then(function (state) {
-                        // console.log('CURRENT HANDLE === '+hd);
-                         console.log('STATE = '+state);
-                         if('complete' === state){
-                              _defferd.fulfill(true);
-                             //return true;
-                         }
-                     });
-      // return _defferd.promise;
-     },TIMEOUT, "Page is not ready after "+TIMEOUT+" milliseconds");
-*/
-
-
-    return  _driver.wait(function() {
-        return isLoaded();
+    return  _driver.wait(function() { //wait until ...
+               return isPageReady();
     }, TIMEOUT,"Element is not ready after "+TIMEOUT+" milliseconds");
-
 };
-
 
 
 /**
@@ -473,4 +440,3 @@ BlueprintRunner.prototype.waitForPageToBeReady = function (TIMEOUT) {
 BlueprintRunner.prototype.closeDriver = function () {
       this.driver.close();
 };
-

@@ -160,7 +160,5 @@ module.exports = tabNavigationTechnique = function (domElement) {
             });
      };
 
-    console.log('FIND ELEMENT helperFunction ***++**++****+ = '+domElement);
-
     return helperFunction(domElement);
 };

@@ -26,7 +26,7 @@ module.exports = navigationSteps = function () {
             });
     });
 
-    this.Then(/^The actor switches to the opening tap in the browser$/, function(callback) {
+    this.Then(/^The actor switches to a new page in a new browser tab$/, function(callback) {
         var that = this,
             _currentWindowHandle = void 0;
 
@@ -35,10 +35,8 @@ module.exports = navigationSteps = function () {
                 _currentWindowHandle = currentWindowHandle;
             });
         this.browser.getAllWindowHandles().
-            then(function (allHandlers) {
+            then(function findTheNewHandle(allHandlers) {
                 var deferred = that.browser.webdriver.promise.defer();
-                console.log('Current ' + _currentWindowHandle);
-                console.dir(allHandlers);
                 allHandlers.forEach(function (handle) {
                     if(_currentWindowHandle != handle){
                         deferred.fulfill(handle);
@@ -47,18 +45,15 @@ module.exports = navigationSteps = function () {
                 });
                 return deferred.promise;
             }).
-            then(function (handle) {
-                console.log('Habnlde = '+handle);
+            then(function switchToNewHandle(handle) {
                return that.browser.switchToNewHandle(handle);
             }).
             then(function waitForPageInTheNewTabToBeReady() {
-                var _by = that.browser.webdriver.By;
-                //waitForPageToBeReady
-              // return that.browser.waitForElementToBeReady(_by.tagName('title'),5000)
+                // var _by = that.browser.webdriver.By;
+                //return that.browser.waitForElementToBeReady(_by.tagName('title'),5000)
                return that.browser.waitForPageToBeReady(5000)
             }).
-            then(function onOK(er) {
-                console.log('ON OK WAS CALLED = '+er);
+            then(function onOK() {
                 callback();
             }).
             then(null, function OnError(err) {
@@ -80,8 +75,6 @@ module.exports = navigationSteps = function () {
         }else{
             callback.fail(new Error("'hyperlink' is not a valid tag name"));
         }
-
-        console.log('hyperlink ****************** _resolvedAttributeName = '+_resolvedAttributeName);
         var _domElement = this.browser.createDOMElement({
             'tagName' : _tagName,
             'type' : _type,
@@ -90,8 +83,6 @@ module.exports = navigationSteps = function () {
                 'value': value
             }
         });
-
-        console.log('FIND ELEMENT TTTTTTTT = '+_domElement);
 
         this.browser.actorTryToFindThisElement(_domElement).
             then(function (webElement) {
