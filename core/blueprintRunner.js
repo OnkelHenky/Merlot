@@ -384,6 +384,7 @@ BlueprintRunner.prototype.getAllWindowHandles = function () {
  * @returns {*} a promise
  */
 BlueprintRunner.prototype.switchToNewHandle = function (handle) {
+    this.driver.close();
     return  this.driver.switchTo().window(handle);
 };
 
@@ -398,7 +399,7 @@ BlueprintRunner.prototype.waitForElementToBeReady = function (locator,TIMEOUT) {
     var  _driver = this.driver;
     return _driver.wait(function() {
             return _driver.isElementPresent(locator);
-        }, TIMEOUT);
+        }, TIMEOUT,"Element was not ready after "+TIMEOUT+" milliseconds");
 };
 
 /**
@@ -410,16 +411,57 @@ BlueprintRunner.prototype.waitForElementToBeReady = function (locator,TIMEOUT) {
 BlueprintRunner.prototype.waitForPageToBeReady = function (TIMEOUT) {
    var  _driver = this.driver,
          that = this;
-   return _driver.wait(function() {
-        var _defferd = that.webdriver.promise.defer();
-        _driver.executeScript("return document.readyState").
-                then(function (state) {
-                    if('complete' === state){
-                        _defferd.fulfill(true);
-                    }
-                });
-        return _defferd.promise;
-   }, TIMEOUT);
+
+
+    function isLoaded(){
+   //   var _defferd = that.webdriver.promise.defer();
+
+   //  _driver.executeAsyncScript(" arguments[arguments.length - 1]('MUHAHAHA');").
+  return _driver.executeScript("return document.readyState").
+   //  _driver.executeAsyncScript("document.addEventListener('DOMContentLoaded', function() { console.log('MIMIMIM'); arguments[arguments.length - 1]() }, false);").
+   //
+    // _driver.executeScript("window.setInterval(function () { if(document.readyState === 'complete' ){ return true;}},200);").
+         then(function (state) {
+             console.log('state  = '+state);
+                if('complete' === state) {
+                 //   console.log('STATE TRUE = '+state);
+                 //   _defferd.fulfill(true);
+                    return true;
+                }else{
+                  //  console.log('STATE FALSE = '+state);
+                   return false
+                }
+
+
+        });
+
+
+
+     //  return _defferd.promise;
+    }
+
+
+/*
+    return  _driver.wait(function() {
+      // var _defferd = that.webdriver.promise.defer();
+                _driver.executeScript("console.log('MIIIIIIII'); return document.readyState").
+                     then(function (state) {
+                        // console.log('CURRENT HANDLE === '+hd);
+                         console.log('STATE = '+state);
+                         if('complete' === state){
+                              _defferd.fulfill(true);
+                             //return true;
+                         }
+                     });
+      // return _defferd.promise;
+     },TIMEOUT, "Page is not ready after "+TIMEOUT+" milliseconds");
+*/
+
+
+    return  _driver.wait(function() {
+        return isLoaded();
+    }, TIMEOUT,"Element is not ready after "+TIMEOUT+" milliseconds");
+
 };
 
 

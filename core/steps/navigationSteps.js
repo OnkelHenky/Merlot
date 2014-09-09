@@ -51,21 +51,14 @@ module.exports = navigationSteps = function () {
                 console.log('Habnlde = '+handle);
                return that.browser.switchToNewHandle(handle);
             }).
-            then(function () {
-
-                that.browser.getCurrentWindowHandle().
-                    then(function(currentWindowHandle) {
-                       console.log('currentWindowHandle ' +currentWindowHandle);
-                        return currentWindowHandle;
-                    });
-            }).
             then(function waitForPageInTheNewTabToBeReady() {
                 var _by = that.browser.webdriver.By;
                 //waitForPageToBeReady
-               // return that.browser.waitForElementToBeReady(_by.tagName('title'),5000)
-                return that.browser.waitForPageToBeReady(5000)
+              // return that.browser.waitForElementToBeReady(_by.tagName('title'),5000)
+               return that.browser.waitForPageToBeReady(5000)
             }).
-            then(function onOK() {
+            then(function onOK(er) {
+                console.log('ON OK WAS CALLED = '+er);
                 callback();
             }).
             then(null, function OnError(err) {
@@ -88,6 +81,7 @@ module.exports = navigationSteps = function () {
             callback.fail(new Error("'hyperlink' is not a valid tag name"));
         }
 
+        console.log('hyperlink ****************** _resolvedAttributeName = '+_resolvedAttributeName);
         var _domElement = this.browser.createDOMElement({
             'tagName' : _tagName,
             'type' : _type,
@@ -97,8 +91,11 @@ module.exports = navigationSteps = function () {
             }
         });
 
+        console.log('FIND ELEMENT TTTTTTTT = '+_domElement);
+
         this.browser.actorTryToFindThisElement(_domElement).
             then(function (webElement) {
+
                 var deferred = that.browser.webdriver.promise.defer();
                 that.browser.applyCriteria(webElement, function (webElement) {
                     deferred.fulfill(webElement);
