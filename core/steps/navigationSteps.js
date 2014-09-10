@@ -48,11 +48,6 @@ module.exports = navigationSteps = function () {
             then(function switchToNewHandle(handle) {
                return that.browser.switchToNewHandle(handle);
             }).
-            then(function waitForPageInTheNewTabToBeReady(la) {
-                // var _by = that.browser.webdriver.By;
-                //return that.browser.waitForElementToBeReady(_by.tagName('title'),5000)
-               return la//that.browser.waitForPageToBeReady(la);
-            }).
             then(function onOK() {
                 callback();
             }).
