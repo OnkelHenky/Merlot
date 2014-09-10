@@ -133,17 +133,19 @@ BlueprintRunner.prototype.addConfiguration = function (config) {
      */
     function _serverBuilder(caps, server, browser) {
 
-        var ChromeOptions = require('selenium-webdriver/chrome').Options;
-        var _chromeOpt = new ChromeOptions().addArguments("test-type");
-
         if ('chrome' === browser) {
+            /*Adding chrome options to avoid error massages*/
+            var ChromeOptions = require('selenium-webdriver/chrome').Options;
+            var _chromeOpt = new ChromeOptions().addArguments("test-type");
+
             return new webdriver.Builder().
-                usingServer(_server.address()).
+                usingServer(server.address()).
                 withCapabilities(caps).
                 setChromeOptions(_chromeOpt);
+
         } else {
             return new webdriver.Builder().
-                usingServer(_server.address()).
+                usingServer(server.address()).
                 withCapabilities(caps);
         }
 
@@ -180,9 +182,12 @@ BlueprintRunner.prototype.addConfiguration = function (config) {
                     break;
                 case 'ie':
                     this.logger.info('Internet Explorer is not yet supported, using Chrome instead');
+                    _serverCapabilities = webdriver.Capabilities.chrome();
+                    break;
                 default :
                     this.logger.info(self.config.browser + ' is not defined, using Chrome instead');
                     _serverCapabilities = webdriver.Capabilities.chrome();
+                    break;
             }
 
             self.driver = _serverBuilder(_serverCapabilities, _server, self.config.browser).build();
