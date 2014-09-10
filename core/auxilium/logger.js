@@ -74,7 +74,7 @@ Logger.prototype.addProperties = function (properties) {
 Logger.prototype.log = function (stuff) {
     var _style = this.style;
     if(this.getLogLevel() >= 1) {
-        this.sys.puts(_style.foreground.magenta("Debug:")+ _style.foreground.green(stuff));
+        this.sys.puts("\n\r"+_style.foreground.magenta("Debug:")+ _style.foreground.green(stuff));
     }
 };
 
@@ -87,9 +87,9 @@ Logger.prototype.dir = function (stuff, inspectProperties) {
     var _style = this.style;
     if(this.getLogLevel() >= 2) {
         if(inspectProperties){
-            this.sys.puts(this.sys.inspect(stuff, inspectProperties));
+            this.sys.puts("\n\r"+this.sys.inspect(stuff, inspectProperties));
         }else{
-            this.sys.puts(this.sys.inspect(stuff));
+            this.sys.puts("\n\r"+this.sys.inspect(stuff));
         }
     }
 };
@@ -104,7 +104,7 @@ Logger.prototype.dir = function (stuff, inspectProperties) {
 Logger.prototype.info = function (stuff) {
     var _style = this.style;
     if(this.getLogLevel() >= 2) {
-        this.sys.puts(_style.extras.underline(_style.foreground.cyan("Info:")) + " " + _style.foreground.green(stuff));
+        this.sys.puts("\n\r"+_style.extras.underline(_style.foreground.cyan("Info:")) + " " + _style.foreground.green(stuff));
     }
 };
 
@@ -118,6 +118,6 @@ Logger.prototype.info = function (stuff) {
 Logger.prototype.error = function (stuff) {
     var _style = this.style;
     if(this.getLogLevel() === 3) {
-        this.sys.puts(_style.extras.underline(_style.extras.bold(_style.foreground.red("Error:")))+ " " + _style.foreground.green(stuff));
+        this.sys.puts("\n\r"+_style.extras.underline(_style.extras.bold(_style.foreground.red("Error:")))+ " " + _style.foreground.green(stuff));
     }
 };

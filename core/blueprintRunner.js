@@ -186,12 +186,11 @@ BlueprintRunner.prototype.addConfiguration = function (config) {
 
             self.driver = _serverBuilder(_serverCapabilities,_server,self.config.browser).build();
 
-
-        var timeouts =  new  self.webdriver.WebDriver.Timeouts(self.driver);
-             timeouts.pageLoadTimeout(5000); //set timer to wait for pages to be loaded
-             timeouts.implicitlyWait(3000); //wait 3 seconds for every element to retrieve
-
+        var timeouts = new self.webdriver.WebDriver.Timeouts(self.driver);
+          //  timeouts.pageLoadTimeout(10000); //set timer to wait for pages to be loaded
+          //  timeouts.implicitlyWait(10000); //wait 3 seconds for every element to retrieve
         }
+
     } catch (ex) {
         this.logger.dir(ex);
         this.logger.log('Selenium JAR not found at ' + ex['path']);
@@ -392,8 +391,58 @@ BlueprintRunner.prototype.getAllWindowHandles = function () {
  * @returns {*} a promise
  */
 BlueprintRunner.prototype.switchToNewHandle = function (handle) {
-    // this.driver.close(); /*closing old handle*/
-   return this.driver.switchTo().window(handle);
+var _driver = this.driver,
+    _by = this.webdriver.By,
+    _deferred = this.webdriver.promise.defer();
+
+ _driver.findElement(_by.tagName("html")).
+    then(function (_lastActiveWebElement) {
+            _driver.switchTo().window(handle).
+                then(function () {
+                    function isPageReady(lastActiveElement){
+                        console.log('isPAGERADEY?????');
+                        return  lastActiveElement.findElement(_by.id("LL1234OOLL")).
+                            then(function (found) {
+                                console.log('found = '+found);
+                                return false;
+                            }).
+                            then(null, function (error) {
+                                console.log('Error = ' + error.name) //StaleElementReferenceError;
+                                return('StaleElementReferenceError' === error.name);
+
+                            });
+                    }
+
+                    _driver.wait(function() { //wait until ...
+                            return isPageReady(_lastActiveWebElement);
+                    }).
+                    then (function (erg) {
+                        _deferred.fulfill(true);
+                    });
+
+           });
+        });
+
+
+    /*
+
+     driver.findElements(By.tagName('a'));
+     return webdriver.promise.filter(links, function(link) {
+     return links.isDisplayed();
+     }).then(function(visibleLinks) {
+     return visibleLinks[0];
+     });
+
+     */
+
+ /* return _driver.close().
+       then(function () {
+           //_driver.sleep(1000);
+           return _driver.switchTo().window(handle);
+       })
+       */
+
+    return _deferred.promise;
 };
 
 /**
@@ -416,20 +465,48 @@ BlueprintRunner.prototype.waitForElementToBeReady = function (locator,TIMEOUT) {
  * @param TIMEOUT the time in milliseconds to wait for the page to be ready
  * @returns {*} a promise
  */
-BlueprintRunner.prototype.waitForPageToBeReady = function (TIMEOUT) {
+BlueprintRunner.prototype.waitForPageToBeReady = function (lastActiveElement) {
    var  _driver = this.driver,
-         that = this;
+         that = this,
+        _by = this.webdriver.By,
+         TIMEOUT = 5000;
 
+
+
+    function isPageReady(lastActiveElement){
+    return  lastActiveElement.findElement(_by.id("1234")).
+            then(function (found) {
+                console.log('found = '+found);
+                return false;
+            }).
+        then(null, function (error) {
+            console.log('error' + error.name) //StaleElementReferenceError;
+            if('StaleElementReferenceError' === error.name){
+                return true;
+            }
+            return false;
+
+        });
+    }
+
+    return  _driver.wait(function() { //wait until ...
+        return isPageReady(lastActiveElement);
+    }, TIMEOUT,"Element is not ready after "+TIMEOUT+" milliseconds");
+
+    /*
    function isPageReady(){
-      return _driver.executeScript("return document.readyState").
-             then(function (state) {
-                 return ('complete' === state);
+      return _driver.executeScript("return {'state': document.readyState, 'url':document.documentURI }").
+             then(function (document) {
+                 console.log('Page URL = '+document.url);
+                 console.log('Page State = '+document.state);
+                 return ('complete' === document.state);
              });
    }
 
     return  _driver.wait(function() { //wait until ...
                return isPageReady();
     }, TIMEOUT,"Element is not ready after "+TIMEOUT+" milliseconds");
+    */
 };
 
 
