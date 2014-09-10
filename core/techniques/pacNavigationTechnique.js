@@ -10,7 +10,8 @@ var ElementNotFoundError = require('../auxilium/MerlotErrors').ElementNotFoundEr
 
 
 /**
- * Find a WebElement by using an XPah expression
+ * @description
+ * Find a WebElement by using an XPath expression
  * @type {pacXpathNavigationTechnique}
  */
 module.exports.pacXpathNavigationTechnique = function (domElement) {
@@ -74,7 +75,8 @@ module.exports.pacCSSSelectorNavigationTechnique = function (domElement) {
 
 
 /**
- *
+ * @description
+ * Interact with an option element in a radio group
  * @param selectionElement
  * @param domElement
  * @returns {promise}

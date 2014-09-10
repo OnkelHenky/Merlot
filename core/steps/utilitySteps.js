@@ -11,19 +11,25 @@
  */
 module.exports = utility_Steps = function () {
 
-     // Set the actor, tell the browser to run with a specific actor
+    /**
+     * Set the actor, tell the browser to run with a specific actor
+     */
     this.Given(/^Actor is "([^"]*)"$/, function (thisActor, callback) {
         this.browser.runWithThatActor(thisActor);
         callback();
     });
 
-    //Setting the user name, used in a scenario, 'globally'
+    /**
+     * Setting the user name, used in a scenario, 'globally'
+     */
     this.Given(/^Username is "([^"]*)"$/, function (username, callback) {
         this.browser.setLoginCredentialsForActor('username', username);
         callback();
     });
 
-    //Setting the password, used in a scenario, 'globally'
+    /**
+     * Setting the password, used in a scenario, 'globally'
+     */
     this.Given(/^Password is "([^"]*)"$/, function (password, callback) {
         this.browser.setLoginCredentialsForActor('password', password);
         callback();

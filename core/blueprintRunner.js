@@ -15,7 +15,8 @@ var webdriver = require('selenium-webdriver'),
  */
 var BlueprintRunner,
     ActorProvider = require('./actors/actorProvider').ActorProvider,
-    DOMElement = require('./auxilium/DOMElement');
+    DOMElement = require('./auxilium/DOMElement'),
+    TagNameDictionary = require('./auxilium/tagNameDictionary'),
     Merlot = require('./Merlot').Merlot;
 
 /**
@@ -88,6 +89,7 @@ BlueprintRunner.prototype.resolveAttributeName = function (identifiedBy) {
         case "@style":
             _resolvedIdentifiedBy =  identifiedBy.split("@")[1]; /* Cutting of the '@' */
             break;
+        case "textNode":
         case ">text":
             _resolvedIdentifiedBy = "textNode"; //identifiedBy.split(">")[1]; /* Cutting of the '>' */
             break;
@@ -202,17 +204,58 @@ BlueprintRunner.prototype.addConfiguration = function (config) {
 };
 
 /**
+ * TODO: function is deprecated
+ * @description
+ * Create a new DOMElement with the given properties
+ * @deprecated
+ * @param properties
+ * @returns {DOMElement}
+ */
+BlueprintRunner.prototype.createDOMElementProperties = function (properties) {
+   if (properties){
+     return new DOMElement(properties);
+   } else{
+      throw new Error("Can not create new DOMElement with empty properties!") ;
+   }
+};
+
+/**
  * @description
  * Create a new DOMElement with the given properties
  * @param properties
  * @returns {DOMElement}
  */
 BlueprintRunner.prototype.createDOMElement = function (properties) {
-   if (properties){
-     return new DOMElement(properties);
-   } else{
-      throw new Error("Can not create new DOMElement with empty properties!") ;
-   }
+
+    var _resolvedTagName,
+        _resolvedType,
+        _resolvedAttributeName = this.resolveAttributeName(properties.identifiedBy);
+
+
+    if (TagNameDictionary.hasOwnProperty(properties.tagName)) {
+
+        _resolvedTagName = TagNameDictionary[properties.tagName].eleName;
+        _resolvedType = TagNameDictionary[properties.tagName].type;
+
+        var domeElementProperties = {
+            'tagName': _resolvedTagName,
+                'type': _resolvedType,
+                'searchAttribute': {
+                "name": _resolvedAttributeName,
+                    'value': properties.identifierValue
+            }
+        };
+
+        if(properties.name){
+            domeElementProperties.name = properties.name;
+        }
+
+        return new DOMElement(domeElementProperties);
+
+    } else {
+        throw new Error('"' + properties.tagName + '" is not a valid tag name');
+    }
+
 };
 
 /**
@@ -254,7 +297,7 @@ BlueprintRunner.prototype.setLoginCredentialsForActor = function (type,value) {
                     that.actor.setUsername(value);
                     break;
                 case 'password':
-                    that.actor.setPassword(value)
+                    that.actor.setPassword(value);
                     break;
                 default:
                     throw new TypeError("Type "+ type + " for 'setLoginCredentialsForActor is not allowed, use 'username' or 'password'");
@@ -304,16 +347,12 @@ BlueprintRunner.prototype.applyCriteria = function (webElement,cb) {
 
 /**
  * @description
- * Enter some text into the given text field, provided by the WebElement.
+ * Enter text into the given text field, provided by the WebElement.
  * @param webElement , the reference to the text field
  * @param text , the text that should be entered into the WebElement.
- * @param callback
  */
-BlueprintRunner.prototype.enterText = function (webElement,text,callback) {
-     webElement.sendKeys(text)
-         .then(function () {
-             callback();
-         });
+BlueprintRunner.prototype.enterText = function (webElement,text) {
+   return webElement.sendKeys(text);
 };
 
 /**
@@ -354,8 +393,6 @@ BlueprintRunner.prototype.goTo = function (where, callback) {
             callback();
         });
 };
-
-
 
 /**
  * @description
@@ -398,7 +435,7 @@ BlueprintRunner.prototype.switchToNewHandle = function (handle) {
         _by = this.webdriver.By,
         _deferred = this.webdriver.promise.defer();
 
-    function isPageReady(htmlElementOfTheOldPage) {
+    function isPageStale(htmlElementOfTheOldPage) {
         return  htmlElementOfTheOldPage.findElement(_by.id("12SomeIDdoesntMatter345")).
             then(function whatWeFoundAElement() {
                 return false;
@@ -412,8 +449,8 @@ BlueprintRunner.prototype.switchToNewHandle = function (handle) {
         then(function switchToNewHandle(htmlElementOfTheOldPage) {
             _driver.switchTo().window(handle).
                 then(function waitForThePageToBeReady() {
-                    _driver.wait(function () { //wait until ...
-                        return isPageReady(htmlElementOfTheOldPage);
+                    _driver.wait(function untilOldPageHasGoneStale() { //wait until ...
+                        return isPageStale(htmlElementOfTheOldPage);
                     }).
                     then(function pageShouldBeReadyNow() {
                          _deferred.fulfill(true);
