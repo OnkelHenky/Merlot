@@ -98,20 +98,22 @@ module.exports = navigationSteps = function () {
 
         this.browser.actorTryToFindThisElement(_domElement).
             then(function (webElement) {
-
                 var deferred = that.browser.webdriver.promise.defer();
+
                 that.browser.applyCriteria(webElement, function (webElement) {
                     deferred.fulfill(webElement);
                 });
+
                 return deferred.promise;
             }).
             then(function (webElement) {
-                return that.browser.click(webElement, that.browser.webdriver.Key.ENTER);
+                return that.browser.click(webElement);
             }).
-            then(function () {
+            then(function onOK() {
+                console.log('onOK');
                 callback();
             }).
-            then(null, function (err) {
+            then(null, function onError(err) {
                 callback.fail(new Error("Merlot reported an error! " + err + " with DOMElement: " + _domElement).message);
             });
     });
@@ -154,6 +156,7 @@ module.exports = navigationSteps = function () {
                 callback.fail(new Error("Merlot reported an error! " + err + " with DOMElement: " + _domElement).message);
             });
     });
+
     /**
      * Step to interact with an html element.
      * The step first performs an look up for the element and a interaction if the look up was successfully.
@@ -181,12 +184,12 @@ module.exports = navigationSteps = function () {
                 return deferred.promise;
             }).
             then(function (webElement) {
-                return that.browser.click(webElement, that.browser.webdriver.Key.ENTER);
+                return that.browser.click(webElement);
             }).
-            then(function () {
+            then(function onOK() {
                 callback();
             }).
-            then(null, function (err) {
+            then(null, function onError(err) {
                 callback.fail(new Error("Merlot reported an error! " + err + " with DOMElement: " + _domElement).message);
             });
     });

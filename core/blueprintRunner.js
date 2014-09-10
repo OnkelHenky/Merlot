@@ -131,7 +131,7 @@ BlueprintRunner.prototype.addConfiguration = function (config) {
      * If the the browser is 'chrome', special options for are passed
      * to the webdriver, to avoid any errors in the browser.
      */
-    function _serverBuilder(caps, server, browser) {
+    function driverBuilder(caps, server, browser) {
 
         if ('chrome' === browser) {
             /*Adding chrome options to avoid error massages*/
@@ -190,7 +190,7 @@ BlueprintRunner.prototype.addConfiguration = function (config) {
                     break;
             }
 
-            self.driver = _serverBuilder(_serverCapabilities, _server, self.config.browser).build();
+            self.driver = driverBuilder(_serverCapabilities, _server, self.config.browser).build();
 
             //  var timeouts = new self.webdriver.WebDriver.Timeouts(self.driver);
             //  timeouts.pageLoadTimeout(10000); //set timer to wait for pages to be loaded
@@ -320,8 +320,7 @@ BlueprintRunner.prototype.setLoginCredentialsForActor = function (type, value) {
  * @returns {*} a promise
  */
 BlueprintRunner.prototype.actorTryToFindThisElement = function (domElement) {
-    var _actor = this.actor;
-    return  _actor.findElement.call(this, domElement);
+    return this.actor.findElement.call(this, domElement);
 };
 
 
@@ -329,11 +328,9 @@ BlueprintRunner.prototype.actorTryToFindThisElement = function (domElement) {
  * @description
  * Let the actor perform a 'click'
  * @param webEle
- * @param type
  */
-BlueprintRunner.prototype.click = function (webEle, type) {
-    var _actor = this.actor;
-    return _actor.click.call(this, webEle, type);
+BlueprintRunner.prototype.click = function (webEle) {
+    return this.actor.click.call(this, webEle);
 };
 
 /**
@@ -345,8 +342,7 @@ BlueprintRunner.prototype.click = function (webEle, type) {
  * @param cb
  */
 BlueprintRunner.prototype.applyCriteria = function (webElement, cb) {
-    var _actor = this.actor;
-    _actor.criteriaBundle.checkCriterion(webElement, cb);
+    this.actor.criteriaBundle.checkCriterion(webElement, cb);
 };
 
 /**

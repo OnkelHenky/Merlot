@@ -43,5 +43,6 @@ Paul.prototype.interactWithSelection = techniqueRepository.techniques['PAC_Selec
  * Technique used to interact (click) with a component on the web application
  */
 Paul.prototype.click = techniqueRepository.techniques['Click_Mouse'];
+//Paul.prototype.click = techniqueRepository.techniques['Click_ReturnKey'];
 
 Paul.prototype.criteriaBundle = new CriteriaProvider(['Void']).getCriteria();
