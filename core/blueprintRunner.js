@@ -25,18 +25,18 @@ var BlueprintRunner,
  * @type {BlueprintRunner}
  * @constructor
  */
-BlueprintRunner = exports.BlueprintRunner = function(config) {
+BlueprintRunner = exports.BlueprintRunner = function (config) {
 
     /*Information*/
-    this._type_    = "BlueprintRunner Object"; //Name of the object
+    this._type_ = "BlueprintRunner Object"; //Name of the object
 
-    this.config  = {
+    this.config = {
         'seleniumPath': '',
-        'port' : '4444',
-        'browser' : 'chrome',
-        'pageTimeout' : 5000,
-        'elementTimeout' : 5000,
-        'debug' : true
+        'port': '4444',
+        'browser': 'chrome',
+        'pageTimeout': 5000,
+        'elementTimeout': 5000,
+        'debug': true
 
     };
 
@@ -44,13 +44,13 @@ BlueprintRunner = exports.BlueprintRunner = function(config) {
     this.aux = this.utile._aux_; //From Merlot object
 
     /*Properties*/
-    this.logger = new Logger({'logLevel' : 0});
+    this.logger = new Logger({'logLevel': 0});
     this.driver = {};
     this.webdriver = webdriver;
     this.actor = new ActorProvider.Actors["Paul"]; //Default actor
 
 
-    if(config && (config.seleniumPath && config.port && config.browser)) {
+    if (config && (config.seleniumPath && config.port && config.browser)) {
         this.addConfiguration(config);
     } else {
         this.addConfiguration(this.config);
@@ -79,7 +79,7 @@ BlueprintRunner.prototype.resolveAttributeName = function (identifiedBy) {
     var self = this,
         _resolvedIdentifiedBy;
 
-    switch (identifiedBy){
+    switch (identifiedBy) {
         case "@id":
         case "@name":
         case "@href":
@@ -87,14 +87,15 @@ BlueprintRunner.prototype.resolveAttributeName = function (identifiedBy) {
         case "@label":
         case "@css":
         case "@style":
-            _resolvedIdentifiedBy =  identifiedBy.split("@")[1]; /* Cutting of the '@' */
+            _resolvedIdentifiedBy = identifiedBy.split("@")[1];
+            /* Cutting of the '@' */
             break;
         case "textNode":
         case ">text":
             _resolvedIdentifiedBy = "textNode"; //identifiedBy.split(">")[1]; /* Cutting of the '>' */
             break;
         default:
-            throw new Error('"'+identifiedBy+'" is not valid identifier! e.g.; "@id", "@name", "@value" or ">text", to get the text node value');
+            throw new Error('"' + identifiedBy + '" is not valid identifier! e.g.; "@id", "@name", "@value" or ">text", to get the text node value');
             break;
     }
 
@@ -116,15 +117,13 @@ BlueprintRunner.prototype.resolveAttributeName = function (identifiedBy) {
  */
 BlueprintRunner.prototype.addConfiguration = function (config) {
     var self = this;
-
-
     /*
      * Enable Merlot debug logger if the config contains the property
      * 'config.logLevel' with a valid 'numeric' value.
      *  1 = Only Logs; 2 = Logs and Info; 3 =  Logs, Info and Errors
      */
-    if(config.logLevel !== undefined && this.aux.isNumber(config.logLevel)){
-        this.logger = new Logger({'logLevel' :config.logLevel});
+    if (config.logLevel !== undefined && this.aux.isNumber(config.logLevel)) {
+        this.logger = new Logger({'logLevel': config.logLevel});
     }
 
     /*
@@ -132,17 +131,17 @@ BlueprintRunner.prototype.addConfiguration = function (config) {
      * If the the browser is 'chrome', special options for are passed
      * to the webdriver, to avoid any errors in the browser.
      */
-    function _serverBuilder(caps,server,browser){
+    function _serverBuilder(caps, server, browser) {
 
-        var ChromeOptions =  require('selenium-webdriver/chrome').Options;
+        var ChromeOptions = require('selenium-webdriver/chrome').Options;
         var _chromeOpt = new ChromeOptions().addArguments("test-type");
 
-        if('chrome' === browser){
+        if ('chrome' === browser) {
             return new webdriver.Builder().
                 usingServer(_server.address()).
                 withCapabilities(caps).
                 setChromeOptions(_chromeOpt);
-        }else{
+        } else {
             return new webdriver.Builder().
                 usingServer(_server.address()).
                 withCapabilities(caps);
@@ -182,15 +181,15 @@ BlueprintRunner.prototype.addConfiguration = function (config) {
                 case 'ie':
                     this.logger.info('Internet Explorer is not yet supported, using Chrome instead');
                 default :
-                    this.logger.info(self.config.browser +' is not defined, using Chrome instead');
+                    this.logger.info(self.config.browser + ' is not defined, using Chrome instead');
                     _serverCapabilities = webdriver.Capabilities.chrome();
             }
 
-            self.driver = _serverBuilder(_serverCapabilities,_server,self.config.browser).build();
+            self.driver = _serverBuilder(_serverCapabilities, _server, self.config.browser).build();
 
-        var timeouts = new self.webdriver.WebDriver.Timeouts(self.driver);
-          //  timeouts.pageLoadTimeout(10000); //set timer to wait for pages to be loaded
-          //  timeouts.implicitlyWait(10000); //wait 3 seconds for every element to retrieve
+            var timeouts = new self.webdriver.WebDriver.Timeouts(self.driver);
+            //  timeouts.pageLoadTimeout(10000); //set timer to wait for pages to be loaded
+            //  timeouts.implicitlyWait(10000); //wait 3 seconds for every element to retrieve
         }
 
     } catch (ex) {
@@ -212,11 +211,11 @@ BlueprintRunner.prototype.addConfiguration = function (config) {
  * @returns {DOMElement}
  */
 BlueprintRunner.prototype.createDOMElementProperties = function (properties) {
-   if (properties){
-     return new DOMElement(properties);
-   } else{
-      throw new Error("Can not create new DOMElement with empty properties!") ;
-   }
+    if (properties) {
+        return new DOMElement(properties);
+    } else {
+        throw new Error("Can not create new DOMElement with empty properties!");
+    }
 };
 
 /**
@@ -239,14 +238,14 @@ BlueprintRunner.prototype.createDOMElement = function (properties) {
 
         var domeElementProperties = {
             'tagName': _resolvedTagName,
-                'type': _resolvedType,
-                'searchAttribute': {
+            'type': _resolvedType,
+            'searchAttribute': {
                 "name": _resolvedAttributeName,
-                    'value': properties.identifierValue
+                'value': properties.identifierValue
             }
         };
 
-        if(properties.name){
+        if (properties.name) {
             domeElementProperties.name = properties.name;
         }
 
@@ -264,19 +263,19 @@ BlueprintRunner.prototype.createDOMElement = function (properties) {
  * @param actor {string} the name of the actor.
  */
 BlueprintRunner.prototype.runWithThatActor = function (actor) {
-  var that = this,
-      _aux = that.utile._aux_;
+    var that = this,
+        _aux = that.utile._aux_;
 
-    if(_aux.isString(actor)){
+    if (_aux.isString(actor)) {
 
-        if(ActorProvider.Actors[actor]){
+        if (ActorProvider.Actors[actor]) {
             that.actor = new ActorProvider.Actors[actor];
-            this.logger.info('Using "'+that.actor+'" as actor');
-        }else{
-            throw new ReferenceError('Actor with name "'+actor+'" not found')
+            this.logger.info('Using "' + that.actor + '" as actor');
+        } else {
+            throw new ReferenceError('Actor with name "' + actor + '" not found')
         }
-    }else{
-        throw new TypeError('Actor with name "'+actor+'" not defined');
+    } else {
+        throw new TypeError('Actor with name "' + actor + '" not defined');
     }
 };
 
@@ -286,12 +285,12 @@ BlueprintRunner.prototype.runWithThatActor = function (actor) {
  * @param type
  * @param value
  */
-BlueprintRunner.prototype.setLoginCredentialsForActor = function (type,value) {
+BlueprintRunner.prototype.setLoginCredentialsForActor = function (type, value) {
     var that = this,
         _aux = that.utile._aux_;
 
-    if(that.actor){
-        if(_aux.isString(type) && _aux.isString(value)) {
+    if (that.actor) {
+        if (_aux.isString(type) && _aux.isString(value)) {
             switch (type) {
                 case 'username':
                     that.actor.setUsername(value);
@@ -300,11 +299,11 @@ BlueprintRunner.prototype.setLoginCredentialsForActor = function (type,value) {
                     that.actor.setPassword(value);
                     break;
                 default:
-                    throw new TypeError("Type "+ type + " for 'setLoginCredentialsForActor is not allowed, use 'username' or 'password'");
+                    throw new TypeError("Type " + type + " for 'setLoginCredentialsForActor is not allowed, use 'username' or 'password'");
                     break;
             }
         }
-    }else{
+    } else {
         throw new TypeError("No actor defined in the blueprintRunner, therefor you cant set any LoginCredentials ");
     }
 };
@@ -316,8 +315,8 @@ BlueprintRunner.prototype.setLoginCredentialsForActor = function (type,value) {
  * @returns {*} a promise
  */
 BlueprintRunner.prototype.actorTryToFindThisElement = function (domElement) {
-      var _actor = this.actor;
-  return  _actor.findElement.call(this,domElement);
+    var _actor = this.actor;
+    return  _actor.findElement.call(this, domElement);
 };
 
 
@@ -327,9 +326,9 @@ BlueprintRunner.prototype.actorTryToFindThisElement = function (domElement) {
  * @param webEle
  * @param type
  */
-BlueprintRunner.prototype.click = function (webEle,type) {
+BlueprintRunner.prototype.click = function (webEle, type) {
     var _actor = this.actor;
-    return _actor.click.call(this,webEle,type);
+    return _actor.click.call(this, webEle, type);
 };
 
 /**
@@ -340,9 +339,9 @@ BlueprintRunner.prototype.click = function (webEle,type) {
  * @param webElement
  * @param cb
  */
-BlueprintRunner.prototype.applyCriteria = function (webElement,cb) {
+BlueprintRunner.prototype.applyCriteria = function (webElement, cb) {
     var _actor = this.actor;
-    _actor.criteriaBundle.checkCriterion(webElement,cb);
+    _actor.criteriaBundle.checkCriterion(webElement, cb);
 };
 
 /**
@@ -351,8 +350,8 @@ BlueprintRunner.prototype.applyCriteria = function (webElement,cb) {
  * @param webElement , the reference to the text field
  * @param text , the text that should be entered into the WebElement.
  */
-BlueprintRunner.prototype.enterText = function (webElement,text) {
-   return webElement.sendKeys(text);
+BlueprintRunner.prototype.enterText = function (webElement, text) {
+    return webElement.sendKeys(text);
 };
 
 /**
@@ -365,9 +364,9 @@ BlueprintRunner.prototype.enterText = function (webElement,text) {
  * @param domElement
  * @returns {*} - A promise with the radio button.
  */
-BlueprintRunner.prototype.interactWithRadioButton = function (webElement,domElement) {
+BlueprintRunner.prototype.interactWithRadioButton = function (webElement, domElement) {
     var _actor = this.actor;
-    return _actor.interactWithRadioButton.call(this,webElement,domElement);
+    return _actor.interactWithRadioButton.call(this, webElement, domElement);
 };
 
 /**
@@ -376,9 +375,9 @@ BlueprintRunner.prototype.interactWithRadioButton = function (webElement,domElem
  * @param domElement
  * @returns {*}
  */
-BlueprintRunner.prototype.interactWithSelection = function (webElement,domElement) {
+BlueprintRunner.prototype.interactWithSelection = function (webElement, domElement) {
     var _actor = this.actor;
-   return _actor.interactWithSelection.call(this,webElement,domElement);
+    return _actor.interactWithSelection.call(this, webElement, domElement);
 };
 
 /**
@@ -452,9 +451,9 @@ BlueprintRunner.prototype.switchToNewHandle = function (handle) {
                     _driver.wait(function untilOldPageHasGoneStale() { //wait until ...
                         return isPageStale(htmlElementOfTheOldPage);
                     }).
-                    then(function pageShouldBeReadyNow() {
-                         _deferred.fulfill(true);
-                    });
+                        then(function pageShouldBeReadyNow() {
+                            _deferred.fulfill(true);
+                        });
                 });
         });
 
@@ -468,11 +467,11 @@ BlueprintRunner.prototype.switchToNewHandle = function (handle) {
  * @param TIMEOUT the time in milliseconds to wait for the element
  * @returns {*}  a promise
  */
-BlueprintRunner.prototype.waitForElementToBeReady = function (locator,TIMEOUT) {
-    var  _driver = this.driver;
-    return _driver.wait(function() {  //wait until ...
-            return _driver.isElementPresent(locator);
-    }, TIMEOUT,"Element was not ready after "+TIMEOUT+" milliseconds");
+BlueprintRunner.prototype.waitForElementToBeReady = function (locator, TIMEOUT) {
+    var _driver = this.driver;
+    return _driver.wait(function () {  //wait until ...
+        return _driver.isElementPresent(locator);
+    }, TIMEOUT, "Element was not ready after " + TIMEOUT + " milliseconds");
 };
 
 
@@ -481,5 +480,5 @@ BlueprintRunner.prototype.waitForElementToBeReady = function (locator,TIMEOUT) {
  * Close the driver instance, which closes also the browser process.
  */
 BlueprintRunner.prototype.closeDriver = function () {
-      this.driver.close();
+    this.driver.close();
 };

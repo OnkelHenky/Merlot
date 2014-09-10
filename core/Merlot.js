@@ -10,11 +10,11 @@ var Merlot;
  * @description The prototype for an actor
  * @type {ActorBuilder}
  */
-module.exports.Merlot = Merlot =  function(properties) {
+module.exports.Merlot = Merlot = function (properties) {
 
     /*Information*/
     this._version_ = "0.0.1"; //Version number of the Actor
-    this._type_    = "Merlot Object"; //Name of the object
+    this._type_ = "Merlot Object"; //Name of the object
 };
 
 /**
@@ -69,6 +69,6 @@ Merlot.prototype.getTypeName = function () {
  * @returns {string}
  */
 Merlot.prototype.toString = function () {
-    return this.getTypeName()+" "+this.getVersion();
+    return this.getTypeName() + " " + this.getVersion();
 };
 
