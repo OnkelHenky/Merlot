@@ -4,9 +4,6 @@
  */
 
 
-var auxilia = require('../auxilium/auxiliaFunctions'),
-    tagNameDictionary = require('../auxilium/tagNameDictionary');
-
 /**
  * @description
  * Contains steps for interacting with form and input element on a web page

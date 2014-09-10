@@ -2,9 +2,6 @@
  * Created by Henka on 18.06.14.
  */
 
-var _tagNameDictionary = require('../auxilium/tagNameDictionary');
-
-
 /**
  * @description
  * Contains steps for navigating on a web page
