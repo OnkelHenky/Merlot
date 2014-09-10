@@ -187,7 +187,7 @@ BlueprintRunner.prototype.addConfiguration = function (config) {
 
             self.driver = _serverBuilder(_serverCapabilities, _server, self.config.browser).build();
 
-            var timeouts = new self.webdriver.WebDriver.Timeouts(self.driver);
+            //  var timeouts = new self.webdriver.WebDriver.Timeouts(self.driver);
             //  timeouts.pageLoadTimeout(10000); //set timer to wait for pages to be loaded
             //  timeouts.implicitlyWait(10000); //wait 3 seconds for every element to retrieve
         }
