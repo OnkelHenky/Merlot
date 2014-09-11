@@ -119,7 +119,7 @@ module.exports.keyboardInteractionTechnique = function (webElement, domElement) 
             then(null, function onError(er) {
                 /* Rejecting the blueprint step if any error occurs during the interaction with a radio button element, */
                 // _deferred.reject();
-                 throw new ElementNotFoundError();
+                throw new ElementNotFoundError();
 
                 /* NOTE: Usually any error gets propagated through the promise chain
                  * but to keep the overview over the code, i  prefer to catch errors thrown in the functions
