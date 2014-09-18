@@ -1,19 +1,20 @@
 {
-    "name": "merlot",
-    "version": "0.0.1",
-    "description": "Persona Based Accessibility Evaluation using Selenium, Cucumber, Node.js and Personas",
-    "author": "Alexander Henka,  Alexander.Henka@googlemail.com",
-    "license": "Apache 2.0",
-    "main": "./core/index.js",
-    "keywords": [
-        "selenium",
-        "merlot",
-        "cucumber",
-        "personas",
-        "accessibility evaluation"
-    ],
-    "dependencies": {
-        "selenium-webdriver": ">= 2.42.1",
-        "cucumber": ">= 0.4.1"
-    }
+  "name": "merlot",
+  "version": "0.0.1",
+  "description": "Persona Based Accessibility Evaluation using Selenium, Cucumber, Node.js and Personas",
+  "author": "Alexander Henka,  Alexander.Henka@googlemail.com",
+  "license": "Apache 2.0",
+  "main": "./core/index.js",
+  "keywords": [
+    "selenium",
+    "merlot",
+    "cucumber",
+    "personas",
+    "accessibility evaluation"
+  ],
+  "dependencies": {
+    "express": "^4.9.0",
+    "selenium-webdriver": "2.43.4",
+    "socket.io": "^1.1.0"
+  }
 }
