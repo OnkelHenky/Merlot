@@ -16,7 +16,6 @@ var compareObject = function(){
 
     /*Properties*/
     this.tagName                = "input";
-    this.type                   = "";
 
     // {'name' : 'id', 'value': 'textfield123'}
     this.searchAttribute        = {};
