@@ -61,6 +61,7 @@ TestMaster.prototype.closeDriver = function () {
 
 };
 
+
 /**
  * Adding the configuration for a new TestMaster
  * @param config
@@ -70,13 +71,15 @@ TestMaster.prototype.addConfiguration = function (config) {
     console.dir(config);
     try {
         var _stats = fs.statSync(config.seleniumPath);
+
         if (_stats.isFile()) {
+            console.log('_stats +' +_stats);
             self.config = config;
             var _pathToSeleniumJar = self.config.seleniumPath,
                 _server = new SeleniumServer(_pathToSeleniumJar, {
                     port: self.config.port
 
-                });
+            });
 
             console.log("Using selenium from: " + _pathToSeleniumJar);
             _server.start();
@@ -99,14 +102,13 @@ TestMaster.prototype.addConfiguration = function (config) {
                     _serverCapabilities = webdriver.Capabilities.chrome();
             }
 
-            self.driver = new webdriver.Builder().
-                usingServer(_server.address()).
-                withCapabilities(_serverCapabilities).
+            self.driver =  new webdriver.Builder().
+                forBrowser('chrome').
                 build();
 
         }
     } catch (ex) {
-        console.error('Selenium JAR not found at ' + ex['path']);
+        console.error('Selenium JAR not found at ' + config.seleniumPath);
         console.error('HINT: Check for typos');
         throw new Error('Unable to find selenium.jar');
     }
