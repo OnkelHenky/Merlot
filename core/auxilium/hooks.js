@@ -25,7 +25,8 @@ module.exports = hooks = function () {
           // _logger.info("To keep the browser up and running set Merlot log level 3 (Error level) in the Blueprint config");
            this.browser.closeDriver(); //closing the selenium driver (browser)
         }
-
+        // this.browser.closeDriver();
+        this.browser.pinotServer.stop(); //stop the pinot server
         callback();
     });
 

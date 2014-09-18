@@ -18,6 +18,7 @@ var BlueprintRunner,
     DOMElement = require('./auxilium/DOMElement'),
     TagNameDictionary = require('./auxilium/tagNameDictionary'),
     Merlot = require('./Merlot').Merlot;
+    Pinot = require('./pinot/pinot').Pinot;
 
 /**
  * @description
@@ -56,6 +57,9 @@ BlueprintRunner = exports.BlueprintRunner = function (config) {
         this.addConfiguration(this.config);
         //throw new Error("You must provide a blueprint configuration in the format: " + "{'seleniumPath': '/path/to/selenium.jar','port' : '4444','browser' : 'chrome'}");
     }
+
+     this.pinotServer = new Pinot();
+     this.pinotServer.start();
 
 };
 
@@ -138,10 +142,18 @@ BlueprintRunner.prototype.addConfiguration = function (config) {
             var ChromeOptions = require('selenium-webdriver/chrome').Options;
             var _chromeOpt = new ChromeOptions().addArguments("test-type");
 
+            /* New in selenium-webdriver 2.43.x
+             * See: http://www.joecolantonio.com/2014/09/09/selenium-webdriver-version-2-43-0-released/*/
             return new webdriver.Builder().
+                     forBrowser('chrome').
+                     setChromeOptions(_chromeOpt); //.build();
+
+           /* Old pre 2.43.x way
+           return new webdriver.Builder().
                 usingServer(server.address()).
                 withCapabilities(caps).
                 setChromeOptions(_chromeOpt);
+           */
 
         } else {
             return new webdriver.Builder().
@@ -360,10 +372,10 @@ BlueprintRunner.prototype.enterText = function (webElement, text) {
  * Find a radio button in a radio group.
  * With webElement = The first radio button in the group.
  * And domElement = The representation of the radio button, that we are looking for.
- * @throws {ElementNotFoundError} If no radio button with given format defined in 'domElement' can be found with in the radio group.
- * @param webElement
- * @param domElement
- * @returns {*} - A promise with the radio button.
+ * @throws  {ElementNotFoundError} If no radio button with given format defined in 'domElement' can be found with in the radio group.
+ * @param   {Object} webElement
+ * @param   {Object} domElement
+ * @returns {Object} A promise with the radio button.
  */
 BlueprintRunner.prototype.interactWithRadioButton = function (webElement, domElement) {
     var _actor = this.actor;
@@ -388,10 +400,83 @@ BlueprintRunner.prototype.interactWithSelection = function (webElement, domEleme
  * @param callback
  */
 BlueprintRunner.prototype.goTo = function (where, callback) {
-    this.driver.get(where)
-        .then(function () {
-            callback();
-        });
+var self = this;
+    this.driver.get(where).
+        then(function injectPinot(){
+           return  self.driver.executeScript(function() {
+               if (!window.jQuery){
+                   var jqueryScriptTag = document.createElement("script");
+                   jqueryScriptTag.type = "text/javascript";
+
+                   if (jqueryScriptTag.readyState){  //IE
+                       jqueryScriptTag.onreadystatechange = function(){
+                           if (jqueryScriptTag.readyState == "loaded" ||
+                               jqueryScriptTag.readyState == "complete"){
+                               jqueryScriptTag.onreadystatechange = null;
+                             //  cb("jquery loaded");
+                           }
+                       };
+                   } else {  //Others
+                       jqueryScriptTag.onload = function(){
+                        //   cb("jquery loaded");
+                       };
+                   }
+                   jqueryScriptTag.src = "http://localhost:3000/javascripts/jquery-1.11.1.min.js";
+                   document.body.appendChild(jqueryScriptTag);
+                   }
+               });
+
+        }).
+        then(function injectQuail(){
+            return  self.driver.executeScript(function() {
+                    var quailScriptTag = document.createElement("script");
+                    quailScriptTag.type = "text/javascript";
+
+                    if (quailScriptTag.readyState){  //IE
+                        quailScriptTag.onreadystatechange = function(){
+                            if (quailScriptTag.readyState == "loaded" ||
+                                quailScriptTag.readyState == "complete"){
+                                quailScriptTag.onreadystatechange = null;
+                                //  cb("jquery loaded");
+                            }
+                        };
+                    } else {  //Others
+                        quailScriptTag.onload = function(){
+                            //   cb("jquery loaded");
+                        };
+                    }
+                    quailScriptTag.src = "http://localhost:3000/javascripts/quail/quail.jquery.min.js";
+                    document.body.appendChild(quailScriptTag);
+             });
+            }).
+            then(function injectGamay() {
+                if (!window.Gamay) {
+                    return  self.driver.executeScript(function () {
+                        var gamayScriptTag = document.createElement("script");
+                        gamayScriptTag.type = "text/javascript";
+
+                        if (gamayScriptTag.readyState) {  //IE
+                            gamayScriptTag.onreadystatechange = function () {
+                                if (gamayScriptTag.readyState == "loaded" ||
+                                    gamayScriptTag.readyState == "complete") {
+                                    gamayScriptTag.onreadystatechange = null;
+                                    //  cb("jquery loaded");
+                                }
+                            };
+                        } else {  //Others
+                            gamayScriptTag.onload = function () {
+                                //   cb("jquery loaded");
+                            };
+                        }
+                        gamayScriptTag.src = "http://localhost:3000/javascripts/gamay.js";
+                        document.body.appendChild(gamayScriptTag);
+
+                    });
+                }
+            }).
+            then(function () {
+                    callback();
+            });
 };
 
 /**
