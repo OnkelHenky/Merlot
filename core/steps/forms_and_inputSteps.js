@@ -30,6 +30,9 @@ module.exports = forms_and_input_Steps = function () {
             });
 
         this.browser.actorTryToFindThisElement(_domElement).
+            then(function runAccessibilityEvaluation(webElement) {
+                return that.browser.evalAccessibility(webElement);
+            }).
             then(function enterText(webElement) {
                 return that.browser.enterText(webElement, text); //  auxilia.inputText.call(that,text,webElement);
             }).
@@ -67,6 +70,9 @@ module.exports = forms_and_input_Steps = function () {
             });
 
             this.browser.actorTryToFindThisElement(_domElement).
+                then(function runAccessibilityEvaluation(webElement) {
+                    return that.browser.evalAccessibility(webElement);
+                }).
                 then(function (webElement) {
                     return that.browser.enterText(webElement, _username);
                 }).
@@ -106,6 +112,9 @@ module.exports = forms_and_input_Steps = function () {
             });
 
             this.browser.actorTryToFindThisElement(_domElement).
+                then(function runAccessibilityEvaluation(webElement) {
+                    return that.browser.evalAccessibility(webElement);
+                }).
                 then(function (webElement) {
                     return that.browser.enterText(webElement, _password);
                 }).
@@ -143,22 +152,12 @@ module.exports = forms_and_input_Steps = function () {
 
         /*Find the radio group first*/
         this.browser.actorTryToFindThisElement(_domElement).
+            then(function runAccessibilityEvaluation(webElement) {
+                return that.browser.evalAccessibility(webElement);
+            }).
             then(function findTheRadioButtonInTheRadioGroup(webElement){
                 /*Here we have the first element in the radio group*/
-                 return that.browser.interactWithRadioButton(webElement,_domElement);
-            }).
-            then(function (webElement) {
-                /*Here we have the first element in the radio group*/
-                var deferred = that.browser.webdriver.promise.defer();
-                that.browser.applyCriteria(webElement, function (webElement) {
-                    deferred.fulfill(webElement);
-                });
-                return deferred.promise;
-
-            }).
-            then(function (webElement) {
-                /*Here we have the first element in the radio group*/
-                return "";//that.browser.click(webElement,that.browser.webdriver.Key.ENTER);
+                return that.browser.interactWithRadioButton(webElement,_domElement);
             }).
             then(function onOK() {
                 callback();
@@ -192,6 +191,9 @@ module.exports = forms_and_input_Steps = function () {
             });
 
         this.browser.actorTryToFindThisElement(_SELECTdomElement).
+            then(function runAccessibilityEvaluation(webElement) {
+                return that.browser.evalAccessibility(webElement);
+            }).
             then(function applyCriteria(foundSelectionElement) {
                 var deferred = that.browser.webdriver.promise.defer();
                 that.browser.applyCriteria(foundSelectionElement, function (foundSelectionElement, err) {
@@ -234,6 +236,9 @@ module.exports = forms_and_input_Steps = function () {
             });
 
         this.browser.actorTryToFindThisElement(_domElement).
+            then(function runAccessibilityEvaluation(webElement) {
+                return that.browser.evalAccessibility(webElement);
+            }).
             then(function (webElement) {
                 var deferred = that.browser.webdriver.promise.defer();
                 that.browser.applyCriteria(webElement, function (webElement) {

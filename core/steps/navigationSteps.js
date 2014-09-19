@@ -1,7 +1,7 @@
 /**
  * Created by Henka on 18.06.14.
  */
-var HTMLCS = require('../../lib/HTML_CodeSniffer/HTMLCS');
+
 
 /**
  * @description
@@ -38,76 +38,10 @@ module.exports = navigationSteps = function () {
                 }
 
             }).
-            then(function runAccessibilityEvaluation() {
-                self.browser.driver.executeAsyncScript(function() {
-                    window.merlot.eval('#headerBild',arguments[arguments.length - 1]);
-                }).then(function checkResult(result) {
-                    console.log("TEST COMPLETE ... FROM BLUEPRINT RUNNER --- YIHAAA");
-                    console.log("Error Count "+result.totals);
-                    console.dir(result.totals);
-                    console.log("Error Results "+result.results);
-                    console.dir(result.results);
-                    callback();
-                });
-
+            then(function onOK(){
+                callback();
             }).
-
-            /*
-            then(function () {
-
-                if(HTMLCS){console.log('YAHAA' + HTMLCS);}
-
-                function output (msg) {
-                    // Simple output for now.
-                    var typeName = 'UNKNOWN';
-                    switch (msg.type) {
-                        case HTMLCS.ERROR:
-                            typeName = 'ERROR';
-                            break;
-
-                        case HTMLCS.WARNING:
-                            typeName = 'WARNING';
-                            break;
-
-                        case HTMLCS.NOTICE:
-                            typeName = 'NOTICE';
-                            break;
-                    }//end switch
-
-                    console.log(typeName + '|' + msg.code + '|' + msg.msg);
-                };
-
-
-               var html =  "<img id='headerBild' src='./img/merlot2.jpg'>";
-                var html =  "" +
-                    "<html xml:lang='en'>"
-                    + '<head>'
-                    + "<title>Merlot Testbed</title>"
-                    + '<meta name="viewport" content="width=device-width, initial-scale=1">'
-                    +'</head>'
-                    + '<body>'
-                    +    '<header id="pageheader">'
-               + '<h1>Merlot Testbed</h1>'
-               + '<img id="headerBild" src="./img/merlot2.jpg" alt="Image of Merlot Grapes, this is the Logo of the Merlot testbed">'
-               + ' </header>'
-
-                    +'</body></html>'
-
-                var standard = "WCAG2A";
-
-                HTMLCS.process(standard, html, function () {
-                    var messages = HTMLCS.getMessages();
-                    var length = messages.length;
-                    for (var i = 0; i < length; i++) {
-                        output(messages[i]);
-                    }
-
-                    console.log('done');
-                });
-
-
-            }).*/
-            then(null, function (err) {
+            then(null, function onError(err) {
                 callback.fail(err);
             });
     });
@@ -177,12 +111,13 @@ module.exports = navigationSteps = function () {
 
                 return deferred.promise;
             }).
+            then(function runAccessibilityEvaluation(webElement) {
+                return that.browser.evalAccessibility(webElement);
+            }).
             then(function (webElement) {
-                console.log('GHET NOCH');
                 return that.browser.click(webElement);
             }).
             then(function onOK() {
-                console.log('onOK');
                 callback();
             }).
             then(null, function onError(err) {
@@ -217,6 +152,9 @@ module.exports = navigationSteps = function () {
                     deferred.fulfill(webElement);
                 });
                 return deferred.promise;
+            }).
+            then(function runAccessibilityEvaluation(webElement) {
+                return that.browser.evalAccessibility(webElement);
             }).
             then(function (webElement) {
                 return that.browser.click(webElement, that.browser.webdriver.Key.ENTER);
@@ -254,6 +192,9 @@ module.exports = navigationSteps = function () {
                     deferred.fulfill(webElement);
                 });
                 return deferred.promise;
+            }).
+            then(function runAccessibilityEvaluation(webElement) {
+                return that.browser.evalAccessibility(webElement);
             }).
             then(function (webElement) {
                 return that.browser.click(webElement);

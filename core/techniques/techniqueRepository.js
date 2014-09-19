@@ -21,9 +21,6 @@ TechniqueRepository.techniques['Tab_Navigation']            = require('./tabNavi
 TechniqueRepository.techniques['PointAndClick_Navigation']  = require('./pacNavigationTechnique').pacNavigationTechnique;
 TechniqueRepository.techniques['CSS_Navigation']            = require('./pacNavigationTechnique').pacCSSSelectorNavigationTechnique;
 
-/* Interaction */
-TechniqueRepository.techniques['KeyboardTechnique']         = require('./keyboardInteractionTechnique').keyboardInteractionTechnique;
-
 /* Click */
 TechniqueRepository.techniques['Click_Mouse']               = require('./clickTechnique').byPointAndClick;
 TechniqueRepository.techniques['Click_ReturnKey']           = require('./clickTechnique').byUsingTheReturnKey;
@@ -33,8 +30,10 @@ TechniqueRepository.techniques['Click_SpaceKey']            = require('./clickTe
 /*Input and Forms*/
 
 //Selection and Options
-TechniqueRepository.techniques['PAC_SelectOption']               = require('./pacNavigationTechnique').pacSelectOption;
-TechniqueRepository.techniques['Keyboard_SelectOption']          = require('./keyboardInteractionTechnique').keyboardcSelectOption;
+TechniqueRepository.techniques['PAC_SelectOption']                  = require('./pacNavigationTechnique').pacSelectOption;
+TechniqueRepository.techniques['Keyboard_SelectOption']             = require('./keyboardInteractionTechnique').keyboardcSelectOption;
+TechniqueRepository.techniques['Keyboard_RadioButtonInteraction']   = require('./keyboardInteractionTechnique').keyboardRadioButtonInteraction;
+
 
 //TechniqueRepository.techniques['PAC_SelectOption']               = require('./pacNavigationTechnique').pacSelectOption;
 

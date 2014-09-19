@@ -1,9 +1,37 @@
 /**
- * Created by Henka on 07.06.14.
+ *  blueprintRunner.js is part of Merlot
+ *  Copyright (c) by Alexander Henka, 07.06.14.
+ *  Project URL: https://github.com/OnkelHenky/Merlot
+ *
+ * +--------------------------------------------------------------------------+
+ * | LICENSE INFORMATION                                                      |
+ * | ===================                                                      |
+ * |                                                                          |
+ * | Licensed under the Apache License, Version 2.0 (the "License");          |
+ * | you may not use this file except in compliance with the License.         |
+ * | You may obtain a copy of the License at                                  |
+ * |                                                                          |
+ * | http://www.apache.org/licenses/LICENSE-2.0                               |
+ * |                                                                          |
+ * | Unless required by applicable law or agreed to in writing, software      |
+ * | distributed under the License is distributed on an "AS IS" BASIS,        |
+ * | WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. |
+ * | See the License for the specific language governing permissions and      |
+ * | limitations under the License.                                           |
+ * +--------------------------------------------------------------------------+
  */
-/** @module blueprintRunner */
+
 /*
- * Require selenium stuff
+ * +----------------------------+
+ * |      Blueprint Runner      |
+ * |      ================      |
+ * +----------------------------+
+ */
+
+/*
+ * +----------------------------+
+ * |   Require selenium stuff   |
+ * +----------------------------+
  */
 var webdriver = require('selenium-webdriver'),
     path = require('path'),
@@ -11,7 +39,9 @@ var webdriver = require('selenium-webdriver'),
     SeleniumServer = require('selenium-webdriver/remote').SeleniumServer;
 
 /*
- * Require Merlot stuff
+ * +----------------------------+
+ * |   Require Merlot stuff     |
+ * +----------------------------+
  */
 var BlueprintRunner,
     ActorProvider = require('./actors/actorProvider').ActorProvider,
@@ -22,34 +52,44 @@ var BlueprintRunner,
 
 /**
  * @description
- * The export function for the user scenario blue print runner.
+ * The export function for the user scenario blueprint runner.
+ * The blueprint runner is the core component in Merlot.
+ * It is responsible for conducting the actual acceptance test
+ * and the management of the test workflow.
  * @type {BlueprintRunner}
+ * @param config the configuration for the test setup
  * @constructor
  */
 BlueprintRunner = exports.BlueprintRunner = function (config) {
 
-    /*Information*/
+    /*
+     * +----------------------------+
+     * |        Information         |
+     * +----------------------------+
+     */
     this._type_ = "BlueprintRunner Object"; //Name of the object
 
-    this.config = {
+
+    this.config = {                         // Default config, used of the no config is provided
         'seleniumPath': '',
         'port': '4444',
         'browser': 'chrome',
         'pageTimeout': 5000,
         'elementTimeout': 5000,
         'debug': true
-
     };
 
-    /*'short cut' properties*/
-    this.aux = this.utile._aux_; //From Merlot object
-
-    /*Properties*/
+    /*
+     * +----------------------------+
+     * |        Properties          |
+     * +----------------------------+
+     */
+    this.aux = this.utile._aux_; // 'short cut' properties from Merlot object
     this.logger = new Logger({'logLevel': 0});
     this.driver = {};
     this.webdriver = webdriver;
     this.actor = new ActorProvider.Actors["Paul"]; //Default actor
-
+    this.acessibilityRuleset = this.actor.getAcessibilityRuleset();
 
     if (config && (config.seleniumPath && config.port && config.browser)) {
         this.addConfiguration(config);
@@ -204,7 +244,8 @@ BlueprintRunner.prototype.addConfiguration = function (config) {
 
             self.driver = driverBuilder(_serverCapabilities, _server, self.config.browser).build();
 
-            //  var timeouts = new self.webdriver.WebDriver.Timeouts(self.driver);
+              var timeouts = new self.webdriver.WebDriver.Timeouts(self.driver);
+                  timeouts.setScriptTimeout(100000); //TODO: set timer to wait for pages to be loaded
             //  timeouts.pageLoadTimeout(10000); //set timer to wait for pages to be loaded
             //  timeouts.implicitlyWait(10000); //wait 3 seconds for every element to retrieve
         }
@@ -395,88 +436,165 @@ BlueprintRunner.prototype.interactWithSelection = function (webElement, domEleme
 
 /**
  * @description
+ * Perform an accessibility evaluation on the provided element
+ * @param {object} webElement the element to tes
+ * @returns {webdriver.promise.Deferred.promise|*} a promise that will be resolved when the evaluation is completed
+ */
+BlueprintRunner.prototype.evalAccessibility = function (webElement) {
+    var self = this,
+        _accessibilityRuleset = self.actor.getAcessibilityRuleset(),
+        _deferred = self.webdriver.promise.defer();
+
+    webElement.getOuterHtml().
+        then(function(outerHtml){
+            console.log('outerHtml = ' +outerHtml);
+            return outerHtml;
+        }).
+        then(function injectPinot(outerHtml) {
+             return self.injectAcessibilityTestScripts().
+                    then(function(){
+                        return outerHtml;
+                    });
+        }).
+        then(function(outerHtml){
+            self.driver.executeAsyncScript(function(ruleset,html) {
+                window.Gamay.accessibilityEvaluationHTMLCS(ruleset,html,arguments[arguments.length - 1]);
+            }, _accessibilityRuleset, ''+outerHtml)
+                .then(function checkResult(erros) {
+                    console.log("\b\b\b");
+                    erros.forEach(function (error) {
+                        console.log(error.type + '|'
+                            + error.code + '|'
+                            + error.wcagConf + '|'
+                            + error.wcagGuideline + '|'
+                            + error.wcagPrinciple + '|'
+                            + error.wcagTechnique + '|'
+                            + error.msg + '|'
+                            + error.nodeName + '|'
+                            + error.className + '|'
+                            + error.id);
+                        console.log("\b");
+                    });
+
+                });
+        }).
+        then(function onOK() {
+            _deferred.fulfill(webElement);
+        });
+
+    return _deferred.promise;
+
+};
+
+/**
+ *
+ * @returns {webdriver.promise.Deferred.promise|*}
+ */
+BlueprintRunner.prototype.injectAcessibilityTestScripts = function () {
+    var self = this,
+        _deferred = self.webdriver.promise.defer();
+
+     self.driver.executeScript(function () {
+        if (!window.jQuery) {
+            var jqueryScriptTag = document.createElement("script");
+            jqueryScriptTag.type = "text/javascript";
+
+            if (jqueryScriptTag.readyState) {  //IE
+                jqueryScriptTag.onreadystatechange = function () {
+                    if (jqueryScriptTag.readyState == "loaded" ||
+                        jqueryScriptTag.readyState == "complete") {
+                        jqueryScriptTag.onreadystatechange = null;
+                        //  cb("jquery loaded");
+                    }
+                };
+            } else {  //Others
+                jqueryScriptTag.onload = function () {
+                    //   cb("jquery loaded");
+                };
+            }
+            jqueryScriptTag.src = "http://localhost:3000/javascripts/jquery-1.11.1.min.js";
+            document.head.appendChild(jqueryScriptTag);
+        }
+    }). then(function injectHTMLCS() {
+        return  self.driver.executeScript(function () {
+            if (!window.HTMLCS) {
+                var _htmlcsScriptTag = document.createElement("script");
+                _htmlcsScriptTag.type = "text/javascript";
+
+                if (_htmlcsScriptTag.readyState) {  //IE
+                    _htmlcsScriptTag.onreadystatechange = function () {
+                        if (_htmlcsScriptTag.readyState == "loaded" ||
+                            _htmlcsScriptTag.readyState == "complete") {
+                            _htmlcsScriptTag.onreadystatechange = null;
+                            //  cb("jquery loaded");
+                        }
+                    };
+                } else {  //Others
+                    _htmlcsScriptTag.onload = function () {
+                        //   cb("jquery loaded");
+                    };
+                }
+                _htmlcsScriptTag.src = "http://localhost:3000/javascripts/HTML_CodeSniffer/HTMLCS.js";
+                document.head.appendChild(_htmlcsScriptTag);
+            }
+         });
+
+     }).
+      then(function injectGamay() {
+             return  self.driver.executeScript(function () {
+                 if (!window.Gamay) {
+                     var gamayScriptTag = document.createElement("script");
+                     gamayScriptTag.type = "text/javascript";
+                     if (gamayScriptTag.readyState) {  //IE
+                         gamayScriptTag.onreadystatechange = function () {
+                             if (gamayScriptTag.readyState == "loaded" ||
+                                 gamayScriptTag.readyState == "complete") {
+                                 gamayScriptTag.onreadystatechange = null;
+                                 //  cb("jquery loaded");
+                             }
+                         };
+                     } else {  //Others
+                         gamayScriptTag.onload = function () {
+                             //   cb("jquery loaded");
+                         };
+                     }
+                     gamayScriptTag.src = "http://localhost:3000/javascripts/gamay.js";
+                     document.head.appendChild(gamayScriptTag);
+                 }
+
+             });
+
+         }).
+         then(function onOk() {
+             _deferred.fulfill();
+         }).
+         then(null, function onError(err) {
+             _deferred.reject(err);
+         });
+
+    return _deferred.promise;
+
+};
+
+/**
+ * @description
  * Got the the URL location, defined by the parameter 'where'
  * @param where , the URL
  * @param callback
  */
 BlueprintRunner.prototype.goTo = function (where, callback) {
-var self = this;
+    var self = this;
     this.driver.get(where).
-        then(function injectPinot(){
-           return  self.driver.executeScript(function() {
-               if (!window.jQuery){
-                   var jqueryScriptTag = document.createElement("script");
-                   jqueryScriptTag.type = "text/javascript";
-
-                   if (jqueryScriptTag.readyState){  //IE
-                       jqueryScriptTag.onreadystatechange = function(){
-                           if (jqueryScriptTag.readyState == "loaded" ||
-                               jqueryScriptTag.readyState == "complete"){
-                               jqueryScriptTag.onreadystatechange = null;
-                             //  cb("jquery loaded");
-                           }
-                       };
-                   } else {  //Others
-                       jqueryScriptTag.onload = function(){
-                        //   cb("jquery loaded");
-                       };
-                   }
-                   jqueryScriptTag.src = "http://localhost:3000/javascripts/jquery-1.11.1.min.js";
-                   document.body.appendChild(jqueryScriptTag);
-                   }
-               });
-
+       then(function injectPinot() {
+          return self.injectAcessibilityTestScripts();
         }).
-        then(function injectQuail(){
-            return  self.driver.executeScript(function() {
-                    var quailScriptTag = document.createElement("script");
-                    quailScriptTag.type = "text/javascript";
+        then(function onOk() {
+            callback();
+        }).
+        then(null, function onError(err) {
+            callback.fail(err);
+        });
 
-                    if (quailScriptTag.readyState){  //IE
-                        quailScriptTag.onreadystatechange = function(){
-                            if (quailScriptTag.readyState == "loaded" ||
-                                quailScriptTag.readyState == "complete"){
-                                quailScriptTag.onreadystatechange = null;
-                                //  cb("jquery loaded");
-                            }
-                        };
-                    } else {  //Others
-                        quailScriptTag.onload = function(){
-                            //   cb("jquery loaded");
-                        };
-                    }
-                    quailScriptTag.src = "http://localhost:3000/javascripts/quail/quail.jquery.min.js";
-                    document.body.appendChild(quailScriptTag);
-             });
-            }).
-            then(function injectGamay() {
-                if (!window.Gamay) {
-                    return  self.driver.executeScript(function () {
-                        var gamayScriptTag = document.createElement("script");
-                        gamayScriptTag.type = "text/javascript";
-
-                        if (gamayScriptTag.readyState) {  //IE
-                            gamayScriptTag.onreadystatechange = function () {
-                                if (gamayScriptTag.readyState == "loaded" ||
-                                    gamayScriptTag.readyState == "complete") {
-                                    gamayScriptTag.onreadystatechange = null;
-                                    //  cb("jquery loaded");
-                                }
-                            };
-                        } else {  //Others
-                            gamayScriptTag.onload = function () {
-                                //   cb("jquery loaded");
-                            };
-                        }
-                        gamayScriptTag.src = "http://localhost:3000/javascripts/gamay.js";
-                        document.body.appendChild(gamayScriptTag);
-
-                    });
-                }
-            }).
-            then(function () {
-                    callback();
-            });
 };
 
 /**

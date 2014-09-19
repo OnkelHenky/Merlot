@@ -1,8 +1,42 @@
 /**
- * Created by Alexander Henka on 12.08.14.
- * Copyright by Alexander Henka
+ *  gamay is part of Merlot
+ *  Copyright (c) by Alexander Henka, 12.08.14.
+ *  Project URL: https://github.com/OnkelHenky/Merlot
+ *
+ * +--------------------------------------------------------------------------+
+ * | LICENSE INFORMATION                                                      |
+ * | ===================                                                      |
+ * |                                                                          |
+ * | Licensed under the Apache License, Version 2.0 (the "License");          |
+ * | you may not use this file except in compliance with the License.         |
+ * | You may obtain a copy of the License at                                  |
+ * |                                                                          |
+ * | http://www.apache.org/licenses/LICENSE-2.0                               |
+ * |                                                                          |
+ * | Unless required by applicable law or agreed to in writing, software      |
+ * | distributed under the License is distributed on an "AS IS" BASIS,        |
+ * | WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. |
+ * | See the License for the specific language governing permissions and      |
+ * | limitations under the License.                                           |
+ * +--------------------------------------------------------------------------+
  */
 
+
+/*
+ * +----------------------------+
+ * |    KEYBOARD INTERACTION    |
+ * |    ====================    |
+ * +----------------------------+
+ *
+ *  Used for the Actors: Anna
+ *
+ */
+
+/*
+ * +----------------------------+
+ * |           Requires         |
+ * +----------------------------+
+ */
 var ElementNotFoundError = require('../auxilium/MerlotErrors').ElementNotFoundError;
 
 /**
@@ -11,14 +45,14 @@ var ElementNotFoundError = require('../auxilium/MerlotErrors').ElementNotFoundEr
  * @param domElement
  * @returns {promise}
  */
-module.exports.keyboardInteractionTechnique = function (webElement, domElement) {
+module.exports.keyboardRadioButtonInteraction = function (webElement, domElement) {
     var that = this,
         _firstWebElement = void 0,
         _lastActiveElement = void 0,
         _deferred = that.webdriver.promise.defer(),
         _presKeyDown = that.driver.actions().sendKeys(that.webdriver.Key.ARROW_DOWN);
 
-    /*
+    /**
      * @description
      * Helper function to check if a attribute is present
      * @param webElement
@@ -40,7 +74,7 @@ module.exports.keyboardInteractionTechnique = function (webElement, domElement) 
         return false;
     };
 
-    /*
+    /**
      * @description
      * Helper function to check if a web element hast a text node
      * @param webElement
@@ -59,8 +93,12 @@ module.exports.keyboardInteractionTechnique = function (webElement, domElement) 
         return _result;
     };
 
-    /* Recursive 'helper' function to retrieve
-     * the element defined in 'domElement' */
+    /*
+     * +-----------------------------------------+
+     * | Recursive 'helper' function to retrieve |
+     * | the element defined in 'domElementes'   |
+     * +-----------------------------------------+
+     */
     var findRadioButton = function (activeElement, domElement) {
         activeElement.
             then(function checkIfWeCantreachTheRadioButton() {
@@ -128,7 +166,7 @@ module.exports.keyboardInteractionTechnique = function (webElement, domElement) 
             });
     };
 
-    findRadioButton(webElement, domElement);
+    findRadioButton(that.driver.switchTo().activeElement(), domElement);
     return _deferred.promise;
 };
 
