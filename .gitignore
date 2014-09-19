@@ -4,7 +4,5 @@ bin/*
 spielwiese/*
 .npm-debug.log
 .DS_Store
-lib/HTML_CodeSniffer
-core/pinot
 node_modules
 *.log
