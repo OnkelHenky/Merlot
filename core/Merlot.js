@@ -13,7 +13,7 @@ var Merlot;
 module.exports.Merlot = Merlot = function (properties) {
 
     /*Information*/
-    this._version_ = "0.0.1"; //Version number of the Actor
+    this._version_ = "0.0.2"; //Version number of the Actor
     this._type_ = "Merlot Object"; //Name of the object
 };
 
