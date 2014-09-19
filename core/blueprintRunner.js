@@ -70,7 +70,7 @@ BlueprintRunner = exports.BlueprintRunner = function (config) {
     this._type_ = "BlueprintRunner Object"; //Name of the object
 
 
-    this.config = {                         // Default config, used of the no config is provided
+    this.config = {     // Default config, used if no config is provided
         'seleniumPath': '',
         'port': '4444',
         'browser': 'chrome',
