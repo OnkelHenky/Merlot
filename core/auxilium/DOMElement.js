@@ -166,6 +166,11 @@ DOMElement.prototype.getTypeExpression = function () {
 
     return xpathExpression;
 };
+
+/*
+ input[type=radio][value='AmericanExpress']
+ */
+
 /**
  * @description
  * Get a basic CSS selector, that represents this element
