@@ -26,7 +26,6 @@ TechniqueRepository.techniques['Click_Mouse']               = require('./clickTe
 TechniqueRepository.techniques['Click_ReturnKey']           = require('./clickTechnique').byUsingTheReturnKey;
 TechniqueRepository.techniques['Click_SpaceKey']            = require('./clickTechnique').byUsingSpaceKey;
 
-
 /*Input and Forms*/
 
 //Selection and Options
