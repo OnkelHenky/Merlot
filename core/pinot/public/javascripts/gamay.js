@@ -1,5 +1,5 @@
 /**
- *  gamay is part of Merlot
+ *  gamay.js is part of Merlot
  *  Copyright (c) by Alexander Henka, 15.09.14.
  *  Project URL: https://github.com/OnkelHenky/Merlot
  *
@@ -18,16 +18,36 @@
  * | WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. |
  * | See the License for the specific language governing permissions and      |
  * | limitations under the License.                                           |
+ * |                                                                          |
+ * |  For more information see:                                               |
+ * |  https://github.com/OnkelHenky/Merlot/blob/master/LICENSE.md             |
+ * |                                                                          |
  * +--------------------------------------------------------------------------+
  */
 
 
 /*
- * +---------------------------------------+
- * |                 GAMAY                 |
- * |           ================            |
- * | Merlot´s sidekick on the client side  |
- * +---------------------------------------+
+ * +---------------------------------------------------------------------------+
+ * |                                GAMAY                                      |
+ * |                           ================                                |
+ * |                  Merlot´s sidekick on the client side                     |
+ * +---------------------------------------------------------------------------+
+ *
+ * +---------------------------------------------------------------------------+
+ * | From Wikipedia                                                            |
+ * | ==============                                                            |
+ * |                                                                           |
+ * | GAMAY is a purple-colored grape variety used to make red wines,           |
+ * | most notably grown in Beaujolais and in the Loire Valley around Tours.    |
+ * | Its full name is Gamay Noir à Jus Blanc.                                  |
+ * |                                                                           |
+ * | It is a very old cultivar, mentioned as long ago as the 15th century.     |
+ * | It has been often cultivated because it makes for abundant production;    |
+ * | however, it can produce wines of distinction when planted on acidic soils,|
+ * | which help to soften the grape's naturally high acidity.                  |
+ * |                                                                           |
+ * | Source: http://en.wikipedia.org/wiki/Gamay                                |
+ * +---------------------------------------------------------------------------+
  */
 
 (function () {
@@ -59,6 +79,7 @@
         this.nodeName       = "";  // Name of the HTML tag containing the issue
         this.className      = "";  // Value of the @class of the HTML element
         this.id             = "";  // Value of the @id of the HTML element
+        this.element        = "";  // The HTML element itself
 
         if (config) {
             this.addConfiguration(config);
@@ -87,14 +108,13 @@
         return this.typeName + '|' + this.code + '|' + this.msg + '|' + this.nodeName + '|' + this.className + '|' + this.id;
     };
 
-
    /*
     * +---------------------------------------------+
     * | Evaluation Function using HTML CodeSniffer  |
     * +---------------------------------------------+
     */
 
-    window.Gamay.accessibilityEvaluationHTMLCS =  function(ruleset, html, callback) {
+    window.Gamay.accessibilityEvaluationHTMLCS =  function(ruleset, html, domElement ,callback) {
 
         var _callback = function () {
 
@@ -102,30 +122,38 @@
                 _messages = HTMLCS.getMessages();
 
             _messages.forEach(function(msg){
-                var typeName = 'UNKNOWN';
+                var _typeName = 'UNKNOWN',
+                    _color = '4px dotted';
                 switch (msg.type) {
                     case HTMLCS.ERROR:
-                        typeName = 'ERROR';
+                        _typeName = 'ERROR';
+                        _color += ' red';
                         break;
                     case HTMLCS.WARNING:
-                        typeName = 'WARNING';
+                        _typeName = 'WARNING';
+                        _color += ' goldenRod';
                         break;
                     case HTMLCS.NOTICE:
-                        typeName = 'NOTICE';
+                        _typeName = 'NOTICE';
+                        _color += ' green';
                         break;
                     default:
-                        typeName = 'UNKNOWN';
+                        _typeName = 'UNKNOWN';
+                        _color += ' goldenRod';
                         break;
                 } //end switch
+                console.log("MSG");
+                console.log(msg.element.id);
+                console.log("ourline = "+_color);
 
-                var _splittedCode = msg.code.split('.');
-                var wcagConf      = _splittedCode[0],
+                var _splittedCode = msg.code.split('.'),
+                    wcagConf      = _splittedCode[0],
                     wcagGuideline = _splittedCode[1],
                     wcagPrinciple = _splittedCode[2]+'.'+ _splittedCode[3],
                     wcagTechnique = _splittedCode[4];
 
                 var issue = new AccessibilityIssue({
-                    type: typeName,
+                    type: _typeName,
                     code: msg.code,
                     wcagConf: wcagConf,
                     wcagGuideline: wcagGuideline,
@@ -134,8 +162,18 @@
                     msg: msg.msg,
                     nodeName: msg.element.nodeName.toLowerCase(),
                     className: msg.element.className,
-                    id: msg.element.id
+                    id: msg.element.id,
+                    element: msg.element
                 });
+                console.log('SELECTOR = '+domElement);
+                //input[@type='radio' and @value='AmericanExpress']
+                //$(type~="accordion"][value~="expand"]
+              // var r = $("input[type=radio][value='AmericanExpress']");
+                var r = $(domElement);
+             //   $( ".inner" ).append( "<p>Test</p>" );
+                r.parent().css("outline", _color);
+                r.parent().append( "<p>"+msg.msg+"</p>" );
+                console.log(msg.element.id);
                 _accessIssues.push(issue);
             }); //End forEach
             callback(_accessIssues); //calling back Merlot (selenium)

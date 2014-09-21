@@ -112,7 +112,7 @@ module.exports = navigationSteps = function () {
                 return deferred.promise;
             }).
             then(function runAccessibilityEvaluation(webElement) {
-                return that.browser.evalAccessibility(webElement);
+                return that.browser.evalAccessibility(webElement,_domElement);
             }).
             then(function (webElement) {
                 return that.browser.click(webElement);
@@ -154,7 +154,7 @@ module.exports = navigationSteps = function () {
                 return deferred.promise;
             }).
             then(function runAccessibilityEvaluation(webElement) {
-                return that.browser.evalAccessibility(webElement);
+                return that.browser.evalAccessibility(webElement,_domElement);
             }).
             then(function (webElement) {
                 return that.browser.click(webElement, that.browser.webdriver.Key.ENTER);
@@ -194,7 +194,7 @@ module.exports = navigationSteps = function () {
                 return deferred.promise;
             }).
             then(function runAccessibilityEvaluation(webElement) {
-                return that.browser.evalAccessibility(webElement);
+                return that.browser.evalAccessibility(webElement,_domElement);
             }).
             then(function (webElement) {
                 return that.browser.click(webElement);

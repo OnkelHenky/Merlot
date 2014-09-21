@@ -248,6 +248,8 @@ var HTMLCS = new function()
             }//end for
 
             if (_tags[tagName] && _tags[tagName].length > 0) {
+                console.log('topELEMENTS');
+                console.dir(topElement);
                 _processSniffs(element, _tags[tagName].concat([]), topElement);
 
                 // Save "top" messages, and reset the messages array.
@@ -561,7 +563,6 @@ var HTMLCS = new function()
                 script.onload();
             }
         }
-console.log('Script SCRC = ' + src);
         script.src = src;
 
         if (document.head) {

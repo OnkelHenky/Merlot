@@ -246,8 +246,8 @@ BlueprintRunner.prototype.addConfiguration = function (config) {
 
               var timeouts = new self.webdriver.WebDriver.Timeouts(self.driver);
                   timeouts.setScriptTimeout(100000); //TODO: set timer to wait for pages to be loaded
+                  timeouts.implicitlyWait(30000); //wait 3 seconds for every element to retrieve
             //  timeouts.pageLoadTimeout(10000); //set timer to wait for pages to be loaded
-            //  timeouts.implicitlyWait(10000); //wait 3 seconds for every element to retrieve
         }
 
     } catch (ex) {
@@ -440,7 +440,7 @@ BlueprintRunner.prototype.interactWithSelection = function (webElement, domEleme
  * @param {object} webElement the element to tes
  * @returns {webdriver.promise.Deferred.promise|*} a promise that will be resolved when the evaluation is completed
  */
-BlueprintRunner.prototype.evalAccessibility = function (webElement) {
+BlueprintRunner.prototype.evalAccessibility = function (webElement, domElement) {
     var self = this,
         _accessibilityRuleset = self.actor.getAcessibilityRuleset(),
         _deferred = self.webdriver.promise.defer();
@@ -457,9 +457,9 @@ BlueprintRunner.prototype.evalAccessibility = function (webElement) {
                     });
         }).
         then(function(outerHtml){
-            self.driver.executeAsyncScript(function(ruleset,html) {
-                window.Gamay.accessibilityEvaluationHTMLCS(ruleset,html,arguments[arguments.length - 1]);
-            }, _accessibilityRuleset, ''+outerHtml)
+            self.driver.executeAsyncScript(function(ruleset,html,domElement) {
+                window.Gamay.accessibilityEvaluationHTMLCS(ruleset,html,domElement,arguments[arguments.length - 1]);
+            }, _accessibilityRuleset, ''+outerHtml,domElement.getCSSSelector())
                 .then(function checkResult(erros) {
                     console.log("\b\b\b");
                     erros.forEach(function (error) {
