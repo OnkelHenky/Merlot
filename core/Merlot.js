@@ -59,39 +59,14 @@ var Merlot;
  */
 module.exports.Merlot = Merlot = function () {
 
-    /*Information*/
-    this._version_ = "0.0.2"; //Version number of the Actor
-    this._type_ = "Merlot Object"; //Name of the object
+   /*
+    * +----------------------------+
+    * |        Information         |
+    * +----------------------------+
+    */
+    this._version_ = "0.0.2";         //Version number of the Actor
+    this._type_    = "Merlot Object"; //Name of the object
 };
-
-/**
- * @description
- * Collection of useful function, that should occur in any Merlot object
- * @type {{}}
- */
-Merlot.prototype.utile = {};
-
-/**
- * @description
- * File system support.
- * @type {exports}
- */
-Merlot.prototype.utile._fs_ = require('fs');
-
-/**
- * @description
- * System function support.
- * @type {exports}
- * @private
- */
-Merlot.prototype.utile._sys_ = require('sys');
-
-/**
- * @description
- * Access to the auxilia functions for all Merlot objects
- * @type {exports}
- */
-Merlot.prototype.utile._aux_ = require('./auxilium/auxiliaFunctions');
 
 /**
  * @description
@@ -119,3 +94,38 @@ Merlot.prototype.toString = function () {
     return this.getTypeName() + " " + this.getVersion();
 };
 
+/**
+ * @description
+ * Collection of useful function, that should occur in any Merlot object
+ * @type {{}}
+ */
+Merlot.prototype.utile = {};
+
+/*
+ * +------------------------------------------+
+ * | Helper functions, like file system       |
+ * | useful in various objects of Merlot      |
+ * +------------------------------------------+
+ */
+
+/**
+ * @description
+ * File system support.
+ * @type {exports}
+ */
+Merlot.prototype.utile._fs_ = require('fs');
+
+/**
+ * @description
+ * System function support.
+ * @type {exports}
+ * @private
+ */
+Merlot.prototype.utile._sys_ = require('sys');
+
+/**
+ * @description
+ * Access to the auxilia functions for all Merlot objects
+ * @type {exports}
+ */
+Merlot.prototype.utile._aux_ = require('./auxilium/auxiliaFunctions');
