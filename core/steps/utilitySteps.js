@@ -20,7 +20,7 @@ module.exports = utility_Steps = function () {
     });
 
     /**
-     * Setting the user name, used in a scenario, 'globally'
+     * Setting the user name used in a scenario 'globally'
      */
     this.Given(/^Username is "([^"]*)"$/, function (username, callback) {
         this.browser.setLoginCredentialsForActor('username', username);
@@ -28,12 +28,19 @@ module.exports = utility_Steps = function () {
     });
 
     /**
-     * Setting the password, used in a scenario, 'globally'
+     * Setting the password used in a scenario 'globally'
      */
     this.Given(/^Password is "([^"]*)"$/, function (password, callback) {
         this.browser.setLoginCredentialsForActor('password', password);
         callback();
     });
 
+    /**
+     * Set the WCAG conformance level (A, AA or AAA)
+     */
+    this.Given(/^The WCAG conformance level shall be "([^"]*)"$/, function (conformanceLevel, callback) {
+        this.browser.setConformanceLevel(conformanceLevel);
+        callback();
+    });
 
 };

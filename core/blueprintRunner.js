@@ -36,7 +36,8 @@
 var webdriver = require('selenium-webdriver'),
     path = require('path'),
     Logger = require('./auxilium/logger').Logger,
-    SeleniumServer = require('selenium-webdriver/remote').SeleniumServer;
+    SeleniumServer = require('selenium-webdriver/remote').SeleniumServer,
+    mu = require('mu2');
 
 /*
  * +----------------------------+
@@ -47,6 +48,7 @@ var BlueprintRunner,
     ActorProvider = require('./actors/actorProvider').ActorProvider,
     DOMElement = require('./auxilium/DOMElement'),
     TagNameDictionary = require('./auxilium/tagNameDictionary'),
+    MerlotErros = require('./auxilium/MerlotErrors'),
     Merlot = require('./Merlot').Merlot;
     Pinot = require('./pinot/pinot').Pinot;
 
@@ -84,20 +86,34 @@ BlueprintRunner = exports.BlueprintRunner = function (config) {
      * |        Properties          |
      * +----------------------------+
      */
-    this.aux = this.utile._aux_; // 'short cut' properties from Merlot object
-    this.logger = new Logger({'logLevel': 0});
-    this.driver = {};
-    this.webdriver = webdriver;
-    this.actor = new ActorProvider.Actors["Paul"]; //Default actor
-    this.acessibilityRuleset = this.actor.getAcessibilityRuleset();
+    this.aux                 = this.utile._aux_; // 'short cut' properties from Merlot object
+    this.logger              = new Logger({'logLevel': 0});
+    this.driver              = {};
+    this.webdriver           = webdriver;
+    this.actor               = new ActorProvider.Actors["Paul"]; //Default actor
+    this.acessibilityRuleset = this.actor.getName()+'A';
+
+    this.isssuesMsgs         = []; // Array with all found accessibility issues
+    this.reportDirectory             = ""; // Path where the accessibility issue report shall be stored.
 
     if (config && (config.seleniumPath && config.port && config.browser)) {
         this.addConfiguration(config);
-    } else {
+    }else {
+        this.logger.info("Not proper blueprint config, please provide at least path to selenium, the port number and the desired browser'"
+                         + "Example config:" +
+                         +" {'seleniumPath': require('path').join(__dirname, '../../bin/selenium-server-standalone-2.42.0.jar'),"
+                         +" 'port' : '4444',"
+                         +" 'browser' : 'chrome'}");
         this.addConfiguration(this.config);
-        //throw new Error("You must provide a blueprint configuration in the format: " + "{'seleniumPath': '/path/to/selenium.jar','port' : '4444','browser' : 'chrome'}");
     }
 
+    /*
+     * +----------------------------+
+     * |         PINOT SERVER       |
+     * +----------------------------+
+     *  Used to inject GAMAY (and jQuery) into the client's
+     *  web application.
+     */
      this.pinotServer = new Pinot();
      this.pinotServer.start();
 
@@ -112,6 +128,177 @@ BlueprintRunner.prototype = new Merlot();
 
 /**
  * @description
+ * Set the WCAG conformance level for this blueprint evaluation
+ * @param conformanceLevel
+ */
+BlueprintRunner.prototype.setConformanceLevel = function(conformanceLevel){
+   if(["A","AA","AAA"].indexOf(conformanceLevel) !== -1){
+       this.acessibilityRuleset = this.actor.getName() + conformanceLevel;
+       this.logger.info("Checking for "+ this.actor.getName() + "'s "+conformanceLevel+" level conformance");
+   }else{
+       this.acessibilityRuleset = this.actor.getName() + 'A';
+       this.logger.info(conformanceLevel+" is not a valid WCAG conformance level, please use 'A', 'AA' or 'AAA'");
+       this.logger.info("Using default WCAG conformance level: 'A'");
+   }
+};
+
+/**
+ * @description
+ * Get all the array with the found accessibility issues
+ * @returns {Array}
+ */
+BlueprintRunner.prototype.getArrayWithAccessibilityIssues = function(){
+    return this.isssuesMsgs
+};
+
+/**
+ *
+ * @param issue
+ */
+BlueprintRunner.prototype.addAccessibilityIssue = function(issue){
+    console.dir(issue);
+    console.dir(issue.isssues[0].msgs);
+    this.isssuesMsgs.push(issue);
+};
+
+
+/**
+ * @description
+ * Get the path to the directory where the reports should be stored
+ * @returns {string}
+ */
+BlueprintRunner.prototype.getReportDirectory = function(){
+    return this.reportDirectory;
+};
+
+/**
+ *
+ * @returns {object}
+ */
+BlueprintRunner.prototype.getAccessibilityIssuesBuffer = function(ScenarioName, issues, cb){
+    var self    = this,
+        _buffer ='';
+
+    /*
+     _issuesType.type   = erros.type;
+     _issuesType.issue  = error;
+     */
+    mu.root = __dirname + '/reports';
+    var data =  issues.map(function(x){
+                                return {
+                                    stepDescr: x.stepDescr,
+                                    issues: x.isssues.map(function(i){
+                                        return {type: i.type,
+                                                msg: i.msgs.map(function(msg){
+                                                    console.dir(msg);
+                                                    return {
+                                                            m: msg.msg
+                                                    }
+                                                })
+                                            }
+                                    })
+                                };
+                            });
+    var time = new Date();
+    var context = {
+        scenario: ScenarioName,
+        currentDate : time.toLocaleDateString() + " " + time.getHours()+":"+time.getMinutes()+":"+time.getSeconds(),
+        msgs: data,
+        actor : self.actor.getName()
+    };
+    mu.compileAndRender('report.md.mu', context).
+        on('data', function (data) { _buffer += data;}).
+        on('end', function () { cb(_buffer);}).
+        on('error', function (error) {console.log(error);});
+};
+
+/**
+ * @description
+ * Print a given buffer
+ * @param buffer
+ * @param callback
+ * @param scenario
+ */
+BlueprintRunner.prototype.printIssuesBuffer = function(buffer,scenario,callback){
+    var self       = this,
+        _logger    = this.logger,
+        _fs        = self.utile._fs_,
+        _path      = self.utile._path_,
+        _reportDIR = self.getReportDirectory(),
+        _issues    = self.getArrayWithAccessibilityIssues();
+
+    _logger.log('Buffer = ' +buffer);
+    _logger.log("Writing report for =" + scenario.getName());
+    var issuePath = _path.join(_reportDIR, '/report.md');
+
+    _fs.writeFile(issuePath, buffer, function (err) {
+        if (err) {
+            _logger.error('Error during the writing of the report' +err);
+            callback(err);
+        }
+
+        if (_issues.length > 0) {
+            _logger.info("Found accessibility issues:");
+            _issues.forEach(function (issue) {
+                _logger.info(issue.stepDescr);
+                issue.isssues.forEach(function(error){
+                    _logger.info(  error.type + '|'
+                        + error.code + '|'
+                        + error.wcagConf + '|'
+                        + error.wcagGuideline + '|'
+                        + error.wcagPrinciple + '|'
+                        + error.wcagTechnique + '|'
+                        + error.msg + '|'
+                        + error.nodeName + '|'
+                        + error.className + '|'
+                        + error.id +'\b');
+                })
+
+            });
+        } else {
+            _logger.info("No accessibility issues found");
+        }
+        callback();
+    });
+};
+
+/**
+ * @description
+ * Print a evaluation report
+ * @param scenario
+ * @param callback
+ */
+BlueprintRunner.prototype.printEvaluationReport = function(scenario,callback){
+    var self       = this,
+        _logger    = this.logger,
+        _fs        = self.utile._fs_,
+        _reportDIR = self.getReportDirectory(),
+        _issues    = self.getArrayWithAccessibilityIssues();
+
+    _logger.info('Print evaluation report');
+
+    _fs.exists(_reportDIR, function (exists) {
+        if (!exists) {
+            _fs.mkdir(_reportDIR, function (err) {
+                if (err) {
+                    _logger.error('Error during creation of the reports directory' +err);
+                    callback(err);
+                }else{
+                    self.getAccessibilityIssuesBuffer(scenario.getName(), _issues, function(buffer){
+                        self.printIssuesBuffer(buffer,scenario,callback);
+                    });
+                }
+            });
+        } else {
+            self.getAccessibilityIssuesBuffer(scenario.getName(), _issues, function(buffer){
+                 self.printIssuesBuffer(buffer,scenario,callback);
+            });
+        }
+    });
+};
+
+/**
+ * @description
  * Resolving the identifier of an DOMElement by cutting if the '@' form the cucumber scenario steps
  * Example: if you have a step like: 'The actor chooses "Saab" from the selection whose @id is "cars"'
  * The '@' in '@id' indicates the the attribute: 'id' with the value 'cars' should be selected.
@@ -120,8 +307,7 @@ BlueprintRunner.prototype = new Merlot();
  * @returns {*} the resolved identifier
  */
 BlueprintRunner.prototype.resolveAttributeName = function (identifiedBy) {
-    var self = this,
-        _resolvedIdentifiedBy;
+    var _resolvedIdentifiedBy = void 0;  //undefined
 
     switch (identifiedBy) {
         case "@id":
@@ -142,9 +328,7 @@ BlueprintRunner.prototype.resolveAttributeName = function (identifiedBy) {
             throw new Error('"' + identifiedBy + '" is not valid identifier! e.g.; "@id", "@name", "@value" or ">text", to get the text node value');
             break;
     }
-
     return _resolvedIdentifiedBy;
-
 };
 
 /**
@@ -168,6 +352,10 @@ BlueprintRunner.prototype.addConfiguration = function (config) {
      */
     if (config.logLevel !== undefined && this.aux.isNumber(config.logLevel)) {
         this.logger = new Logger({'logLevel': config.logLevel});
+    }
+
+    if(config.reportsDir){
+        this.reportDirectory = config.reportsDir;
     }
 
     /*
@@ -339,6 +527,74 @@ BlueprintRunner.prototype.runWithThatActor = function (actor) {
 
 /**
  * @description
+ * Handling any errors
+ * @param error
+ * @param _domElement
+ * @param callback
+ */
+BlueprintRunner.prototype.errorHandler = function(error, _domElement,_stepDescr,callback){
+    var self = this;
+    console.log("the error is a "+error);
+      //  errorType = error.getType();
+    // [ { type: 'NOTICE', msgs: [Object] } ] }
+      if("ElementNotFound" === error){
+          var obj = {};
+          obj.stepDescr = _stepDescr;
+          obj.isssues = [{ type: 'ERROR', msgs:[{
+              msg: self.actor.name+" can't reach the element"+_domElement+" by using keyboard navigation. Tip: Try to set the tabindex attribute, e.g., 'tabindex='1' '",
+              typeCode: 1,
+              code: 'Conformance Level:A - Principle: Operable 2.1.1 Keyboard Accessible: Make all functionality available from a keyboard.',
+              wcagConf: 'AnnaA',
+              wcagGuideline: '2.1.1',
+              wcagPrinciple: 'Operable',
+              wcagTechnique: ''
+              }]
+          }];
+
+
+          self.driver.executeAsyncScript(function(_domElement) {
+              window.Gamay.isValidElement(_domElement,arguments[arguments.length - 1]);
+          }, _domElement.getCSSSelector()).then(function(validStatus){
+              self.logger.info("Valid Element STATUS = "+validStatus);
+              if(!validStatus){ //not valid
+                  callback.fail(new MerlotErros.ElementNotFoundError("Element " + _domElement + " does not exit check for typos").message);
+              }else{ //valid
+                  self.addAccessibilityIssue(obj); //
+                  self.driver.executeAsyncScript(function(_domElement,issues) {
+                      window.Gamay.markElement(_domElement,issues,arguments[arguments.length - 1]);
+                  }, _domElement.getCSSSelector(), obj.isssues[0].msgs).then(function(ok){
+                      callback.fail(new MerlotErros.ElementNotFoundError("Cant find element with " + error + " with DOMElement: " + _domElement).message);
+                  });
+              }
+          });
+
+
+          /*
+              className: 'drinks',
+              code: 'AnnaA.Principle3.Guideline3_2.3_2_1.G107',
+              element: { driver_: [Object], id_: [Object] },
+          id: 'cars',
+              msg: 'Check that a change of context does not occur when this input field receives focus.',
+              nodeName: 'select',
+              toString: {},
+          type: 'NOTICE',
+              typeCode: 3,
+              wcagConf: 'AnnaA',
+              wcagGuideline: 'Principle3',
+              wcagPrinciple: 'Guideline3_2.3_2_1',
+              wcagTechnique: 'G107' }
+              */
+
+    //[{type: "ERROR", msg:["All Elements must be accasable by keyboard interaction"]}];
+         // self.addAccessibilityIssue(obj);
+
+      }else{
+          callback.fail(new Error("Merlot reported an error! " + err + " with DOMElement: " + _domElement).message);
+      }
+};
+
+/**
+ * @description
  * Set the login credentials, username and password, for the defined actor.
  * @param type
  * @param value
@@ -413,7 +669,7 @@ BlueprintRunner.prototype.enterText = function (webElement, text) {
  * Find a radio button in a radio group.
  * With webElement = The first radio button in the group.
  * And domElement = The representation of the radio button, that we are looking for.
- * @throws  {ElementNotFoundError} If no radio button with given format defined in 'domElement' can be found with in the radio group.
+ * @throws  {MerlotError} If no radio button with given format defined in 'domElement' can be found with in the radio group.
  * @param   {Object} webElement
  * @param   {Object} domElement
  * @returns {Object} A promise with the radio button.
@@ -443,7 +699,8 @@ BlueprintRunner.prototype.interactWithSelection = function (webElement, domEleme
 BlueprintRunner.prototype.evalAccessibility = function (webElement, domElement) {
     var self = this,
         _accessibilityRuleset = self.actor.getAcessibilityRuleset(),
-        _deferred = self.webdriver.promise.defer();
+        _deferred = self.webdriver.promise.defer(),
+        _issues = [];
 
     webElement.getOuterHtml().
         then(function(outerHtml){
@@ -460,26 +717,59 @@ BlueprintRunner.prototype.evalAccessibility = function (webElement, domElement) 
             self.driver.executeAsyncScript(function(ruleset,html,domElement) {
                 window.Gamay.accessibilityEvaluationHTMLCS(ruleset,html,domElement,arguments[arguments.length - 1]);
             }, _accessibilityRuleset, ''+outerHtml,domElement.getCSSSelector())
-                .then(function checkResult(erros) {
-                    console.log("\b\b\b");
-                    erros.forEach(function (error) {
-                        console.log(error.type + '|'
-                            + error.code + '|'
-                            + error.wcagConf + '|'
-                            + error.wcagGuideline + '|'
-                            + error.wcagPrinciple + '|'
-                            + error.wcagTechnique + '|'
-                            + error.msg + '|'
-                            + error.nodeName + '|'
-                            + error.className + '|'
-                            + error.id);
-                        console.log("\b");
+                .then(function checkResult(errors) {
+
+                    var _notice    = [],
+                        _warning   = [],
+                        _error     = [],
+                        _def       = [];
+
+                    errors.forEach(function(error){
+                       switch(error.type){
+                           case 'NOTICE':
+                               _notice.push(error);
+                               break;
+                           case 'WARNING':
+                               _warning.push(error);
+                               break;
+                           case 'ERROR':
+                               _error.push(error);
+                               break;
+                           default:
+                               _def.push(error);
+                               break;
+                       }
                     });
+
+                    if(_notice.length > 0){
+                        _issues.push({
+                            type: 'NOTICE',
+                            msgs: _notice
+                        });
+                    }
+                    if(_warning.length > 0){
+                        _issues.push({
+                            type: 'WARNING',
+                            msgs: _warning
+                        });
+                    }
+                    if(_error.length > 0){
+                        _issues.push({
+                            type: 'ERROR',
+                            msgs: _error
+                        });
+                    }
+                    if(_def.length > 0){
+                        _issues.push({
+                            type: 'UNKOWN ISSUE',
+                            msgs: _def
+                        });
+                    }
 
                 });
         }).
         then(function onOK() {
-            _deferred.fulfill(webElement);
+            _deferred.fulfill(_issues);
         });
 
     return _deferred.promise;
@@ -515,7 +805,60 @@ BlueprintRunner.prototype.injectAcessibilityTestScripts = function () {
             jqueryScriptTag.src = "http://localhost:3000/javascripts/jquery-1.11.1.min.js";
             document.head.appendChild(jqueryScriptTag);
         }
-    }). then(function injectHTMLCS() {
+    }).
+         then(function injectToolTips() {
+             return  self.driver.executeScript(function () {
+                 if (!window.HTMLCS) {
+                     var _htmlcsScriptTag = document.createElement("script");
+                     _htmlcsScriptTag.type = "text/javascript";
+
+                     if (_htmlcsScriptTag.readyState) {  //IE
+                         _htmlcsScriptTag.onreadystatechange = function () {
+                             if (_htmlcsScriptTag.readyState == "loaded" ||
+                                 _htmlcsScriptTag.readyState == "complete") {
+                                 _htmlcsScriptTag.onreadystatechange = null;
+                                 //  cb("jquery loaded");
+                             }
+                         };
+                     } else {  //Others
+                         _htmlcsScriptTag.onload = function () {
+                             //   cb("jquery loaded");
+                         };
+                     }
+                     _htmlcsScriptTag.src = "http://localhost:3000/javascripts/jquery.tooltipster.min.js";
+                     document.head.appendChild(_htmlcsScriptTag);
+                 }
+             });
+
+         }).
+         then(function injectToolTipsCSS() {
+             return  self.driver.executeScript(function () {
+                 if (!window.HTMLCS) {
+                     var _htmlcsScriptTag = document.createElement("link");
+                     _htmlcsScriptTag.type = "text/css";
+                     _htmlcsScriptTag.rel = "stylesheet";
+
+                     if (_htmlcsScriptTag.readyState) {  //IE
+                         _htmlcsScriptTag.onreadystatechange = function () {
+                             if (_htmlcsScriptTag.readyState == "loaded" ||
+                                 _htmlcsScriptTag.readyState == "complete") {
+                                 _htmlcsScriptTag.onreadystatechange = null;
+                                 //  cb("jquery loaded");
+                             }
+                         };
+                     } else {  //Others
+                         _htmlcsScriptTag.onload = function () {
+                             //   cb("jquery loaded");
+                         };
+                     }
+                     _htmlcsScriptTag.href = "http://localhost:3000/stylesheets/tooltipster.css";
+                     document.head.appendChild(_htmlcsScriptTag);
+                 }
+             });
+
+         }).
+
+         then(function injectHTMLCS() {
         return  self.driver.executeScript(function () {
             if (!window.HTMLCS) {
                 var _htmlcsScriptTag = document.createElement("script");
@@ -540,6 +883,32 @@ BlueprintRunner.prototype.injectAcessibilityTestScripts = function () {
          });
 
      }).
+
+        /* then(function injectQUAIL() {
+             return  self.driver.executeScript(function () {
+                 if (!window.quail) {
+                     var _quailScriptTag = document.createElement("script");
+                     _quailScriptTag.type = "text/javascript";
+
+                     if (_quailScriptTag.readyState) {  //IE
+                         _quailScriptTag.onreadystatechange = function () {
+                             if (_quailScriptTag.readyState == "loaded" ||
+                                 _quailScriptTag.readyState == "complete") {
+                                 _quailScriptTag.onreadystatechange = null;
+                                 //  cb("jquery loaded");
+                             }
+                         };
+                     } else {  //Others
+                         _quailScriptTag.onload = function () {
+                             //   cb("jquery loaded");
+                         };
+                     }
+                     _quailScriptTag.src = "http://localhost:3000/javascripts/quail/quail.jquery.min.js";
+                     document.head.appendChild(_quailScriptTag);
+                 }
+             });
+
+         }). */
       then(function injectGamay() {
              return  self.driver.executeScript(function () {
                  if (!window.Gamay) {

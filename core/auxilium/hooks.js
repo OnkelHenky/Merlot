@@ -15,19 +15,28 @@ module.exports = hooks = function () {
      * Close the selenium driver (browser) after all features
      * of an scenario had been executed.
      */
-    this.After(function(scenario, callback) {
-        var _logger = this.browser.logger;
+    this.After(function (scenario, callback) {
+        var self    = this,
+            _logger = this.browser.logger;
 
-        _logger.info("Finished scenario: '"+scenario.getName()+"'");
+        self.browser.printEvaluationReport(scenario, function (err) {
+            if (err) {
+                _logger.log("Error, closing server");
+                self.browser.pinotServer.stop(); //stop the pinot server
+                callback();
+            } else {
+                _logger.info("Finished scenario: '" + scenario.getName() + "'");
+                if (_logger.getLogLevel() < 3) {
+                    _logger.info("Closing selenium driver");
+                    _logger.info("To keep the browser up and running set Merlot log level 3 (Error level) in the Blueprint config");
+                    self.browser.pinotServer.stop(); //stop the pinot server
+                    self.browser.closeDriver(); //closing the selenium driver (browser)
+                }
+                self.browser.pinotServer.stop(); //stop the pinot server
+                callback();
+            }
 
-        if(_logger.getLogLevel() < 3){
-           _logger.info("Closing selenium driver");
-          // _logger.info("To keep the browser up and running set Merlot log level 3 (Error level) in the Blueprint config");
-           this.browser.closeDriver(); //closing the selenium driver (browser)
-        }
-        // this.browser.closeDriver();
-        this.browser.pinotServer.stop(); //stop the pinot server
-        callback();
+        });
+
     });
-
 };

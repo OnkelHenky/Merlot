@@ -119,9 +119,15 @@ Merlot.prototype.utile._fs_ = require('fs');
  * @description
  * System function support.
  * @type {exports}
- * @private
  */
 Merlot.prototype.utile._sys_ = require('sys');
+
+/**
+ * @description
+ * Path support.
+ * @type {exports}
+ */
+Merlot.prototype.utile._path_ = require('path');
 
 /**
  * @description

@@ -52,8 +52,64 @@
 
 (function () {
 
-    /*Is the Gamay already loaded ?*/
-    window.Gamay = window.Gamay || {};
+    window.Gamay = window.Gamay || {};  // Is the Gamay already loaded?
+
+   /*
+    * +----------------------------------------------------------+
+    * | Applying Gamay specific functions to all jQuery objects  |
+    * +----------------------------------------------------------+
+    */
+    function _apply_Gamay_jQueryExtensions(){
+
+        /**
+         * @description
+         * Get the tag name of an HTML element.
+         * @returns {string} the tag name in lower case
+         */
+        jQuery.fn.Gamay_GetTagName = function() {
+            return this.prop("tagName").toLowerCase();
+        };
+
+       /**
+        * @description
+        * Check if an HTML element is direct child of 'html', 'body' or 'head'.
+        * This function returns true if the criteria is correct, and false otherwise.
+        * @returns {boolean}
+        */
+        jQuery.fn.Gamay_isElementChildOfBiggerContent = function() {
+            var _parentTagName = this.parent().Gamay_GetTagName();
+            return ["html","body","head"].indexOf(_parentTagName) !== -1;
+        };
+
+        /**
+         * @description
+         * Get the HTML environment of a element
+         * @example
+         * Given this html code:
+         *
+         * <header id="pageheader">
+         *      <h1>some heading</h1>
+         *      <img id="imageID" src="./img/someimage.jpg">
+         *
+         * </header>
+         *
+         * If the element is the image element with @id = "imageID"
+         * The HTML environment snapshot would be the parent element (header tag),
+         * containing this image.
+         *
+         * If it is a direct child of 'html', 'body' or 'head',
+         * the element and it innerHTML is returned.
+         *
+         * @returns {*} the html environment
+         */
+        jQuery.fn.Gamay_GetEnvironmentSnapshot = function() {
+            if(this.Gamay_isElementChildOfBiggerContent()){
+              return this.html(); //the element + its 'innerHTML'
+            }else{
+              return this.parent().html();
+            }
+        };
+    }
 
     /*
      * +----------------------------+
@@ -70,6 +126,7 @@
     var AccessibilityIssue = function (config) {
 
         this.type           = "";  // ERROR = 1, WARNING = 2, NOTICE = 3
+        this.typeCode       = "";  // Numeric representation for ERROR = 1, WARNING = 2, NOTICE = 3
         this.code           = "";  // String combination of violated WCAG2.0 rule, principle and technique
         this.wcagConf       = "";  // Violate WCAG2.0 conformation level: A, AA, AAA
         this.wcagPrinciple  = "";  // Violate WCAG2.0 principle: Principle1, Principle2, Principle3, Principle4
@@ -109,42 +166,185 @@
     };
 
    /*
+    * +--------------------------------------+
+    * | Flags to indicated that we           |
+    * | have an error on a specific element  |
+    * +--------------------------------------+
+    *
+    *  If we haven an error on HTML element, than this error
+    *  should be visible on the web page, regardless
+    *  of any potential warning or notice.
+    *
+    *  If we have an warning (and no error)for an specific element,
+    *  then this waring should be visible, regardless
+    *  of any notice
+    *
+    *  The hierarchy is as follows:
+    *
+    *  Error > Warning > Notice > No Error
+    *
+    */
+    window.Gamay._onlyOneError   = false;
+    window.Gamay._onlyOneWarning = false;
+
+   /*
+    * +--------------------------------------+
+    * | Attache tool tip explanation for     |
+    * | accessibility issues                 |
+    * +--------------------------------------+
+    */
+    window.Gamay.outlineIssuedTooltip = function(element, msgs){
+        var _tooltip = "";
+
+        msgs.forEach(function (msg) {_tooltip += msg;});
+
+        element.parent().tooltipster({
+            content: $(_tooltip),
+            animation: 'grow',
+            delay: 100
+        });
+    };
+
+   /*
+    * +---------------------------------+
+    * | Outline any issued HTML Element |
+    * +---------------------------------+
+    *
+    *  The outline is colored, depending on the issues type,
+    *  4px strong and dotted
+    *
+    *  Error    = red,
+    *  Warning  = yellow,
+    *  Notice   = blue,
+    *  No Error = green
+    *
+    *  This function uses the '_onlyOneError' and '_onlyOneWarning' flags
+    *  to indicate the color of the outline.
+    *
+    *  NOTE:
+    *  input[@type='radio' and @value='AmericanExpress']
+    *  $(type~="accordion"][value~="expand"]
+    *  var r = $("input[type=radio][value='AmericanExpress']");
+    */
+    window.Gamay.outlineIssuedElement = function(domElementCSSSelector, issue, _issuesMSGs){
+
+        var _error   = false,
+            _warning = false,
+            _color   = '4px dotted',
+            _element = $(domElementCSSSelector);
+
+
+
+        console.log('domElementCSSSelector = '+domElementCSSSelector);
+        console.log('Element = '+_element);
+
+        switch (issue.typeCode) {
+            case HTMLCS.ERROR:
+                _color += ' red';
+                _error = true;
+                break;
+            case HTMLCS.WARNING:
+                _color += ' goldenRod';
+                _warning = true;
+                break;
+            case HTMLCS.NOTICE:
+                _color += ' blue';
+                break;
+            default:
+                _color += ' goldenRod';
+                break;
+        }
+
+
+        if(_error){
+            _element.parent().css("outline", _color);
+            _element.parent().addClass("tooltip");
+            window.Gamay._onlyOneError = true;
+
+            var msg = "<article>" +
+                "<header><h4>ERROR</h4></header>" +
+                "<span> "+issue.wcagPrinciple+" </span>" +
+                "<span> "+issue.wcagGuideline+" </span>" +
+                "<div>"+issue.msg+"</div>" +
+                "</article><br>";
+
+            if( _issuesMSGs.indexOf(msg) === -1){
+                _issuesMSGs.push(msg);
+            }
+
+
+        }else if (_warning){
+           if(!window.Gamay._onlyOneError) {
+             _element.parent().css("outline", _color);
+             _element.parent().addClass("tooltip");
+             window.Gamay._onlyOneWarning = true;
+
+               var msg = "<article>" +
+                   "<header><h4>WARNING</h4></header>" +
+                   "<span>"+issue.wcagPrinciple+"</span>" +
+                   "<span>"+issue.wcagGuideline+"</span>" +
+                   "<div>"+issue.msg+"</div>" +
+                   "</article><br>";
+               //<span><strong>"+msg+"</strong></span><br>
+
+               if( _issuesMSGs.indexOf(msg) === -1){
+                   _issuesMSGs.push(msg);
+               }
+           }
+        }else{
+            if(!window.Gamay._onlyOneError && !window.Gamay._onlyOneWarning ) {
+              _element.parent().addClass("tooltip");
+              _element.parent().css("outline", _color);
+
+                var msg = "<article>" +
+                    "<header><h4>NOTICE</h4></header>" +
+                    "<span>"+issue.wcagPrinciple+"</span>" +
+                    "<span>"+issue.wcagGuideline+"</span>" +
+                    "<div>"+issue.msg+"</div>" +
+                    "</article><br>";
+                //<span><strong>"+msg+"</strong></span><br>
+
+                if( _issuesMSGs.indexOf(msg) === -1){
+                    _issuesMSGs.push(msg);
+                }
+
+
+            }
+        }
+
+
+    };
+
+
+   /*
     * +---------------------------------------------+
     * | Evaluation Function using HTML CodeSniffer  |
     * +---------------------------------------------+
     */
-
-    window.Gamay.accessibilityEvaluationHTMLCS =  function(ruleset, html, domElement ,callback) {
+    window.Gamay.accessibilityEvaluationHTMLCS =  function(ruleset, html, domElement, callback) {
 
         var _callback = function () {
 
             var _accessIssues = [], //Array with all found accessibility issues
-                _messages = HTMLCS.getMessages();
+                _messages = HTMLCS.getMessages(),
+                _issuesMSGs = [];
 
             _messages.forEach(function(msg){
-                var _typeName = 'UNKNOWN',
-                    _color = '4px dotted';
+                var _typeName = 'UNKNOWN';
                 switch (msg.type) {
                     case HTMLCS.ERROR:
                         _typeName = 'ERROR';
-                        _color += ' red';
                         break;
                     case HTMLCS.WARNING:
                         _typeName = 'WARNING';
-                        _color += ' goldenRod';
                         break;
                     case HTMLCS.NOTICE:
                         _typeName = 'NOTICE';
-                        _color += ' green';
                         break;
                     default:
                         _typeName = 'UNKNOWN';
-                        _color += ' goldenRod';
                         break;
                 } //end switch
-                console.log("MSG");
-                console.log(msg.element.id);
-                console.log("ourline = "+_color);
 
                 var _splittedCode = msg.code.split('.'),
                     wcagConf      = _splittedCode[0],
@@ -154,6 +354,7 @@
 
                 var issue = new AccessibilityIssue({
                     type: _typeName,
+                    typeCode: msg.type,
                     code: msg.code,
                     wcagConf: wcagConf,
                     wcagGuideline: wcagGuideline,
@@ -165,24 +366,91 @@
                     id: msg.element.id,
                     element: msg.element
                 });
-                console.log('SELECTOR = '+domElement);
-                //input[@type='radio' and @value='AmericanExpress']
-                //$(type~="accordion"][value~="expand"]
-              // var r = $("input[type=radio][value='AmericanExpress']");
-                var r = $(domElement);
-             //   $( ".inner" ).append( "<p>Test</p>" );
-                r.parent().css("outline", _color);
-                r.parent().append( "<p>"+msg.msg+"</p>" );
-                console.log(msg.element.id);
+
+                window.Gamay.outlineIssuedElement(domElement,issue,_issuesMSGs);
                 _accessIssues.push(issue);
             }); //End forEach
+            window.Gamay.outlineIssuedTooltip($(domElement),_issuesMSGs);
             callback(_accessIssues); //calling back Merlot (selenium)
         };
-        HTMLCS.process(ruleset, html, _callback); // run the accessibility evaluation
+        window.Gamay._onlyOneError   = false; //reset the error
+        window.Gamay._onlyOneWarning = false; //reset the error
+
+        console.log('standard = '+ruleset +' | '+ ' content:'+html);
+        console.log('EnvironmentSnapshot:'+ $(domElement).Gamay_GetEnvironmentSnapshot());
+
+        HTMLCS.process(ruleset,$(domElement).Gamay_GetEnvironmentSnapshot(), _callback); // run the accessibility evaluation
+
     }; // End of function 'accessibilityEvaluationHTMLCS'
 
+    /**
+     *
+     * @param domElement
+     */
+    window.Gamay.isValidElement = function(domElement,callback){
+        console.log($(domElement));
+        ($(domElement).length <= 0) ? callback(false) : callback(true);
+    };
+
+    /**
+     *
+     * @param domElement
+     * @param _issuesMSGs
+     * @param callback
+     */
+    window.Gamay.markElement = function(domElement,issue,callback){
+
+        console.dir(issue);//.Gamay_GetEnvironmentSnapshot());
+var _issueObj = issue[0];
+        var _element = $(domElement);//;.Gamay_GetEnvironmentSnapshot();
+        console.log("MARK ELEMENT = "+_element);//.Gamay_GetEnvironmentSnapshot());
+        console.dir(_element);//.Gamay_GetEnvironmentSnapshot());
+        var _color =  '4px dotted';
+        switch (_issueObj.typeCode) {
+            case HTMLCS.ERROR:
+                _color += ' red';
+                _error = true;
+                break;
+            case HTMLCS.WARNING:
+                _color += ' goldenRod';
+                _warning = true;
+                break;
+            case HTMLCS.NOTICE:
+                _color += ' blue';
+                break;
+            default:
+                _color += ' goldenRod';
+                break;
+        }
+
+        _element.parent().css("outline", _color);
+        _element.parent().addClass("tooltip");
+
+        var msg = "<article>" +
+                "<header><h4>Error</h4></header>" +
+                "<span>"+_issueObj.wcagPrinciple+"</span>" +
+                "<span>"+_issueObj.wcagGuideline+"</span>" +
+                "<div>"+_issueObj.msg+"</div>" +
+                "</article><br>";
+
+
+        _element.parent().tooltipster({
+            content: $(msg),
+            animation: 'grow',
+            delay: 100
+        });
+
+       // window.Gamay.outlineIssuedTooltip($(domElement),_issuesMSGs);
+        callback();
+    };
+
+    /**
+     * @description
+     * Load everything
+     */
     $(document).ready(function () {
-       console.log('Gamay has been loaded on the client');
+       _apply_Gamay_jQueryExtensions(); //getting the gamay specific jQuery extensions.
+       console.log('Gamay has been loaded');
     });
 
 })();

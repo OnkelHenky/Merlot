@@ -29,9 +29,23 @@ module.exports = forms_and_input_Steps = function () {
                 'identifierValue': identifierValue
             });
 
+        var _stepDescr = "The actor enters "+text+" into textfield whose "
+            +_domElement.getSearchAttributeName()
+            +" is "+ _domElement.getSearchAttributeValue();
+
+
         this.browser.actorTryToFindThisElement(_domElement).
             then(function runAccessibilityEvaluation(webElement) {
-                return that.browser.evalAccessibility(webElement,_domElement);
+                return that.browser.evalAccessibility(webElement,_domElement)
+                    .then(function storeIssues(issues) {
+                        if(issues){
+                            var obj = {};
+                            obj.stepDescr = _stepDescr;
+                            obj.isssues = issues;
+                            that.browser.addAccessibilityIssue(obj);
+                        }
+                        return webElement
+                    });
             }).
             then(function enterText(webElement) {
                 return that.browser.enterText(webElement, text); //  auxilia.inputText.call(that,text,webElement);
@@ -40,7 +54,8 @@ module.exports = forms_and_input_Steps = function () {
                 callback();
             }).
             then(null, function onError(err) {
-                callback.fail(new Error("Merlot reported an error! " + err + " with DOMElement: " + _domElement).message);
+                that.browser.errorHandler(err,_SELECTdomElement,_stepDescr,callback);
+               // callback.fail(new Error("Merlot reported an error! " + err + " with DOMElement: " + _domElement).message);
             });
 
     });
@@ -69,9 +84,22 @@ module.exports = forms_and_input_Steps = function () {
                 'identifierValue': identifierValue
             });
 
+            var _stepDescr = "The actor enters the username into textfield whose "
+                +_domElement.getSearchAttributeName()
+                +" is "+ _domElement.getSearchAttributeValue();
+
             this.browser.actorTryToFindThisElement(_domElement).
                 then(function runAccessibilityEvaluation(webElement) {
-                    return that.browser.evalAccessibility(webElement,_domElement);
+                    return that.browser.evalAccessibility(webElement,_domElement)
+                        .then(function storeIssues(issues) {
+                            if(issues){
+                                var obj = {};
+                                obj.stepDescr = _stepDescr;
+                                obj.isssues = issues;
+                                that.browser.addAccessibilityIssue(obj);
+                            }
+                            return webElement
+                        });
                 }).
                 then(function (webElement) {
                     return that.browser.enterText(webElement, _username);
@@ -80,7 +108,8 @@ module.exports = forms_and_input_Steps = function () {
                     callback();
                 }).
                 then(null, function onError(err) {
-                    callback.fail(new Error("Merlot reported an error! " + err + " with DOMElement: " + _domElement).message);
+                    that.browser.errorHandler(err,_SELECTdomElement,_stepDescr,callback);
+                    //callback.fail(new Error("Merlot reported an error! " + err + " with DOMElement: " + _domElement).message);
                 });
 
 
@@ -111,9 +140,22 @@ module.exports = forms_and_input_Steps = function () {
                 'identifierValue': identifierValue
             });
 
+            var _stepDescr = "The actor enters the username into textfield whose "
+                +_domElement.getSearchAttributeName()
+                +" is "+ _domElement.getSearchAttributeValue();
+
             this.browser.actorTryToFindThisElement(_domElement).
                 then(function runAccessibilityEvaluation(webElement) {
-                    return that.browser.evalAccessibility(webElement,_domElement);
+                    return that.browser.evalAccessibility(webElement,_domElement)
+                        .then(function storeIssues(issues) {
+                            if(issues){
+                                var obj = {};
+                                obj.stepDescr = _stepDescr;
+                                obj.isssues = issues;
+                                that.browser.addAccessibilityIssue(obj);
+                            }
+                            return webElement
+                        });
                 }).
                 then(function (webElement) {
                     return that.browser.enterText(webElement, _password);
@@ -122,7 +164,8 @@ module.exports = forms_and_input_Steps = function () {
                     callback();
                 }).
                 then(null, function onError(err) {
-                    callback.fail(new Error("Merlot reported an error! " + err + " with DOMElement: " + _domElement).message);
+                    that.browser.errorHandler(err,_SELECTdomElement,_stepDescr,callback);
+                   // callback.fail(new Error("Merlot reported an error! " + err + " with DOMElement: " + _domElement).message);
                 });
 
         } else {
@@ -150,10 +193,25 @@ module.exports = forms_and_input_Steps = function () {
                 'identifierValue' : identifierValue
             });
 
+
+        var _stepDescr = "The actor selects the option whose "
+            +_domElement.getSearchAttributeName()
+            +" is "+ _domElement.getSearchAttributeValue()
+            +"from the radiogroup " + radiogroupName ;
+
         /*Find the radio group first*/
         this.browser.actorTryToFindThisElement(_domElement).
             then(function runAccessibilityEvaluation(webElement) {
-                return that.browser.evalAccessibility(webElement,_domElement);
+                return that.browser.evalAccessibility(webElement,_domElement)
+                    .then(function storeIssues(issues) {
+                        if(issues){
+                            var obj = {};
+                            obj.stepDescr = _stepDescr;
+                            obj.isssues = issues;
+                            that.browser.addAccessibilityIssue(obj);
+                        }
+                        return webElement
+                    });
             }).
             then(function findTheRadioButtonInTheRadioGroup(webElement){
                 /*Here we have the first element in the radio group*/
@@ -164,7 +222,8 @@ module.exports = forms_and_input_Steps = function () {
             }).
             then(null, function onError(err) {
                 that.browser.logger.error(err.name + ": " + err.message);
-                callback.fail(err.name + ": " + err.message);
+                that.browser.errorHandler(err,_SELECTdomElement,_stepDescr,callback);
+                //callback.fail(err.name + ": " + err.message);
             });
     });
 
@@ -190,19 +249,22 @@ module.exports = forms_and_input_Steps = function () {
                 'identifierValue': chooseValue
             });
 
+        var _stepDescr = "The actor chooses "+chooseValue+" from the selection whose "
+            +_SELECTdomElement.getSearchAttributeName()
+            +" is "+ _SELECTdomElement.getSearchAttributeValue();
+
         this.browser.actorTryToFindThisElement(_SELECTdomElement).
             then(function runAccessibilityEvaluation(webElement) {
-                return that.browser.evalAccessibility(webElement,_SELECTdomElement);
-            }).
-            then(function applyCriteria(foundSelectionElement) {
-                var deferred = that.browser.webdriver.promise.defer();
-                that.browser.applyCriteria(foundSelectionElement, function (foundSelectionElement, err) {
-                    if (err) {
-                        deferred.reject(err);
-                    }
-                    deferred.fulfill(foundSelectionElement);
-                });
-                return deferred.promise;
+                return that.browser.evalAccessibility(webElement,_SELECTdomElement)
+                    .then(function storeIssues(issues) {
+                        if(issues){
+                            var obj = {};
+                            obj.stepDescr = _stepDescr;
+                            obj.isssues = issues;
+                            that.browser.addAccessibilityIssue(obj);
+                        }
+                        return webElement
+                    });
             }).
             then(function interactWithSelectionAndChooseOption(selectionElement) {
                 return that.browser.interactWithSelection(selectionElement, _SELECTOptionElement);
@@ -211,7 +273,8 @@ module.exports = forms_and_input_Steps = function () {
                 callback();
             }).
             then(null, function onError(err) {
-                callback.fail(new Error("Merlot reported an error! " + err + " with DOMElement: " + _SELECTdomElement).message);
+                that.browser.errorHandler(err,_SELECTdomElement,_stepDescr,callback);
+               // callback.fail(new Error("Merlot reported an error! " + err + " with DOMElement: " + _SELECTdomElement).message);
             });
 
     });
@@ -235,16 +298,22 @@ module.exports = forms_and_input_Steps = function () {
                 }
             });
 
+        var _stepDescr = "The actor interacts with a image whose "
+            +_domElement.getSearchAttributeName()
+            +" is "+ _domElement.getSearchAttributeValue();
+
         this.browser.actorTryToFindThisElement(_domElement).
             then(function runAccessibilityEvaluation(webElement) {
-                return that.browser.evalAccessibility(webElement,_domElement);
-            }).
-            then(function (webElement) {
-                var deferred = that.browser.webdriver.promise.defer();
-                that.browser.applyCriteria(webElement, function (webElement) {
-                    deferred.fulfill(webElement);
-                });
-                return deferred.promise;
+                return that.browser.evalAccessibility(webElement,_domElement)
+                    .then(function storeIssues(issues) {
+                        if(issues){
+                            var obj = {};
+                            obj.stepDescr = _stepDescr;
+                            obj.isssues = issues;
+                            that.browser.addAccessibilityIssue(obj);
+                        }
+                        return webElement
+                    });
             }).
             then(function (webElement) {
                 return that.browser.click(webElement,that.browser.webdriver.Key.ENTER);
@@ -253,7 +322,8 @@ module.exports = forms_and_input_Steps = function () {
                 callback();
             }).
             then(null, function onError(err) {
-                callback.fail(new Error("Merlot reported an error! " + err +" with DOMElement: "+_domElement).message);
+                that.browser.errorHandler(err,_domElement,_stepDescr,callback);
+               // callback.fail(new Error("Merlot reported an error! " + err +" with DOMElement: "+_domElement).message);
             });
 
     });

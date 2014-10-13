@@ -72,7 +72,8 @@ module.exports = tabNavigationTechnique = function (domElement) {
                     that.webdriver.WebElement.equals(_firstWebElement, that.driver.switchTo().activeElement()).then(function (eq) {
                         if (eq) {
                             /* Reject the promise of we have a loop */
-                            return _deferred.reject(new Error(new ElementNotFoundError()));
+                           // return _deferred.reject(new Error(new ElementNotFoundError()));
+                             _deferred.reject("ElementNotFound");
                         }
                     });
                 }

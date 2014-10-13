@@ -32,7 +32,7 @@ module.exports = navigationSteps = function () {
                 console.log('page Tile = ' + pageTitle);
                 if (title === pageTitle) {
                   //  callback();
-                    console.log('passt page Tile = ' + pageTitle);
+                    console.log('page Tile = ' + pageTitle);
                 } else {
                     callback.fail(new Error("Expected to be on page with title " + title + "but was on: '" + pageTitle + "'"));
                 }
@@ -102,17 +102,30 @@ module.exports = navigationSteps = function () {
                 'identifierValue': identifierValue
             });
 
+        var _stepDescr = "The actor interacts with a hyperlink whose "
+            +_domElement.getSearchAttributeName()
+            +" is "+ _domElement.getSearchAttributeValue();
+
         this.browser.actorTryToFindThisElement(_domElement).
-            then(function (webElement) {
+          /*  then(function (webElement) {
                 var deferred = that.browser.webdriver.promise.defer();
                 that.browser.applyCriteria(webElement, function (webElement) {
                     deferred.fulfill(webElement);
                 });
 
                 return deferred.promise;
-            }).
+            }). */
             then(function runAccessibilityEvaluation(webElement) {
-                return that.browser.evalAccessibility(webElement,_domElement);
+                return that.browser.evalAccessibility(webElement,_domElement)
+                    .then(function storeIssues(issues) {
+                        if(issues){
+                            var obj = {};
+                            obj.stepDescr = _stepDescr;
+                            obj.isssues = issues;
+                            that.browser.addAccessibilityIssue(obj);
+                        }
+                        return webElement
+                    });
             }).
             then(function (webElement) {
                 return that.browser.click(webElement);
@@ -121,7 +134,7 @@ module.exports = navigationSteps = function () {
                 callback();
             }).
             then(null, function onError(err) {
-                callback.fail(new Error("Merlot reported an error! " + err + " with DOMElement: " + _domElement).message);
+                that.browser.errorHandler(err,_domElement,_stepDescr,callback);
             });
     });
 
@@ -144,26 +157,39 @@ module.exports = navigationSteps = function () {
                 'identifierValue': identifierValue
             });
 
+        var _stepDescr = "The actor interacts with a button whose "
+            +_domElement.getSearchAttributeName()
+            +" is "+ _domElement.getSearchAttributeValue();
+
 
         this.browser.actorTryToFindThisElement(_domElement).
-            then(function (webElement) {
+            /* then(function (webElement) {
                 var deferred = that.browser.webdriver.promise.defer();
                 that.browser.applyCriteria(webElement, function (webElement) {
                     deferred.fulfill(webElement);
                 });
                 return deferred.promise;
-            }).
+            }). */
             then(function runAccessibilityEvaluation(webElement) {
-                return that.browser.evalAccessibility(webElement,_domElement);
+                return that.browser.evalAccessibility(webElement,_domElement)
+                    .then(function storeIssues(issues) {
+                        if(issues){
+                            var obj = {};
+                            obj.stepDescr = _stepDescr;
+                            obj.isssues = issues;
+                            that.browser.addAccessibilityIssue(obj);
+                        }
+                        return webElement
+                    });
             }).
             then(function (webElement) {
                 return that.browser.click(webElement, that.browser.webdriver.Key.ENTER);
             }).
-            then(function () {
+            then(function onOK() {
                 callback();
             }).
-            then(null, function (err) {
-                callback.fail(new Error("Merlot reported an error! " + err + " with DOMElement: " + _domElement).message);
+            then(null, function onError(err) {
+                that.browser.errorHandler(err,_domElement,_stepDescr,callback);
             });
     });
 
@@ -185,16 +211,29 @@ module.exports = navigationSteps = function () {
                 'identifierValue': identifierValue
             });
 
+        var _stepDescr = "The actor interacts with a "+elementName+ " element whose "
+                          +_domElement.getSearchAttributeName()
+                          +" is "+ _domElement.getSearchAttributeValue();
+
         this.browser.actorTryToFindThisElement(_domElement).
-            then(function (webElement) {
+           /* then(function (webElement) {
                 var deferred = that.browser.webdriver.promise.defer();
                 that.browser.applyCriteria(webElement, function (webElement) {
                     deferred.fulfill(webElement);
                 });
                 return deferred.promise;
-            }).
+            }). */
             then(function runAccessibilityEvaluation(webElement) {
-                return that.browser.evalAccessibility(webElement,_domElement);
+                return that.browser.evalAccessibility(webElement,_domElement)
+                       .then(function storeIssues(issues) {
+                               if(issues){
+                                   var obj = {};
+                                   obj.stepDescr = _stepDescr;
+                                   obj.isssues = issues;
+                                   that.browser.addAccessibilityIssue(obj);
+                               }
+                               return webElement
+                        });
             }).
             then(function (webElement) {
                 return that.browser.click(webElement);
@@ -203,7 +242,7 @@ module.exports = navigationSteps = function () {
                 callback();
             }).
             then(null, function onError(err) {
-                callback.fail(new Error("Merlot reported an error! " + err + " with DOMElement: " + _domElement).message);
+                that.browser.errorHandler(err,_domElement,_stepDescr,callback);
             });
     });
 

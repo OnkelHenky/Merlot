@@ -59,13 +59,13 @@ describe('Test if the promises are all rejected if not element can be found', fu
 
         describe('Using TAB', function () {
             it('It is expected the promise to be rejected', function () {
-                return expect(TabNavTechnique.call(_browser, _domElement)).to.be.rejectedWith('ElementNotFoundError');
+                return expect(TabNavTechnique.call(_browser, _domElement)).to.be.rejectedWith('MerlotError');
             })
         });
 
         describe('Using PACd', function () {
             it('It is expected the promise to be rejected', function () {
-                return expect(PacNavTechnique.call(_browser, _domElement)).to.be.rejectedWith('ElementNotFoundError');
+                return expect(PacNavTechnique.call(_browser, _domElement)).to.be.rejectedWith('MerlotError');
             })
         });
 
@@ -92,13 +92,13 @@ describe('Test if the promises are all rejected if not element can be found', fu
 
         describe('Using TAB', function () {
             it('It is expected the promise to be rejected', function () {
-                return expect(TabNavTechnique.call(_browser, _domElement)).to.be.rejectedWith('ElementNotFoundError');
+                return expect(TabNavTechnique.call(_browser, _domElement)).to.be.rejectedWith('MerlotError');
             })
         });
 
         describe('Using PACd', function () {
             it('It is expected the promise to be rejected', function () {
-                return expect(PacNavTechnique.call(_browser, _domElement)).to.be.rejectedWith('ElementNotFoundError');
+                return expect(PacNavTechnique.call(_browser, _domElement)).to.be.rejectedWith('MerlotError');
             })
         });
 
@@ -125,13 +125,13 @@ describe('Test if the promises are all rejected if not element can be found', fu
 
         describe('Using TAB', function () {
             it('It is expected the promise to be rejected', function () {
-                return expect(TabNavTechnique.call(_browser, _domElement)).to.be.rejectedWith('ElementNotFoundError');
+                return expect(TabNavTechnique.call(_browser, _domElement)).to.be.rejectedWith('MerlotError');
             })
         });
 
         describe('Using PACd', function () {
             it('It is expected the promise to be rejected', function () {
-                return expect(PacNavTechnique.call(_browser, _domElement)).to.be.rejectedWith('ElementNotFoundError');
+                return expect(PacNavTechnique.call(_browser, _domElement)).to.be.rejectedWith('MerlotError');
             })
         });
 

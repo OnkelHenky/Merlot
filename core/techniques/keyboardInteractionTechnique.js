@@ -72,7 +72,7 @@ module.exports.keyboardRadioButtonInteraction = function (webElement, domElement
             console.error('Error from "isAttributePresent": ' + exception);
         }
         return false;
-    };
+    }
 
     /**
      * @description
@@ -91,7 +91,7 @@ module.exports.keyboardRadioButtonInteraction = function (webElement, domElement
             console.error('Error from "hasTextNode": ' + exception);
         }
         return _result;
-    };
+    }
 
     /*
      * +-----------------------------------------+
@@ -101,7 +101,7 @@ module.exports.keyboardRadioButtonInteraction = function (webElement, domElement
      */
     var findRadioButton = function (activeElement, domElement) {
         activeElement.
-            then(function checkIfWeCantreachTheRadioButton() {
+            then(function checkIfWeCantReachTheRadioButton() {
                 var _noLoopPromise = that.webdriver.promise.defer();
                 if (undefined === _firstWebElement) {
                     _firstWebElement = _lastActiveElement = activeElement;
@@ -111,7 +111,8 @@ module.exports.keyboardRadioButtonInteraction = function (webElement, domElement
                     that.webdriver.WebElement.equals(_firstWebElement, activeElement).
                         then(function (eq) {
                             if (eq) {
-                                _noLoopPromise.reject(new ElementNotFoundError(domElement));
+                                throw new ElementNotFoundError("ElementNotFound");
+                                //_noLoopPromise.reject("ElementNotFound");
                             }
                         }).
                         then(function () {
@@ -119,7 +120,8 @@ module.exports.keyboardRadioButtonInteraction = function (webElement, domElement
                                 /* Reject the promise if we are still on the same element (triggered in Chrome & Safari)*/
                                 that.webdriver.WebElement.equals(_lastActiveElement, activeElement).then(function (eq) {
                                     if (eq) {
-                                        _noLoopPromise.reject(new ElementNotFoundError(domElement));
+                                        throw new ElementNotFoundError("ElementNotFound");
+                                       // _noLoopPromise.reject("ElementNotFound");
                                     }
                                 });
                             }
@@ -154,10 +156,14 @@ module.exports.keyboardRadioButtonInteraction = function (webElement, domElement
                         });
                 }
             }).
-            then(null, function onError(er) {
+            then(null, function onError(error) {
                 /* Rejecting the blueprint step if any error occurs during the interaction with a radio button element, */
                 // _deferred.reject();
-                throw new ElementNotFoundError();
+                if("ElementNotFound" === error){
+                    console.log('Element Not Found');
+                   // _deferred.reject();
+                    throw new ElementNotFoundError(error.element);
+                }
 
                 /* NOTE: Usually any error gets propagated through the promise chain
                  * but to keep the overview over the code, i  prefer to catch errors thrown in the functions
