@@ -106,7 +106,7 @@
             if(this.Gamay_isElementChildOfBiggerContent()){
               return this.html(); //the element + its 'innerHTML'
             }else{
-              return this.parent().html();
+              return this.parent().html(); //the parent of the element + the parents 'innerHTML'
             }
         };
     }
@@ -187,6 +187,29 @@
     window.Gamay._onlyOneError   = false;
     window.Gamay._onlyOneWarning = false;
 
+
+   /*
+    * +--------------------------------------+
+    * |           The outline style          |
+    * +--------------------------------------+
+    *
+    * The color and the style of the the outline.
+    * This style is used when marking any errors or issues
+    *  on a web page.
+    *
+    */
+    window.Gamay._OUTLINE_STYLE         = '4px dotted';
+
+   /*
+    * The outline colors
+    */
+    window.Gamay._ERROR_OUTLINE_COLOR   = ' red';
+    window.Gamay._NOTICE_OUTLINE_COLOR  = ' blue';
+    window.Gamay._WARNING_OUTLINE_COLOR  = ' goldenRod';
+
+
+
+
    /*
     * +--------------------------------------+
     * | Attache tool tip explanation for     |
@@ -203,6 +226,40 @@
             animation: 'grow',
             delay: 100
         });
+    };
+
+   /*
+    * Get the text for the pop up
+    */
+    window.Gamay.getIssueTextForPupUp = function(issue){
+
+        return  "<article>" +
+                    "<header>" +
+                        "<h4>"+issue.type+"</h4>" +
+                    "</header>" +
+                    "<section>" +
+                        "<span>"+issue.wcagPrinciple+"</span>" +
+                        "<span>"+issue.wcagGuideline+"</span>" +
+                        "<span>"+issue.msg+"</span>" +
+                    "<section>"
+                "</article>";
+
+    };
+
+   /*
+    * The default text of the pop up
+    */
+    window.Gamay.getDEFAULTTextForPupUp = function(){
+
+     return  "<article>" +
+                "<header>" +
+                "<h4>WARNING</h4>" +
+                "</header>" +
+                "<section>" +
+                    "<span>This element needs some inspection</span>" +
+                "<section>"
+             "</article>";
+
     };
 
    /*
@@ -230,9 +287,9 @@
 
         var _error   = false,
             _warning = false,
-            _color   = '4px dotted',
+            _color   = window.Gamay._OUTLINE_STYLE,
             _element = $(domElementCSSSelector);
-
+          //  _msg = window.Gamay.getDEFAULTTextForPupUp();
 
 
         console.log('domElementCSSSelector = '+domElementCSSSelector);
@@ -240,75 +297,51 @@
 
         switch (issue.typeCode) {
             case HTMLCS.ERROR:
-                _color += ' red';
+                _color += window.Gamay._ERROR_OUTLINE_COLOR;
                 _error = true;
                 break;
             case HTMLCS.WARNING:
-                _color += ' goldenRod';
+                _color += window.Gamay._WARNING_OUTLINE_COLOR;
                 _warning = true;
                 break;
             case HTMLCS.NOTICE:
-                _color += ' blue';
+                _color += window.Gamay._NOTICE_OUTLINE_COLOR;
                 break;
             default:
-                _color += ' goldenRod';
+                _color += window.Gamay._WARNING_OUTLINE_COLOR;
                 break;
         }
 
 
+       var _msg = window.Gamay.getIssueTextForPupUp(issue);
+
         if(_error){
-            _element.parent().css("outline", _color);
-            _element.parent().addClass("tooltip");
             window.Gamay._onlyOneError = true;
 
-            var msg = "<article>" +
-                "<header><h4>ERROR</h4></header>" +
-                "<span> "+issue.wcagPrinciple+" </span>" +
-                "<span> "+issue.wcagGuideline+" </span>" +
-                "<div>"+issue.msg+"</div>" +
-                "</article><br>";
+            _element.parent().css("outline", _color);
+            _element.parent().addClass("tooltip");
 
-            if( _issuesMSGs.indexOf(msg) === -1){
-                _issuesMSGs.push(msg);
+            if( _issuesMSGs.indexOf(_msg) === -1){
+                _issuesMSGs.push(_msg);
             }
 
+        }else if (_warning && !window.Gamay._onlyOneError) {
+            window.Gamay._onlyOneWarning = true;
 
-        }else if (_warning){
-           if(!window.Gamay._onlyOneError) {
-             _element.parent().css("outline", _color);
-             _element.parent().addClass("tooltip");
-             window.Gamay._onlyOneWarning = true;
+            _element.parent().css("outline", _color);
+            _element.parent().addClass("tooltip");
 
-               var msg = "<article>" +
-                   "<header><h4>WARNING</h4></header>" +
-                   "<span>"+issue.wcagPrinciple+"</span>" +
-                   "<span>"+issue.wcagGuideline+"</span>" +
-                   "<div>"+issue.msg+"</div>" +
-                   "</article><br>";
-               //<span><strong>"+msg+"</strong></span><br>
+            if( _issuesMSGs.indexOf(_msg) === -1){
+                _issuesMSGs.push(_msg);
+            }
 
-               if( _issuesMSGs.indexOf(msg) === -1){
-                   _issuesMSGs.push(msg);
-               }
-           }
-        }else{
-            if(!window.Gamay._onlyOneError && !window.Gamay._onlyOneWarning ) {
-              _element.parent().addClass("tooltip");
-              _element.parent().css("outline", _color);
+        }else if(!window.Gamay._onlyOneError && !window.Gamay._onlyOneWarning ) {
 
-                var msg = "<article>" +
-                    "<header><h4>NOTICE</h4></header>" +
-                    "<span>"+issue.wcagPrinciple+"</span>" +
-                    "<span>"+issue.wcagGuideline+"</span>" +
-                    "<div>"+issue.msg+"</div>" +
-                    "</article><br>";
-                //<span><strong>"+msg+"</strong></span><br>
+            _element.parent().css("outline", _color);
+            _element.parent().addClass("tooltip");
 
-                if( _issuesMSGs.indexOf(msg) === -1){
-                    _issuesMSGs.push(msg);
-                }
-
-
+            if( _issuesMSGs.indexOf(_msg) === -1){
+                _issuesMSGs.push(_msg);
             }
         }
 
@@ -383,29 +416,48 @@
 
     }; // End of function 'accessibilityEvaluationHTMLCS'
 
+
+    /*
+     * +-----------------------------------+
+     * |        HELPER FUNCTIONS           |
+     * +-----------------------------------+
+     */
+
+
+    /*
+     * +-----------------------------------+
+     * |         Is valid element ?        |
+     * +-----------------------------------+
+     */
     /**
-     *
+     * @description
+     * Check if the the given element exists on the web page
      * @param domElement
+     * @param callback {function}, call the blueprint runner when the operation is down => (true / false)
      */
     window.Gamay.isValidElement = function(domElement,callback){
-        console.log($(domElement));
         ($(domElement).length <= 0) ? callback(false) : callback(true);
     };
 
+    /*
+     * +-----------------------------------+
+     * | Mark any element on the website,  |
+     * | detached from the evaluation      |
+     * +-----------------------------------+
+     */
     /**
-     *
-     * @param domElement
-     * @param _issuesMSGs
-     * @param callback
+     * @description
+     * Outline any element on the web page under test.
+     * @param domElement {object} the domElement that should be marked.
+     * @param issue  {object} the issue containing the information (e.g., error message) for the pop up.
+     * @param callback {function}, call the blueprint runner when the operation is down.
      */
     window.Gamay.markElement = function(domElement,issue,callback){
 
-        console.dir(issue);//.Gamay_GetEnvironmentSnapshot());
-var _issueObj = issue[0];
-        var _element = $(domElement);//;.Gamay_GetEnvironmentSnapshot();
-        console.log("MARK ELEMENT = "+_element);//.Gamay_GetEnvironmentSnapshot());
-        console.dir(_element);//.Gamay_GetEnvironmentSnapshot());
-        var _color =  '4px dotted';
+        var _issueObj = issue[0],
+            _color =  window.Gamay._OUTLINE_STYLE,
+            _domElement = $(domElement);
+
         switch (_issueObj.typeCode) {
             case HTMLCS.ERROR:
                 _color += ' red';
@@ -423,24 +475,21 @@ var _issueObj = issue[0];
                 break;
         }
 
-        _element.parent().css("outline", _color);
-        _element.parent().addClass("tooltip");
 
-        var msg = "<article>" +
-                "<header><h4>Error</h4></header>" +
-                "<span>"+_issueObj.wcagPrinciple+"</span>" +
-                "<span>"+_issueObj.wcagGuideline+"</span>" +
-                "<div>"+_issueObj.msg+"</div>" +
-                "</article><br>";
+        _domElement.parent().css("outline", _color);
+        _domElement.parent().addClass("tooltip");
 
+        var _msg = window.Gamay.getIssueTextForPupUp(_issueObj);
 
-        _element.parent().tooltipster({
-            content: $(msg),
+        _domElement.parent().tooltipster({
+            content: $(_msg),
             animation: 'grow',
             delay: 100
         });
 
+       // window.Gamay.outlineIssuedElement(_domElement,_issueObj,_issuesMSGs);
        // window.Gamay.outlineIssuedTooltip($(domElement),_issuesMSGs);
+
         callback();
     };
 
