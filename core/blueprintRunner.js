@@ -535,8 +535,8 @@ BlueprintRunner.prototype.runWithThatActor = function (actor) {
 BlueprintRunner.prototype.errorHandler = function(error, _domElement,_stepDescr,callback){
     var self = this;
     console.log("the error is a "+error);
-      //  errorType = error.getType();
-    // [ { type: 'NOTICE', msgs: [Object] } ] }
+
+      /*TODO: This should be somewhat actor-specific*/
       if("ElementNotFound" === error){
           var obj = {};
           obj.stepDescr = _stepDescr;
@@ -556,10 +556,10 @@ BlueprintRunner.prototype.errorHandler = function(error, _domElement,_stepDescr,
               window.Gamay.isValidElement(_domElement,arguments[arguments.length - 1]);
           }, _domElement.getCSSSelector()).then(function(validStatus){
               self.logger.info("Valid Element STATUS = "+validStatus);
-              if(!validStatus){ //not valid
+              if(!validStatus){ //not valid, maybe it a typo.
                   callback.fail(new MerlotErros.ElementNotFoundError("Element " + _domElement + " does not exit check for typos").message);
               }else{ //valid
-                  self.addAccessibilityIssue(obj); //
+                  self.addAccessibilityIssue(obj);
                   self.driver.executeAsyncScript(function(_domElement,issues) {
                       window.Gamay.markElement(_domElement,issues,arguments[arguments.length - 1]);
                   }, _domElement.getCSSSelector(), obj.isssues[0].msgs).then(function(ok){

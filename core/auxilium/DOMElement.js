@@ -170,10 +170,10 @@ DOMElement.prototype.getTypeExpression = function () {
 /*
  input[type=radio][value='AmericanExpress']
  */
-
+//TODO: Check the robustness of the function(!)
 /**
  * @description
- * Get a basic CSS selector, that represents this element
+ * Get a basic CSS selector that represents this element
  * @returns {string} , a basic CSS selector
  */
 DOMElement.prototype.getCSSSelector = function () {
