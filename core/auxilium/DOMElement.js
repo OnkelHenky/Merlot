@@ -105,7 +105,7 @@ DOMElement.prototype.getTagName = function () {
     return (this.tagName) ? this.tagName: undefined;
 };
 
-/*
+/**
  * Get the name attribute of the element
  * @returns {*}
  */
@@ -150,7 +150,7 @@ DOMElement.prototype.getType = function () {
  * @returns {string}
  */
 DOMElement.prototype.getTypeExpression = function () {
-    ////div[@id='..' and @class='...],  Property[text()='fail']
+    //div[@id='..' and @class='...],  Property[text()='fail']
     var xpathExpression = "//" + this.getTagName()+"[";
 
     if(this.getType()) {

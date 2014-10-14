@@ -31,4 +31,4 @@ module.exports.ElementNotFoundError =  ElementNotFoundError = function(msg) {
  *
  * @type {Error}
  */
-MerlotError.prototype = new MerlotError();
+ElementNotFoundError.prototype = new MerlotError();

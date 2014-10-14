@@ -531,18 +531,20 @@ BlueprintRunner.prototype.runWithThatActor = function (actor) {
  * @param error
  * @param _domElement
  * @param callback
+ * @param _stepDescription
  */
-BlueprintRunner.prototype.errorHandler = function(error, _domElement,_stepDescr,callback){
+BlueprintRunner.prototype.errorHandler = function(error, _domElement,_stepDescription,callback){
     var self = this;
     console.log("the error is a "+error);
 
       /*TODO: This should be somewhat actor-specific*/
       if("ElementNotFound" === error){
           var obj = {};
-          obj.stepDescr = _stepDescr;
+          obj.stepDescr = _stepDescription;
           obj.isssues = [{ type: 'ERROR', msgs:[{
-              msg: self.actor.name+" can't reach the element"+_domElement+" by using keyboard navigation. Tip: Try to set the tabindex attribute, e.g., 'tabindex='1' '",
+              msg: self.actor.name+" can't reach the element "+_domElement+" by using keyboard navigation. Tip: Try to set the tabindex attribute, e.g., 'tabindex='1' '",
               typeCode: 1,
+              type: "ERROR",
               code: 'Conformance Level:A - Principle: Operable 2.1.1 Keyboard Accessible: Make all functionality available from a keyboard.',
               wcagConf: 'AnnaA',
               wcagGuideline: '2.1.1',
@@ -568,7 +570,6 @@ BlueprintRunner.prototype.errorHandler = function(error, _domElement,_stepDescr,
               }
           });
 
-
           /*
               className: 'drinks',
               code: 'AnnaA.Principle3.Guideline3_2.3_2_1.G107',
@@ -585,7 +586,7 @@ BlueprintRunner.prototype.errorHandler = function(error, _domElement,_stepDescr,
               wcagTechnique: 'G107' }
               */
 
-    //[{type: "ERROR", msg:["All Elements must be accasable by keyboard interaction"]}];
+
          // self.addAccessibilityIssue(obj);
 
       }else{
