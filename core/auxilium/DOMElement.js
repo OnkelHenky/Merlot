@@ -73,7 +73,6 @@ DOMElement.prototype.isButton = function () {
 
 
 DOMElement.prototype.isRadioButton = function () {
-    //TODO: Typecheck, to assure that 'group' is a string.
     return (('input' === this.getTagName()) && ('radio' === this.getType()));
 };
 /**
@@ -186,5 +185,5 @@ DOMElement.prototype.getCSSSelector = function () {
  * @returns {string}
  */
 DOMElement.prototype.toString = function () {
-    return  " Tag name = " + this.getTagName() + " where "+ this.getSearchAttributeName()+ " = " + this.getSearchAttributeValue();
+    return  this.getTagName() + " where "+ this.getSearchAttributeName()+ " = " + this.getSearchAttributeValue();
 };
