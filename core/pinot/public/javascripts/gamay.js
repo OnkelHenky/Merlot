@@ -203,8 +203,8 @@
    /*
     * The outline colors
     */
-    window.Gamay._ERROR_OUTLINE_COLOR   = ' red';
-    window.Gamay._NOTICE_OUTLINE_COLOR  = ' blue';
+    window.Gamay._ERROR_OUTLINE_COLOR    = ' red';
+    window.Gamay._NOTICE_OUTLINE_COLOR   = ' blue';
     window.Gamay._WARNING_OUTLINE_COLOR  = ' goldenRod';
 
 
