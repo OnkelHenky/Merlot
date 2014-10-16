@@ -116,7 +116,7 @@ module.exports = navigationSteps = function () {
                 return deferred.promise;
             }). */
             then(function runAccessibilityEvaluation(webElement) {
-                return that.browser.evalAccessibility(webElement,_domElement)
+                return that.browser.evalAccessibility(webElement,_domElement,_stepDescr)
                     .then(function storeIssues(issues) {
                         if(issues){
                             var obj = {};
@@ -171,7 +171,7 @@ module.exports = navigationSteps = function () {
                 return deferred.promise;
             }). */
             then(function runAccessibilityEvaluation(webElement) {
-                return that.browser.evalAccessibility(webElement,_domElement)
+                return that.browser.evalAccessibility(webElement,_domElement,_stepDescr)
                     .then(function storeIssues(issues) {
                         if(issues){
                             var obj = {};
@@ -224,7 +224,7 @@ module.exports = navigationSteps = function () {
                 return deferred.promise;
             }). */
             then(function runAccessibilityEvaluation(webElement) {
-                return that.browser.evalAccessibility(webElement,_domElement)
+                return that.browser.evalAccessibility(webElement,_domElement,_stepDescr)
                        .then(function storeIssues(issues) {
                                if(issues){
                                    var obj = {};
@@ -242,6 +242,7 @@ module.exports = navigationSteps = function () {
                 callback();
             }).
             then(null, function onError(err) {
+                console.dir();
                 that.browser.errorHandler(err,_domElement,_stepDescr,callback);
             });
     });

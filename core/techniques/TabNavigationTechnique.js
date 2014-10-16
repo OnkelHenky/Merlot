@@ -5,7 +5,7 @@
  * the 'TAB' navigation technique
  */
 
-var ElementNotFoundError = require('../auxilium/MerlotErrors').ElementNotFoundError;
+var  MerlotErrors = require('../auxilium/MerlotErrors');
 
 /**
  * @description
@@ -73,7 +73,8 @@ module.exports = tabNavigationTechnique = function (domElement) {
                         if (eq) {
                             /* Reject the promise of we have a loop */
                            // return _deferred.reject(new Error(new ElementNotFoundError()));
-                             _deferred.reject("ElementNotFound");
+                             throw new MerlotErrors.ElementNotFoundError(MerlotErrors.LOOP_ERROR);
+                             //_deferred.reject(new MerlotErrors.ElementNotFoundError("LoopError"));
                         }
                     });
                 }

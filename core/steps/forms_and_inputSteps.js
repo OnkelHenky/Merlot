@@ -36,7 +36,7 @@ module.exports = forms_and_input_Steps = function () {
 
         this.browser.actorTryToFindThisElement(_domElement).
             then(function runAccessibilityEvaluation(webElement) {
-                return that.browser.evalAccessibility(webElement,_domElement)
+                return that.browser.evalAccessibility(webElement,_domElement,_stepDescr)
                     .then(function storeIssues(issues) {
                         if(issues){
                             var obj = {};
@@ -54,7 +54,7 @@ module.exports = forms_and_input_Steps = function () {
                 callback();
             }).
             then(null, function onError(err) {
-                that.browser.errorHandler(err,_SELECTdomElement,_stepDescr,callback);
+                that.browser.errorHandler(err,_domElement,_stepDescr,callback);
                // callback.fail(new Error("Merlot reported an error! " + err + " with DOMElement: " + _domElement).message);
             });
 
@@ -90,7 +90,7 @@ module.exports = forms_and_input_Steps = function () {
 
             this.browser.actorTryToFindThisElement(_domElement).
                 then(function runAccessibilityEvaluation(webElement) {
-                    return that.browser.evalAccessibility(webElement,_domElement)
+                    return that.browser.evalAccessibility(webElement,_domElement,_stepDescr)
                         .then(function storeIssues(issues) {
                             if(issues){
                                 var obj = {};
@@ -146,7 +146,7 @@ module.exports = forms_and_input_Steps = function () {
 
             this.browser.actorTryToFindThisElement(_domElement).
                 then(function runAccessibilityEvaluation(webElement) {
-                    return that.browser.evalAccessibility(webElement,_domElement)
+                    return that.browser.evalAccessibility(webElement,_domElement,_stepDescr)
                         .then(function storeIssues(issues) {
                             if(issues){
                                 var obj = {};
@@ -202,7 +202,7 @@ module.exports = forms_and_input_Steps = function () {
         /*Find the radio group first*/
         this.browser.actorTryToFindThisElement(_domElement).
             then(function runAccessibilityEvaluation(webElement) {
-                return that.browser.evalAccessibility(webElement,_domElement)
+                return that.browser.evalAccessibility(webElement,_domElement,_stepDescr)
                     .then(function storeIssues(issues) {
                         if(issues){
                             var obj = {};
@@ -255,7 +255,7 @@ module.exports = forms_and_input_Steps = function () {
 
         this.browser.actorTryToFindThisElement(_SELECTdomElement).
             then(function runAccessibilityEvaluation(webElement) {
-                return that.browser.evalAccessibility(webElement,_SELECTdomElement)
+                return that.browser.evalAccessibility(webElement,_SELECTdomElement,_stepDescr)
                     .then(function storeIssues(issues) {
                         if(issues){
                             var obj = {};
@@ -304,7 +304,7 @@ module.exports = forms_and_input_Steps = function () {
 
         this.browser.actorTryToFindThisElement(_domElement).
             then(function runAccessibilityEvaluation(webElement) {
-                return that.browser.evalAccessibility(webElement,_domElement)
+                return that.browser.evalAccessibility(webElement,_domElement,_stepDescr)
                     .then(function storeIssues(issues) {
                         if(issues){
                             var obj = {};
