@@ -48,7 +48,7 @@ var BlueprintRunner,
     ActorProvider = require('./actors/actorProvider').ActorProvider,
     DOMElement = require('./auxilium/DOMElement'),
     TagNameDictionary = require('./auxilium/tagNameDictionary'),
-    MerlotErros = require('./auxilium/MerlotErrors'),
+    MerlotErrors = require('./auxilium/MerlotErrors'),
     Merlot = require('./Merlot').Merlot;
     Pinot = require('./pinot/pinot').Pinot;
 
@@ -179,21 +179,28 @@ BlueprintRunner.prototype.getAccessibilityIssuesBuffer = function(ScenarioName, 
     var self    = this,
         _buffer ='';
 
-    /*
-     _issuesType.type   = erros.type;
-     _issuesType.issue  = error;
-     */
+   /*
+    * MU Template:
+    *
+    * {{#msgs}}
+    *  STEP: {{stepDescr}}
+    *        {{#issues}}
+    *            ###### {{type}}
+    *            {{#msg}}
+    *                * {{m}}
+    *            {{/msg}}
+    *        {{/issues}}
+    * {{/msgs}}
+    */
     mu.root = __dirname + '/reports';
-    var data =  issues.map(function(x){
+    var data =  issues.map(function(step){
                                 return {
-                                    stepDescr: x.stepDescr,
-                                    issues: x.isssues.map(function(i){
-                                        return {type: i.type,
-                                                msg: i.msgs.map(function(msg){
-                                                    console.dir(msg);
-                                                    return {
-                                                            m: msg.msg
-                                                    }
+                                    stepDescr: step.stepDescr,
+                                    issues: step.isssues.map(function(issue){
+                                        return {
+                                                type: issue.type,
+                                                msg : issue.msgs.map(function(issuesDescription){
+                                                      return { m: issuesDescription.msg }
                                                 })
                                             }
                                     })
@@ -275,13 +282,13 @@ BlueprintRunner.prototype.printEvaluationReport = function(scenario,callback){
         _reportDIR = self.getReportDirectory(),
         _issues    = self.getArrayWithAccessibilityIssues();
 
-    _logger.info('Print evaluation report');
+    _logger.info("Generating evaluation report");
 
     _fs.exists(_reportDIR, function (exists) {
         if (!exists) {
             _fs.mkdir(_reportDIR, function (err) {
                 if (err) {
-                    _logger.error('Error during creation of the reports directory' +err);
+                    _logger.error("Error during creation of the reports directory" +err);
                     callback(err);
                 }else{
                     self.getAccessibilityIssuesBuffer(scenario.getName(), _issues, function(buffer){
@@ -535,10 +542,13 @@ BlueprintRunner.prototype.runWithThatActor = function (actor) {
  */
 BlueprintRunner.prototype.errorHandler = function(error, _domElement,_stepDescription,callback){
     var self = this;
-    console.log("the error is a "+error);
 
       /*TODO: This should be somewhat actor-specific*/
-      if("ElementNotFound" === error){
+      if(MerlotErrors.ERROR_ISSUES_FOUND === error.getMsg()){
+          callback.fail(new MerlotErrors.AbortEvaluationError(self.actor.getName()+" can't continue with the scenario due to an error."
+                        + " \n See the Error report, or the highlighted section on your web page for more details.").message);
+      }
+      else if(MerlotErrors.LOOP_ERROR === error.getMsg()){
           var obj = {};
           obj.stepDescr = _stepDescription;
           obj.isssues = [{ type: 'ERROR', msgs:[{
@@ -553,44 +563,25 @@ BlueprintRunner.prototype.errorHandler = function(error, _domElement,_stepDescri
               }]
           }];
 
-
-          self.driver.executeAsyncScript(function(_domElement) {
+          self.driver.executeAsyncScript(function checkIfElementExistsOnThePage(_domElement) {
               window.Gamay.isValidElement(_domElement,arguments[arguments.length - 1]);
-          }, _domElement.getCSSSelector()).then(function(validStatus){
-              self.logger.info("Valid Element STATUS = "+validStatus);
+
+          }, _domElement.getCSSSelector()).then(function outlineError(validStatus){
               if(!validStatus){ //not valid, maybe it a typo.
-                  callback.fail(new MerlotErros.ElementNotFoundError("Element " + _domElement + " does not exit check for typos").message);
+                  callback.fail(new MerlotErrors.ElementNotFoundError("Element " + _domElement + " does not exit check for typos").message);
               }else{ //valid
                   self.addAccessibilityIssue(obj);
                   self.driver.executeAsyncScript(function(_domElement,issues) {
                       window.Gamay.markElement(_domElement,issues,arguments[arguments.length - 1]);
                   }, _domElement.getCSSSelector(), obj.isssues[0].msgs).then(function(ok){
-                      callback.fail(new MerlotErros.ElementNotFoundError("Cant find element with " + error + " with DOMElement: " + _domElement).message);
+                      callback.fail(new MerlotErrors.AbortEvaluationError(self.actor.getName()+" can't continue with the scenario due to an error."
+                          + " \n See the Error report, or the highlighted section on your web page for more details.").message);
                   });
               }
           });
 
-          /*
-              className: 'drinks',
-              code: 'AnnaA.Principle3.Guideline3_2.3_2_1.G107',
-              element: { driver_: [Object], id_: [Object] },
-          id: 'cars',
-              msg: 'Check that a change of context does not occur when this input field receives focus.',
-              nodeName: 'select',
-              toString: {},
-          type: 'NOTICE',
-              typeCode: 3,
-              wcagConf: 'AnnaA',
-              wcagGuideline: 'Principle3',
-              wcagPrinciple: 'Guideline3_2.3_2_1',
-              wcagTechnique: 'G107' }
-              */
-
-
-         // self.addAccessibilityIssue(obj);
-
       }else{
-          callback.fail(new Error("Merlot reported an error! " + err + " with DOMElement: " + _domElement).message);
+          callback.fail(new Error("Merlot reported an error! " + error + " with DOMElement: " + _domElement).message);
       }
 };
 
@@ -697,7 +688,7 @@ BlueprintRunner.prototype.interactWithSelection = function (webElement, domEleme
  * @param {object} webElement the element to tes
  * @returns {webdriver.promise.Deferred.promise|*} a promise that will be resolved when the evaluation is completed
  */
-BlueprintRunner.prototype.evalAccessibility = function (webElement, domElement) {
+BlueprintRunner.prototype.evalAccessibility = function (webElement, domElement,_stepDescr) {
     var self = this,
         _accessibilityRuleset = self.actor.getAcessibilityRuleset(),
         _deferred = self.webdriver.promise.defer(),
@@ -705,7 +696,6 @@ BlueprintRunner.prototype.evalAccessibility = function (webElement, domElement) 
 
     webElement.getOuterHtml().
         then(function(outerHtml){
-            console.log('outerHtml = ' +outerHtml);
             return outerHtml;
         }).
         then(function injectPinot(outerHtml) {
@@ -759,10 +749,15 @@ BlueprintRunner.prototype.evalAccessibility = function (webElement, domElement) 
                             type: 'ERROR',
                             msgs: _error
                         });
+                        var obj = {};
+                        obj.stepDescr = _stepDescr;
+                        obj.isssues = _issues;
+                        self.addAccessibilityIssue(obj);
+                        throw new MerlotErrors.AbortEvaluationError("ErrorFound");
                     }
                     if(_def.length > 0){
                         _issues.push({
-                            type: 'UNKOWN ISSUE',
+                            type: 'UNKNOWN ISSUE',
                             msgs: _def
                         });
                     }
