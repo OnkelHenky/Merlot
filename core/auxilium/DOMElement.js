@@ -176,7 +176,19 @@ DOMElement.prototype.getTypeExpression = function () {
  * @returns {string} , a basic CSS selector
  */
 DOMElement.prototype.getCSSSelector = function () {
-  return this.getTagName()+"["+ this.getSearchAttributeName() + "='" + this.getSearchAttributeValue()+ "']";
+
+    if('textNode' === this.getSearchAttributeName()){
+        return this.getTagName()+":containsExactCase("+this.getSearchAttributeValue() +")";
+    }else{
+        return this.getTagName()+"["+ this.getSearchAttributeName() + "='" + this.getSearchAttributeValue()+ "']";
+    }
+
+    /*
+    if('textNode' === this.getSearchAttributeName()){
+        return this.getTagName()+":contains("+this.getSearchAttributeValue() +")";
+    }else{
+        return this.getTagName()+"["+ this.getSearchAttributeName() + "='" + this.getSearchAttributeValue()+ "']";
+    }*/
 };
 
 /**
