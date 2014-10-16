@@ -28,8 +28,46 @@
 }
 
 
+/*
+ * +--------------------------------------+
+ * |         Merlot Custom Theme          |
+ * +--------------------------------------+
+ */
 
 
+.merlotIssuesStyle {
+    border-radius: 5px;
+    border: 2px dotted red;
+    background: #4c4c4c;
+    color: #fff;
+}
+
+/* Use this next selector to style things like font-size and line-height: */
+.merlotIssuesStyle .tooltipster-content {
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    line-height: 16px;
+    padding: 8px 10px;
+}
+
+.merlotIssuesStyleHeaderERROR header h4{
+    color: red !important;
+}
+
+.merlotIssuesStyleHeaderWARNING header h4{
+    color: goldenRod !important;
+}
+
+.merlotIssuesStyleHeaderNOTICE header h4{
+    color:  #b3d4fc !important;
+}
+
+
+/*
+ * +--------------------------------------+
+ * |   END - Merlot Custom Theme - END    |
+ * +--------------------------------------+
+ */
 
 
 
