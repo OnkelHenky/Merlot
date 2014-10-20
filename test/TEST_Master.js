@@ -80,8 +80,7 @@ TestMaster.prototype.addConfiguration = function (config) {
                     port: self.config.port
 
             });
-
-            console.log("Using selenium from: " + _pathToSeleniumJar);
+           console.log("Using selenium from: " + _pathToSeleniumJar);
             _server.start();
 
             var _serverCapabilities = webdriver.Capabilities.chrome(); //default
