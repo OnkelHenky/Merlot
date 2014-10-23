@@ -595,6 +595,12 @@ BlueprintRunner.prototype.setLoginCredentialsForActor = function (type, value) {
     var that = this,
         _aux = that.utile._aux_;
 
+
+
+
+
+
+    
     if (that.actor) {
         if (_aux.isString(type) && _aux.isString(value)) {
             switch (type) {
