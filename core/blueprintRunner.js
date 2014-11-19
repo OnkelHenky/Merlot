@@ -600,7 +600,7 @@ BlueprintRunner.prototype.setLoginCredentialsForActor = function (type, value) {
 
 
 
-    
+
     if (that.actor) {
         if (_aux.isString(type) && _aux.isString(value)) {
             switch (type) {
