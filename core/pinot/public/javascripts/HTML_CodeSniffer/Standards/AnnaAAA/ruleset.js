@@ -75,8 +75,6 @@ window.HTMLCS_AnnaAAA = {
                 'Principle2.Guideline3_1.3_1_3', // AAA, A mechanism is available for identifying specific definitions of words or phrases used in an unusual or restricted way, including idioms and jargon.
                 'Principle2.Guideline3_1.3_1_4', // AAA, A mechanism for identifying the expanded form or meaning of abbreviations is available.
                 'Principle2.Guideline3_1.3_1_6'  // AAA, A mechanism is available for identifying specific pronunciation of words where meaning of the words, in context, is ambiguous without knowing the pronunciation.
-
-
             ]
         }
     ],
