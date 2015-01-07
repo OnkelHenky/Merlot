@@ -94,7 +94,7 @@ BlueprintRunner = exports.BlueprintRunner = function (config) {
     this.acessibilityRuleset = this.actor.getName()+'A';
 
     this.isssuesMsgs         = []; // Array with all found accessibility issues
-    this.reportDirectory             = ""; // Path where the accessibility issue report shall be stored.
+    this.reportDirectory     = ""; // Path where the accessibility issue report shall be stored.
 
     if (config && (config.seleniumPath && config.port && config.browser)) {
         this.addConfiguration(config);
@@ -271,7 +271,7 @@ BlueprintRunner.prototype.printIssuesBuffer = function(buffer,scenario,callback)
 
 /**
  * @description
- * Print a evaluation report
+ * Print the evaluation report
  * @param scenario
  * @param callback
  */
@@ -442,7 +442,7 @@ BlueprintRunner.prototype.addConfiguration = function (config) {
               var timeouts = new self.webdriver.WebDriver.Timeouts(self.driver);
                   timeouts.setScriptTimeout(100000); //TODO: set timer to wait for pages to be loaded
                   timeouts.implicitlyWait(30000); //wait 3 seconds for every element to retrieve
-            //  timeouts.pageLoadTimeout(10000); //set timer to wait for pages to be loaded
+               // timeouts.pageLoadTimeout(10000); //set timer to wait for pages to be loaded
         }
 
     } catch (ex) {
