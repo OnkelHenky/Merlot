@@ -211,6 +211,15 @@ Actor.prototype.click = function (domElement) {
 };
 
 /**
+ * @description
+ * Check if actor is John Doe, if true this actor uses his ruleset data from GPII
+ * @returns {boolean}
+ */
+Actor.prototype.isJohnDoe = function () {
+    return false;
+};
+
+/**
  * @deprecated
  */
 Actor.prototype.criteriaBundle = function () {

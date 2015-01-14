@@ -156,8 +156,8 @@ BlueprintRunner.prototype.getArrayWithAccessibilityIssues = function(){
  * @param issue
  */
 BlueprintRunner.prototype.addAccessibilityIssue = function(issue){
-    console.dir(issue);
-    console.dir(issue.isssues[0].msgs);
+   //console.dir(issue);
+   // console.dir(issue.isssues[0].msgs);
     this.isssuesMsgs.push(issue);
 };
 
@@ -594,13 +594,6 @@ BlueprintRunner.prototype.errorHandler = function(error, _domElement,_stepDescri
 BlueprintRunner.prototype.setLoginCredentialsForActor = function (type, value) {
     var that = this,
         _aux = that.utile._aux_;
-
-
-
-
-
-
-
     if (that.actor) {
         if (_aux.isString(type) && _aux.isString(value)) {
             switch (type) {
@@ -699,6 +692,9 @@ BlueprintRunner.prototype.evalAccessibility = function (webElement, domElement,_
         _accessibilityRuleset = self.actor.getAcessibilityRuleset(),
         _deferred = self.webdriver.promise.defer(),
         _issues = [];
+
+    console.log('_accessibilityRuleset = ' +_accessibilityRuleset);
+
 
     webElement.getOuterHtml().
         then(function(outerHtml){
@@ -859,7 +855,6 @@ BlueprintRunner.prototype.injectAcessibilityTestScripts = function () {
              });
 
          }).
-
          then(function injectHTMLCS() {
         return  self.driver.executeScript(function () {
             if (!window.HTMLCS) {
@@ -885,6 +880,18 @@ BlueprintRunner.prototype.injectAcessibilityTestScripts = function () {
          });
 
      }).
+         then(function isJohnDoe() {
+             if(self.actor.isJohnDoe()) {
+                 console.log('RULLE SET AAAL');
+                 console.dir(self.actor.getRuleSet());
+
+                 return self.driver.executeScript(function (obj) {
+                     window.JohnDoe = obj;
+                 }, self.actor.getRuleSet());
+             }else{
+                 return false;
+             }
+         }).
 
         /* then(function injectQUAIL() {
              return  self.driver.executeScript(function () {

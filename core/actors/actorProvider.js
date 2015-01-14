@@ -40,5 +40,6 @@ ActorProvider.Actors = [];  // Array with the available actors
  * |     register the actors    |
  * +----------------------------+
  */
-ActorProvider.Actors['Anna']  =  require('./Anna').Anna;
-ActorProvider.Actors['Paul']  =  require('./Paul').Paul;
+ActorProvider.Actors['Anna']          =  require('./Anna').Anna;
+ActorProvider.Actors['Paul']          =  require('./Paul').Paul;
+ActorProvider.Actors['JohnDoe']       =  require('./GenericActor').GenericActor;
