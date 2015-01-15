@@ -78,15 +78,15 @@ GenericActor.prototype = new Actor;
 GenericActor.prototype.getAcessibilityRuleset = function () {
 
     var _jf   = require('jsonfile'),
-      //  _fs   = require('fs'),
+    //  _fs   = require('fs'),
         _util = require('util'),
         _path = require('path');
 
     var _path_to_vin_file = _path.join(__dirname, "vin.json");
     var jsonData = _jf.readFileSync(_path_to_vin_file);
-    console.log(_util.inspect(jsonData.WCAG.automatic.include));
+    //sconsole.log(_util.inspect(jsonData.WCAG.automatic.include));
     var ruleset = {
-        name: 'JohnDoeA',
+        name: 'JohnDoe',
         description: 'Accessibility Guidelines for JohnDoe',
         sniffs: [
             {
@@ -104,7 +104,139 @@ GenericActor.prototype.getAcessibilityRuleset = function () {
     console.log(_util.inspect(this.getRuleSet()));
 
 
-  //  return "JohnDoe";
+    return this.acessibilityRuleset;
+};
+
+
+/**
+ * @description
+ * Get the name of the accessibility rule set for this actor
+ * @returns {string} the name of the  rule set
+ */
+GenericActor.prototype.getAcessibilityRuleset = function () {
+
+    /*
+    var _jf   = require('jsonfile'),
+    //  _fs   = require('fs'),
+        _util = require('util'),
+        _path = require('path');
+
+    var _path_to_vin_file = _path.join(__dirname, "vin.json");
+    var jsonData = _jf.readFileSync(_path_to_vin_file);
+    //sconsole.log(_util.inspect(jsonData.WCAG.automatic.include));
+    var ruleset = {
+        name: 'JohnDoe',
+        description: 'Accessibility Guidelines for JohnDoe',
+        sniffs: [
+            {
+                standard: 'WCAG2AAA',
+                include: jsonData.WCAG.automatic.include
+            }
+        ],
+        getMsgInfo: function(code) {
+            return HTMLCS_WCAG2AAA.getMsgInfo(code);
+        }
+    };
+
+    this.setRuleSet(ruleset);
+
+    console.log(_util.inspect(this.getRuleSet()));
+   */
+
+    return this.acessibilityRuleset;
+};
+
+
+
+/**
+ * @description
+ * Load the preference set of the actor.
+ * This function is used with the Malbec GPII branch
+ */
+GenericActor.prototype.loadPreferenceSet = function(){
+
+
+    var _jf   = require('jsonfile'),
+    //  _fs   = require('fs'),
+        _util = require('util'),
+        _path = require('path');
+
+    var _path_to_vin_file = _path.join(__dirname, "vin.json");
+    var jsonData = _jf.readFileSync(_path_to_vin_file);
+    //sconsole.log(_util.inspect(jsonData.WCAG.automatic.include));
+    var ruleset = {
+        name: 'JohnDoe',
+        description: 'Accessibility Guidelines for JohnDoe',
+        sniffs: [
+            {
+                standard: 'WCAG2AAA',
+                include: jsonData.common.WCAG.automatic.include
+            }
+        ],
+        getMsgInfo: function(code) {
+            return HTMLCS_WCAG2AAA.getMsgInfo(code);
+        }
+    };
+
+    this.setRuleSet(ruleset);
+
+    console.log(_util.inspect(this.getRuleSet()));
+
+    var navstyle = jsonData.common.WCAG.navigation.style;
+    
+    if('point_and_click' === navstyle){
+
+
+    GenericActor.prototype.findElement = techniqueRepository.techniques['PointAndClick_Navigation'];
+
+    /*
+     * +-----------------------------------------+
+     * | Technique used to interact (click)      |
+     * | with a component on the web application |
+     * +-----------------------------------------+
+     */
+    GenericActor.prototype.click = techniqueRepository.techniques['Click_Mouse'];
+
+    /*
+     * +-----------------------------------------+
+     * | Technique used to interact with:        |
+     * |    + Radio Buttons                      |
+     * |    + Selection (DropDown)               |
+     * +-----------------------------------------+
+     */
+    GenericActor.prototype.interactWithRadioButton = techniqueRepository.techniques['Click_Mouse'];
+    GenericActor.prototype.interactWithSelection = techniqueRepository.techniques['PAC_SelectOption'];
+
+
+    }else if('keyboard' === navstyle){
+        /*
+         * +----------------------------+
+         * | Technique used to navigate |
+         * | on the web application     |
+         * +----------------------------+
+         */
+        GenericActor.prototype.findElement = techniqueRepository.techniques['Tab_Navigation'];
+
+        /*
+         * +-----------------------------------------+
+         * | Technique used to interact (click)      |
+         * | with a component on the web application |
+         * +-----------------------------------------+
+         */
+        GenericActor.prototype.click = techniqueRepository.techniques['Click_ReturnKey'];
+
+
+        /*
+         * +-----------------------------------------+
+         * | Technique used to interact with:        |
+         * |    + Radio Buttons                      |
+         * |    + Selection (DropDown)               |
+         * +-----------------------------------------+
+         */
+        GenericActor.prototype.interactWithRadioButton = techniqueRepository.techniques['Keyboard_RadioButtonInteraction'];
+        GenericActor.prototype.interactWithSelection = techniqueRepository.techniques['Keyboard_SelectOption'];
+
+    }
 };
 
 /**
@@ -116,45 +248,19 @@ GenericActor.prototype.isJohnDoe = function () {
     return true;
 };
 
+/**
+ *
+ * @param rs
+ */
 GenericActor.prototype.setRuleSet = function (rs) {
-    console.log('sdasdasdasdsadsad');
-
     this.ruleset = rs;
     console.dir(this.ruleset);
-
-
 };
 
-
+/**
+ *
+ * @returns {{}|*} the rule set for JohnDoe
+ */
 GenericActor.prototype.getRuleSet = function () {
   return  this.ruleset;
 };
-
-GenericActor.prototype.findElement = techniqueRepository.techniques['PointAndClick_Navigation'];
-
-/*
- * +-----------------------------------------+
- * | Technique used to interact (click)      |
- * | with a component on the web application |
- * +-----------------------------------------+
- */
-GenericActor.prototype.click = techniqueRepository.techniques['Click_Mouse'];
-
-/*
- * +-----------------------------------------+
- * | Technique used to interact with:        |
- * |    + Radio Buttons                      |
- * |    + Selection (DropDown)               |
- * +-----------------------------------------+
- */
-GenericActor.prototype.interactWithRadioButton = techniqueRepository.techniques['Click_Mouse'];
-GenericActor.prototype.interactWithSelection = techniqueRepository.techniques['PAC_SelectOption'];
-
-/*
- * //TODO: DEPRECATED?!
- * +-----------------------------------------+
- * | Criteria, for performing                |
- * |  accessibility test                     |
- * +-----------------------------------------+
- */
-GenericActor.prototype.criteriaBundle = new CriteriaProvider(['Void']).getCriteria();

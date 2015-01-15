@@ -22,9 +22,6 @@
           "Principle4.Guideline4_1.4_1_2"
         ]
       },
-      "navigation": {
-        "style": "point_and_click"
-      },
       "selenium":{
         "Navigation"   : "keyboard",
         "LoginTimeOut" :  "10000"
