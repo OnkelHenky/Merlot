@@ -220,6 +220,15 @@ Actor.prototype.isJohnDoe = function () {
 };
 
 /**
+ * @description
+ * Load the preference set of the actor.
+ * This function is used with the Malbec GPII branch
+ */
+Actor.prototype.loadPreferenceSet = function(){
+    //TODO: Implement a useful method in actor prototype
+};
+
+/**
  * @deprecated
  */
 Actor.prototype.criteriaBundle = function () {
