@@ -23,7 +23,7 @@
         ]
       },
       "navigation": {
-        "style": "point_and_click"
+        "style": "keyboard"
       },
       "selenium":{
         "Navigation"   : "keyboard",

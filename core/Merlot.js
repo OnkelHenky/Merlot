@@ -59,6 +59,7 @@ var Merlot;
  */
 module.exports.Merlot = Merlot = function () {
 
+
    /*
     * +----------------------------+
     * |        Information         |
@@ -135,3 +136,5 @@ Merlot.prototype.utile._path_ = require('path');
  * @type {exports}
  */
 Merlot.prototype.utile._aux_ = require('./auxilium/auxiliaFunctions');
+
+
