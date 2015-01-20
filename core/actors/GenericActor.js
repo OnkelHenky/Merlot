@@ -183,7 +183,7 @@ GenericActor.prototype.loadPreferenceSet = function(){
     console.log(_util.inspect(this.getRuleSet()));
 
     var navstyle = jsonData.common.WCAG.navigation.style;
-    
+
     if('point_and_click' === navstyle){
 
 
