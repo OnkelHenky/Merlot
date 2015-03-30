@@ -774,63 +774,61 @@ BlueprintRunner.prototype.evalAccessibility = function (webElement, domElement,_
 };
 
 /**
+ * @description
+ * Inject all the files and scripts that are need on the client side
+ * when running a blueprint test.
+ * Currently the following files are used and injected:
  *
- * @returns {webdriver.promise.Deferred.promise|*}
+ * - jQuery.js
+ * - tooltipster.js
+ * - gamay.js
+ * - HTMLCS.js
+ * - tooltipster.css
+ *
+ *  TODO: Check if any of the files can be merged into one to decrease the amount of requests
+ *
+ *  Selenium's 'executeAsyncScript' feature is used to inject and sermonize the injection.
+ *
+ *  @returns {webdriver.promise.Deferred.promise|*}
  */
 BlueprintRunner.prototype.injectAcessibilityTestScripts = function () {
     var self = this,
         _deferred = self.webdriver.promise.defer();
 
     self.driver.executeAsyncScript(function () {
-        console.log('LOADING jQuery');
         if (!window.jQuery) {
+            var _jqueryScriptTag = document.createElement("script");
+                _jqueryScriptTag.type = "text/javascript";
 
+            document.head.appendChild(_jqueryScriptTag);
 
-            var jqueryScriptTag = document.createElement("script");
-            jqueryScriptTag.type = "text/javascript";
-
-            console.dir(arguments[arguments.length - 1]);
-
-            var t = arguments[arguments.length - 1];
-
-            console.log(typeof t);
-
-            document.head.appendChild(jqueryScriptTag);
-
+            /*
                 jqueryScriptTag.onload = function () {
-                    //   cb("jquery loaded");
-                    console.log("jquery Loaded");
-                    t();
-
+                    cb(); // NOTE: 'cb' should by pointing to: arguments[arguments.length - 1]
                 };
+            */
 
-            jqueryScriptTag.src = "http://localhost:3000/javascripts/jquery-1.11.1.min.js";
+            /*
+             * Set the callback function to inform Merlot that the jQurey Script has been
+             * loaded and injected into the target's page
+             * NOTE:
+             * arguments[arguments.length - 1] is the callback function, which is automatically injected by selenium
+             * if 'executeAsyncScript' is uses
+             */
+            _jqueryScriptTag.onload = arguments[arguments.length - 1];
+            _jqueryScriptTag.src = "http://localhost:3000/javascripts/jquery-1.11.1.min.js";
         }
     }).
-
-         /*
-          self.driver.executeAsyncScript(function checkIfElementExistsOnThePage(_domElement) {
-          window.Gamay.isValidElement(_domElement,arguments[arguments.length - 1]);
-
-          }
-          */
          then(function injectToolTips() {
                self.driver.executeAsyncScript(function () {
                  if (!window.HTMLCS) {
-
-                     var t = arguments[arguments.length - 1];
                      var _htmlcsScriptTag = document.createElement("script");
-                     _htmlcsScriptTag.type = "text/javascript";
+                         _htmlcsScriptTag.type = "text/javascript";
                      document.head.appendChild(_htmlcsScriptTag);
 
-
-                         _htmlcsScriptTag.onload = function () {
-                             console.log("Tooltipster Loaded");
-                             t();
-                         };
+                      _htmlcsScriptTag.onload = arguments[arguments.length - 1];
+                      _htmlcsScriptTag.src = "http://localhost:3000/javascripts/jquery.tooltipster.min.js";
                      }
-                     _htmlcsScriptTag.src = "http://localhost:3000/javascripts/jquery.tooltipster.min.js";
-
              });
 
          }).
@@ -838,23 +836,17 @@ BlueprintRunner.prototype.injectAcessibilityTestScripts = function () {
                self.driver.executeAsyncScript(function () {
                  if (!window.HTMLCS) {
 
-                     var t = arguments[arguments.length - 1];
+                     var _htmlcsCSSTag = document.createElement("link");
+                         _htmlcsCSSTag.type = "text/css";
+                         _htmlcsCSSTag.rel = "stylesheet";
 
-                     var _htmlcsScriptTag = document.createElement("link");
-                     _htmlcsScriptTag.type = "text/css";
-                     _htmlcsScriptTag.rel = "stylesheet";
+                     document.head.appendChild(_htmlcsCSSTag);
 
+                     _htmlcsCSSTag.onload = arguments[arguments.length - 1];
 
-                     document.head.appendChild(_htmlcsScriptTag);
+                     _htmlcsCSSTag.href = "http://localhost:3000/stylesheets/tooltipster.css";
 
-                         _htmlcsScriptTag.onload = function () {
-                             //   cb("jquery loaded");
-                             t();
-                         };
-                     }
-                     _htmlcsScriptTag.href = "http://localhost:3000/stylesheets/tooltipster.css";
-                     document.head.appendChild(_htmlcsScriptTag);
-
+                 }
              });
 
          }).
@@ -863,19 +855,14 @@ BlueprintRunner.prototype.injectAcessibilityTestScripts = function () {
           self.driver.executeAsyncScript(function () {
             if (!window.HTMLCS) {
                 var _htmlcsScriptTag = document.createElement("script");
-                _htmlcsScriptTag.type = "text/javascript";
+                    _htmlcsScriptTag.type = "text/javascript";
 
-                var t = arguments[arguments.length - 1];
                 document.head.appendChild(_htmlcsScriptTag);
 
-
-                    _htmlcsScriptTag.onload = function () {
-                        //   cb("jquery loaded");
-                        t();
-                    };
-                }
+                _htmlcsScriptTag.onload = arguments[arguments.length - 1];
                 _htmlcsScriptTag.src = "http://localhost:3000/javascripts/HTML_CodeSniffer/HTMLCS.js";
 
+                }
          });
 
      }).
@@ -884,23 +871,17 @@ BlueprintRunner.prototype.injectAcessibilityTestScripts = function () {
                self.driver.executeAsyncScript(function () {
                  if (!window.Gamay) {
 
-                     var t = arguments[arguments.length - 1];
-                     var gamayScriptTag = document.createElement("script");
-                     gamayScriptTag.type = "text/javascript";
-                     document.head.appendChild(gamayScriptTag);
+                     var _gamayScriptTag = document.createElement("script");
+                         _gamayScriptTag.type = "text/javascript";
+                     document.head.appendChild(_gamayScriptTag);
 
-                         gamayScriptTag.onload = function () {
-
-                             t();
-                         };
+                     _gamayScriptTag.onload = arguments[arguments.length - 1];
+                     _gamayScriptTag.src = "http://localhost:3000/javascripts/gamay.js";
                      }
-                     gamayScriptTag.src = "http://localhost:3000/javascripts/gamay.js";
-
              });
 
          }).
          then(function onOk() {
-            console.log("Ok, ready to go - wheeeee");
              _deferred.fulfill();
          }).
          then(null, function onError(err) {
