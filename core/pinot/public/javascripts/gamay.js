@@ -384,8 +384,8 @@
         }
 
 
-//       var _msg = window.Gamay.getIssueTextForPupUp(issue,_cssStyle);
-         var _msg = window.Gamay.getManuelInspectionPopUp(issue,_cssStyle);
+       var _msg = window.Gamay.getIssueTextForPupUp(issue,_cssStyle);
+   //      var _msg = window.Gamay.getManuelInspectionPopUp(issue,_cssStyle);
 
 
        if(!window.Gamay._onlyOneError && !window.Gamay._onlyOneWarning){
@@ -431,6 +431,7 @@
     * +---------------------------------------------+
     */
     window.Gamay.accessibilityEvaluationHTMLCS =  function(ruleset, html, domElement, callback) {
+        console.log('accessibilityEvaluationHTMLCS');
 
         var _callback = function () {
 
@@ -559,9 +560,9 @@
         _domElement.parent().css("outline", _color);
         _domElement.parent().addClass("tooltip");
 
-        //var _msg = window.Gamay.getIssueTextForPupUp(_issueObj,_cssStyle);
+        var _msg = window.Gamay.getIssueTextForPupUp(_issueObj,_cssStyle);
 
-        var _msg = window.Gamay.getManuelInspectionPopUp(_issueObj,_cssStyle);
+     //   var _msg = window.Gamay.getManuelInspectionPopUp(_issueObj,_cssStyle);
 
         _domElement.parent().tooltipster({
             theme: 'merlotIssuesStyle',

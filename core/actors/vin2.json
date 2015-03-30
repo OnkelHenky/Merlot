@@ -40,16 +40,6 @@
     }
   },
 
-  "login-into-the-system": {
-    "Usability":{
-      "selenium":{
-
-      },
-      "manuell": {
-
-      }
-    }
-  },
   "purchase-product": {
     "Usability":{
       "selenium":{
