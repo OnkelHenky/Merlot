@@ -29,7 +29,6 @@ module.exports = navigationSteps = function () {
         var self = this;
         this.browser.getPageTitle()
             .then(function (pageTitle) {
-                console.log('page Tile = ' + pageTitle);
                 if (title === pageTitle) {
                   //  callback();
                     console.log('page Tile = ' + pageTitle);

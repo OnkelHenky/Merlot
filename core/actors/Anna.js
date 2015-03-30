@@ -51,7 +51,7 @@ exports.Anna = Anna = function() {
     * +----------------------------+
     */
     this.name = 'Anna';
-    this.acessibilityRuleset = "AnnaA_Foo";
+    this.acessibilityRuleset = "AnnaA";
 
     this.navigationPattern = {
          "navStyle" : "TAB"

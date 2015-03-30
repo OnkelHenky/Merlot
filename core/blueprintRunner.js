@@ -156,8 +156,8 @@ BlueprintRunner.prototype.getArrayWithAccessibilityIssues = function(){
  * @param issue
  */
 BlueprintRunner.prototype.addAccessibilityIssue = function(issue){
-   //console.dir(issue);
-   // console.dir(issue.isssues[0].msgs);
+    console.dir(issue);
+    console.dir(issue.isssues[0].msgs);
     this.isssuesMsgs.push(issue);
 };
 
@@ -523,7 +523,6 @@ BlueprintRunner.prototype.runWithThatActor = function (actor) {
 
         if (ActorProvider.Actors[actor]) {
             that.actor = new ActorProvider.Actors[actor];
-            that.actor.loadPreferenceSet();
             this.logger.info('Using "' + that.actor + '" as actor');
         } else {
             throw new ReferenceError('Actor with name "' + actor + '" not found')
@@ -595,6 +594,7 @@ BlueprintRunner.prototype.errorHandler = function(error, _domElement,_stepDescri
 BlueprintRunner.prototype.setLoginCredentialsForActor = function (type, value) {
     var that = this,
         _aux = that.utile._aux_;
+
     if (that.actor) {
         if (_aux.isString(type) && _aux.isString(value)) {
             switch (type) {
@@ -694,19 +694,17 @@ BlueprintRunner.prototype.evalAccessibility = function (webElement, domElement,_
         _deferred = self.webdriver.promise.defer(),
         _issues = [];
 
-    console.log('_accessibilityRuleset = ' +_accessibilityRuleset);
-
-
     webElement.getOuterHtml().
         then(function(outerHtml){
             return outerHtml;
         }).
+        /*
         then(function injectPinot(outerHtml) {
              return self.injectAcessibilityTestScripts().
                     then(function(){
                         return outerHtml;
                     });
-        }).
+        }). */
         then(function(outerHtml){
             self.driver.executeAsyncScript(function(ruleset,html,domElement) {
                 window.Gamay.accessibilityEvaluationHTMLCS(ruleset,html,domElement,arguments[arguments.length - 1]);
@@ -783,165 +781,126 @@ BlueprintRunner.prototype.injectAcessibilityTestScripts = function () {
     var self = this,
         _deferred = self.webdriver.promise.defer();
 
-     self.driver.executeScript(function () {
+    self.driver.executeAsyncScript(function () {
+        console.log('LOADING jQuery');
         if (!window.jQuery) {
+
+
             var jqueryScriptTag = document.createElement("script");
             jqueryScriptTag.type = "text/javascript";
 
-            if (jqueryScriptTag.readyState) {  //IE
-                jqueryScriptTag.onreadystatechange = function () {
-                    if (jqueryScriptTag.readyState == "loaded" ||
-                        jqueryScriptTag.readyState == "complete") {
-                        jqueryScriptTag.onreadystatechange = null;
-                        //  cb("jquery loaded");
-                    }
-                };
-            } else {  //Others
+            console.dir(arguments[arguments.length - 1]);
+
+            var t = arguments[arguments.length - 1];
+
+            console.log(typeof t);
+
+            document.head.appendChild(jqueryScriptTag);
+
                 jqueryScriptTag.onload = function () {
                     //   cb("jquery loaded");
+                    console.log("jquery Loaded");
+                    t();
+
                 };
-            }
+
             jqueryScriptTag.src = "http://localhost:3000/javascripts/jquery-1.11.1.min.js";
-            document.head.appendChild(jqueryScriptTag);
         }
     }).
+
+         /*
+          self.driver.executeAsyncScript(function checkIfElementExistsOnThePage(_domElement) {
+          window.Gamay.isValidElement(_domElement,arguments[arguments.length - 1]);
+
+          }
+          */
          then(function injectToolTips() {
-             return  self.driver.executeScript(function () {
+               self.driver.executeAsyncScript(function () {
                  if (!window.HTMLCS) {
+
+                     var t = arguments[arguments.length - 1];
                      var _htmlcsScriptTag = document.createElement("script");
                      _htmlcsScriptTag.type = "text/javascript";
+                     document.head.appendChild(_htmlcsScriptTag);
 
-                     if (_htmlcsScriptTag.readyState) {  //IE
-                         _htmlcsScriptTag.onreadystatechange = function () {
-                             if (_htmlcsScriptTag.readyState == "loaded" ||
-                                 _htmlcsScriptTag.readyState == "complete") {
-                                 _htmlcsScriptTag.onreadystatechange = null;
-                                 //  cb("jquery loaded");
-                             }
-                         };
-                     } else {  //Others
+
                          _htmlcsScriptTag.onload = function () {
-                             //   cb("jquery loaded");
+                             console.log("Tooltipster Loaded");
+                             t();
                          };
                      }
                      _htmlcsScriptTag.src = "http://localhost:3000/javascripts/jquery.tooltipster.min.js";
-                     document.head.appendChild(_htmlcsScriptTag);
-                 }
+
              });
 
          }).
          then(function injectToolTipsCSS() {
-             return  self.driver.executeScript(function () {
+               self.driver.executeAsyncScript(function () {
                  if (!window.HTMLCS) {
+
+                     var t = arguments[arguments.length - 1];
+
                      var _htmlcsScriptTag = document.createElement("link");
                      _htmlcsScriptTag.type = "text/css";
                      _htmlcsScriptTag.rel = "stylesheet";
 
-                     if (_htmlcsScriptTag.readyState) {  //IE
-                         _htmlcsScriptTag.onreadystatechange = function () {
-                             if (_htmlcsScriptTag.readyState == "loaded" ||
-                                 _htmlcsScriptTag.readyState == "complete") {
-                                 _htmlcsScriptTag.onreadystatechange = null;
-                                 //  cb("jquery loaded");
-                             }
-                         };
-                     } else {  //Others
+
+                     document.head.appendChild(_htmlcsScriptTag);
+
                          _htmlcsScriptTag.onload = function () {
                              //   cb("jquery loaded");
+                             t();
                          };
                      }
                      _htmlcsScriptTag.href = "http://localhost:3000/stylesheets/tooltipster.css";
                      document.head.appendChild(_htmlcsScriptTag);
-                 }
+
              });
 
          }).
+
          then(function injectHTMLCS() {
-        return  self.driver.executeScript(function () {
+          self.driver.executeAsyncScript(function () {
             if (!window.HTMLCS) {
                 var _htmlcsScriptTag = document.createElement("script");
                 _htmlcsScriptTag.type = "text/javascript";
 
-                if (_htmlcsScriptTag.readyState) {  //IE
-                    _htmlcsScriptTag.onreadystatechange = function () {
-                        if (_htmlcsScriptTag.readyState == "loaded" ||
-                            _htmlcsScriptTag.readyState == "complete") {
-                            _htmlcsScriptTag.onreadystatechange = null;
-                            //  cb("jquery loaded");
-                        }
-                    };
-                } else {  //Others
+                var t = arguments[arguments.length - 1];
+                document.head.appendChild(_htmlcsScriptTag);
+
+
                     _htmlcsScriptTag.onload = function () {
                         //   cb("jquery loaded");
+                        t();
                     };
                 }
                 _htmlcsScriptTag.src = "http://localhost:3000/javascripts/HTML_CodeSniffer/HTMLCS.js";
-                document.head.appendChild(_htmlcsScriptTag);
-            }
+
          });
 
      }).
-         then(function isJohnDoe() {
-             if(self.actor.isJohnDoe()) {
-                 return self.driver.executeScript(function (obj) {
-                        window.window.HTMLCS_JohnDoe = obj;
-                 }, self.actor.getRuleSet());
-             }else{
-                 return false;
-             }
-         }).
 
-        /* then(function injectQUAIL() {
-             return  self.driver.executeScript(function () {
-                 if (!window.quail) {
-                     var _quailScriptTag = document.createElement("script");
-                     _quailScriptTag.type = "text/javascript";
-
-                     if (_quailScriptTag.readyState) {  //IE
-                         _quailScriptTag.onreadystatechange = function () {
-                             if (_quailScriptTag.readyState == "loaded" ||
-                                 _quailScriptTag.readyState == "complete") {
-                                 _quailScriptTag.onreadystatechange = null;
-                                 //  cb("jquery loaded");
-                             }
-                         };
-                     } else {  //Others
-                         _quailScriptTag.onload = function () {
-                             //   cb("jquery loaded");
-                         };
-                     }
-                     _quailScriptTag.src = "http://localhost:3000/javascripts/quail/quail.jquery.min.js";
-                     document.head.appendChild(_quailScriptTag);
-                 }
-             });
-
-         }). */
       then(function injectGamay() {
-             return  self.driver.executeScript(function () {
+               self.driver.executeAsyncScript(function () {
                  if (!window.Gamay) {
+
+                     var t = arguments[arguments.length - 1];
                      var gamayScriptTag = document.createElement("script");
                      gamayScriptTag.type = "text/javascript";
-                     if (gamayScriptTag.readyState) {  //IE
-                         gamayScriptTag.onreadystatechange = function () {
-                             if (gamayScriptTag.readyState == "loaded" ||
-                                 gamayScriptTag.readyState == "complete") {
-                                 gamayScriptTag.onreadystatechange = null;
-                                 //  cb("jquery loaded");
-                             }
-                         };
-                     } else {  //Others
+                     document.head.appendChild(gamayScriptTag);
+
                          gamayScriptTag.onload = function () {
-                             //   cb("jquery loaded");
+
+                             t();
                          };
                      }
                      gamayScriptTag.src = "http://localhost:3000/javascripts/gamay.js";
-                     document.head.appendChild(gamayScriptTag);
-                 }
 
              });
 
          }).
          then(function onOk() {
+            console.log("Ok, ready to go - wheeeee");
              _deferred.fulfill();
          }).
          then(null, function onError(err) {
