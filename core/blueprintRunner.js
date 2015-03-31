@@ -814,7 +814,7 @@ BlueprintRunner.prototype.injectAcessibilityTestScripts = function () {
              * loaded and injected into the target's page
              * NOTE:
              * arguments[arguments.length - 1] is the callback function, which is automatically injected by selenium
-             * if 'executeAsyncScript' is uses
+             * if 'executeAsyncScript' is used.
              */
             _jqueryScriptTag.onload = arguments[arguments.length - 1];
             _jqueryScriptTag.src = "http://localhost:3000/javascripts/jquery-1.11.1.min.js";
