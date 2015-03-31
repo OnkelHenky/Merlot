@@ -803,6 +803,7 @@ BlueprintRunner.prototype.injectAcessibilityTestScripts = function () {
             document.head.appendChild(_jqueryScriptTag);
 
             /*
+                //Old or alternative implementation for triggering the Selenium callback
                 jqueryScriptTag.onload = function () {
                     cb(); // NOTE: 'cb' should by pointing to: arguments[arguments.length - 1]
                 };
@@ -819,40 +820,35 @@ BlueprintRunner.prototype.injectAcessibilityTestScripts = function () {
             _jqueryScriptTag.src = "http://localhost:3000/javascripts/jquery-1.11.1.min.js";
         }
     }).
-         then(function injectToolTips() {
-               self.driver.executeAsyncScript(function () {
-                 if (!window.HTMLCS) {
-                     var _htmlcsScriptTag = document.createElement("script");
-                         _htmlcsScriptTag.type = "text/javascript";
-                     document.head.appendChild(_htmlcsScriptTag);
+    then(function injectToolTips() {
+        self.driver.executeAsyncScript(function () {
+            if (!window.HTMLCS) {
+                var _htmlcsScriptTag = document.createElement("script");
+                    _htmlcsScriptTag.type = "text/javascript";
 
-                      _htmlcsScriptTag.onload = arguments[arguments.length - 1];
-                      _htmlcsScriptTag.src = "http://localhost:3000/javascripts/jquery.tooltipster.min.js";
-                     }
-             });
+                 document.head.appendChild(_htmlcsScriptTag);
 
-         }).
-         then(function injectToolTipsCSS() {
-               self.driver.executeAsyncScript(function () {
-                 if (!window.HTMLCS) {
+                _htmlcsScriptTag.onload = arguments[arguments.length - 1];
+                _htmlcsScriptTag.src = "http://localhost:3000/javascripts/jquery.tooltipster.min.js";
+            }
+        });
+    }).
+    then(function injectToolTipsCSS() {
+        self.driver.executeAsyncScript(function () {
+            if (!window.HTMLCS) {
+                var _htmlcsCSSTag = document.createElement("link");
+                   _htmlcsCSSTag.type = "text/css";
+                   _htmlcsCSSTag.rel = "stylesheet";
 
-                     var _htmlcsCSSTag = document.createElement("link");
-                         _htmlcsCSSTag.type = "text/css";
-                         _htmlcsCSSTag.rel = "stylesheet";
+                    document.head.appendChild(_htmlcsCSSTag);
 
-                     document.head.appendChild(_htmlcsCSSTag);
-
-                     _htmlcsCSSTag.onload = arguments[arguments.length - 1];
-
-                     _htmlcsCSSTag.href = "http://localhost:3000/stylesheets/tooltipster.css";
-
-                 }
-             });
-
-         }).
-
-         then(function injectHTMLCS() {
-          self.driver.executeAsyncScript(function () {
+                   _htmlcsCSSTag.onload = arguments[arguments.length - 1];
+                   _htmlcsCSSTag.href = "http://localhost:3000/stylesheets/tooltipster.css";
+            }
+        });
+    }).
+    then(function injectHTMLCS() {
+        self.driver.executeAsyncScript(function () {
             if (!window.HTMLCS) {
                 var _htmlcsScriptTag = document.createElement("script");
                     _htmlcsScriptTag.type = "text/javascript";
@@ -861,35 +857,29 @@ BlueprintRunner.prototype.injectAcessibilityTestScripts = function () {
 
                 _htmlcsScriptTag.onload = arguments[arguments.length - 1];
                 _htmlcsScriptTag.src = "http://localhost:3000/javascripts/HTML_CodeSniffer/HTMLCS.js";
+            }
+        });
+    }).
+    then(function injectGamay() {
+        self.driver.executeAsyncScript(function () {
+            if (!window.Gamay) {
+                var _gamayScriptTag = document.createElement("script");
+                    _gamayScriptTag.type = "text/javascript";
 
-                }
-         });
+                document.head.appendChild(_gamayScriptTag);
 
-     }).
-
-      then(function injectGamay() {
-               self.driver.executeAsyncScript(function () {
-                 if (!window.Gamay) {
-
-                     var _gamayScriptTag = document.createElement("script");
-                         _gamayScriptTag.type = "text/javascript";
-                     document.head.appendChild(_gamayScriptTag);
-
-                     _gamayScriptTag.onload = arguments[arguments.length - 1];
-                     _gamayScriptTag.src = "http://localhost:3000/javascripts/gamay.js";
-                     }
-             });
-
-         }).
-         then(function onOk() {
-             _deferred.fulfill();
-         }).
-         then(null, function onError(err) {
-             _deferred.reject(err);
-         });
-
+                _gamayScriptTag.onload = arguments[arguments.length - 1];
+                _gamayScriptTag.src = "http://localhost:3000/javascripts/gamay.js";
+            }
+        });
+    }).
+    then(function onOk() {
+       _deferred.fulfill();
+    }).
+    then(null, function onError(err) {
+       _deferred.reject(err);
+    });
     return _deferred.promise;
-
 };
 
 /**
