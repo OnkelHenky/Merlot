@@ -823,27 +823,27 @@ BlueprintRunner.prototype.injectAcessibilityTestScripts = function () {
     then(function injectToolTips() {
         self.driver.executeAsyncScript(function () {
             if (!window.HTMLCS) {
-                var _htmlcsScriptTag = document.createElement("script");
-                    _htmlcsScriptTag.type = "text/javascript";
+                var _tooltipsterScriptTag = document.createElement("script");
+                    _tooltipsterScriptTag.type = "text/javascript";
 
-                 document.head.appendChild(_htmlcsScriptTag);
+                 document.head.appendChild(_tooltipsterScriptTag);
 
-                _htmlcsScriptTag.onload = arguments[arguments.length - 1];
-                _htmlcsScriptTag.src = "http://localhost:3000/javascripts/jquery.tooltipster.min.js";
+                _tooltipsterScriptTag.onload = arguments[arguments.length - 1];
+                _tooltipsterScriptTag.src = "http://localhost:3000/javascripts/jquery.tooltipster.min.js";
             }
         });
     }).
     then(function injectToolTipsCSS() {
         self.driver.executeAsyncScript(function () {
             if (!window.HTMLCS) {
-                var _htmlcsCSSTag = document.createElement("link");
-                   _htmlcsCSSTag.type = "text/css";
-                   _htmlcsCSSTag.rel = "stylesheet";
+                var _tooltipsterCSSTag = document.createElement("link");
+                    _tooltipsterCSSTag.type = "text/css";
+                    _tooltipsterCSSTag.rel = "stylesheet";
 
-                    document.head.appendChild(_htmlcsCSSTag);
+                document.head.appendChild(_tooltipsterCSSTag);
 
-                   _htmlcsCSSTag.onload = arguments[arguments.length - 1];
-                   _htmlcsCSSTag.href = "http://localhost:3000/stylesheets/tooltipster.css";
+                _tooltipsterCSSTag.onload = arguments[arguments.length - 1];
+                _tooltipsterCSSTag.href = "http://localhost:3000/stylesheets/tooltipster.css";
             }
         });
     }).
