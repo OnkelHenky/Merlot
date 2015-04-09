@@ -887,7 +887,7 @@ BlueprintRunner.prototype.injectAcessibilityTestScripts = function () {
  * @description
  * Got the the URL location, defined by the parameter 'where'
  * @param where , the URL
- * @param callback.
+ * @param callback
  */
 BlueprintRunner.prototype.goTo = function (where, callback) {
     var self = this;
