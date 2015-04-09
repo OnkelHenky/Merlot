@@ -108,44 +108,6 @@ GenericActor.prototype.getAcessibilityRuleset = function () {
 };
 
 
-/**
- * @description
- * Get the name of the accessibility rule set for this actor
- * @returns {string} the name of the  rule set
- */
-GenericActor.prototype.getAcessibilityRuleset = function () {
-
-    /*
-    var _jf   = require('jsonfile'),
-    //  _fs   = require('fs'),
-        _util = require('util'),
-        _path = require('path');
-
-    var _path_to_vin_file = _path.join(__dirname, "vin.json");
-    var jsonData = _jf.readFileSync(_path_to_vin_file);
-    //sconsole.log(_util.inspect(jsonData.WCAG.automatic.include));
-    var ruleset = {
-        name: 'JohnDoe',
-        description: 'Accessibility Guidelines for JohnDoe',
-        sniffs: [
-            {
-                standard: 'WCAG2AAA',
-                include: jsonData.WCAG.automatic.include
-            }
-        ],
-        getMsgInfo: function(code) {
-            return HTMLCS_WCAG2AAA.getMsgInfo(code);
-        }
-    };
-
-    this.setRuleSet(ruleset);
-
-    console.log(_util.inspect(this.getRuleSet()));
-   */
-
-    return this.acessibilityRuleset;
-};
-
 
 
 /**
@@ -163,7 +125,7 @@ GenericActor.prototype.loadPreferenceSet = function(){
 
     var _path_to_vin_file = _path.join(__dirname, "vin.json");
     var jsonData = _jf.readFileSync(_path_to_vin_file);
-    //sconsole.log(_util.inspect(jsonData.WCAG.automatic.include));
+    console.log(_util.inspect(jsonData.common.WCAG.automatic.include));
     var ruleset = {
         name: 'JohnDoe',
         description: 'Accessibility Guidelines for JohnDoe',
@@ -183,6 +145,9 @@ GenericActor.prototype.loadPreferenceSet = function(){
     console.log(_util.inspect(this.getRuleSet()));
 
     var navstyle = jsonData.common.WCAG.navigation.style;
+
+    console.log('navstyle = ' +navstyle);
+
 
     if('point_and_click' === navstyle){
 
