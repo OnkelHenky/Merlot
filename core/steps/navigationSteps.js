@@ -139,9 +139,9 @@ module.exports = navigationSteps = function () {
 
     /**
      * Step to interact with a button.
-     * This is just a more readable version of 'The actor interacts with a "([^"]*)" element whose ([^"]*) is "([^"]*)"'.
-     * In which the user can right the more common name, 'hyperlink', for the <a> element.
-     * 'identifiedBy' is the property of the hyperlink that need to be found.
+     * This is just a more readable version of 'The actor interacts with a "button" element whose ([^"]*) is "([^"]*)"'.
+     * In which the user can right the more common name, 'button', for the <input type='button'> element.
+     * 'identifiedBy' is the property of the button that need to be found.
      *                Allowed values are: @name, @href, @value, @label, @css, @style and >text
      * 'value' is the value of the identifiedBy property
      *                Allowed values are: Any string or numeric combination, that is allowed in the respective identifiedBy property
