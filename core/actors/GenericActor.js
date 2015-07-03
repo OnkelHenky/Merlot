@@ -76,7 +76,7 @@ GenericActor.prototype = new Actor;
  * @returns {string} the name of the  rule set
  */
 GenericActor.prototype.getAcessibilityRuleset = function () {
-
+/*
     var _jf   = require('jsonfile'),
     //  _fs   = require('fs'),
         _util = require('util'),
@@ -84,14 +84,14 @@ GenericActor.prototype.getAcessibilityRuleset = function () {
 
     var _path_to_vin_file = _path.join(__dirname, "vin.json");
     var jsonData = _jf.readFileSync(_path_to_vin_file);
-    //sconsole.log(_util.inspect(jsonData.WCAG.automatic.include));
+    console.log(_util.inspect(jsonData.common.WCAG.automatic.include));
     var ruleset = {
-        name: 'JohnDoe',
+        name: 'WCAG2AAA',
         description: 'Accessibility Guidelines for JohnDoe',
         sniffs: [
             {
                 standard: 'WCAG2AAA',
-                include: jsonData.WCAG.automatic.include
+                include: jsonData.common.WCAG.automatic.include
             }
         ],
         getMsgInfo: function(code) {
@@ -103,7 +103,7 @@ GenericActor.prototype.getAcessibilityRuleset = function () {
 
     console.log(_util.inspect(this.getRuleSet()));
 
-
+*/
     return this.acessibilityRuleset;
 };
 
