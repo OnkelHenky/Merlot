@@ -313,6 +313,24 @@
 
     };
 
+
+    /*
+     *
+     */
+    window.Gamay.getManuelInspectionPopUp = function(issue,_cssStyle){
+
+        return  "<article class='"+_cssStyle+"'>" +
+                "<header>" +
+                "<h4>"+issue.type+"</h4>" +
+                "</header>" +
+                "<section>" +
+                  "<label for='1234567890gjasdghjksda'> is valid</label>" +
+                  "<input id='1234567890gjasdghjksda' type='checkbox'>" +
+                "</section>" +
+                "</article>";
+
+    };
+
    /*
     * +---------------------------------+
     * | Outline any issued HTML Element |
@@ -367,6 +385,7 @@
 
 
        var _msg = window.Gamay.getIssueTextForPupUp(issue,_cssStyle);
+   //      var _msg = window.Gamay.getManuelInspectionPopUp(issue,_cssStyle);
 
 
        if(!window.Gamay._onlyOneError && !window.Gamay._onlyOneWarning){
@@ -412,6 +431,7 @@
     * +---------------------------------------------+
     */
     window.Gamay.accessibilityEvaluationHTMLCS =  function(ruleset, html, domElement, callback) {
+        console.log('accessibilityEvaluationHTMLCS');
 
         var _callback = function () {
 
@@ -541,6 +561,8 @@
         _domElement.parent().addClass("tooltip");
 
         var _msg = window.Gamay.getIssueTextForPupUp(_issueObj,_cssStyle);
+
+     //   var _msg = window.Gamay.getManuelInspectionPopUp(_issueObj,_cssStyle);
 
         _domElement.parent().tooltipster({
             theme: 'merlotIssuesStyle',

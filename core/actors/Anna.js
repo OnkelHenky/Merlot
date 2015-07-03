@@ -67,6 +67,53 @@ exports.Anna = Anna = function() {
 Anna.prototype = new Actor;
 
 
+/**
+ * @description
+ * Load the preference set of the actor.
+ * This function is used with the Malbec GPII branch
+ */
+Anna.prototype.loadPreferenceSet = function(){
+
+    /*
+     * +----------------------------+
+     * | Technique used to navigate |
+     * | on the web application     |
+     * +----------------------------+
+     */
+    Anna.prototype.findElement = techniqueRepository.techniques['Tab_Navigation'];
+
+    /*
+     * +-----------------------------------------+
+     * | Technique used to interact (click)      |
+     * | with a component on the web application |
+     * +-----------------------------------------+
+     */
+    Anna.prototype.click = techniqueRepository.techniques['Click_ReturnKey'];
+
+
+    /*
+     * +-----------------------------------------+
+     * | Technique used to interact with:        |
+     * |    + Radio Buttons                      |
+     * |    + Selection (DropDown)               |
+     * +-----------------------------------------+
+     */
+    Anna.prototype.interactWithRadioButton = techniqueRepository.techniques['Keyboard_RadioButtonInteraction'];
+    Anna.prototype.interactWithSelection = techniqueRepository.techniques['Keyboard_SelectOption'];
+
+
+    /*
+     * //TODO: DEPRECATED?!
+     * +-----------------------------------------+
+     * | Criteria, for performing                |
+     * |  accessibility test                     |
+     * +-----------------------------------------+
+     */
+   //TODO: Use WCAG success criterion - e.g., => new CriteriaProvider(['WCAG_1.1.1','WCAG_2.2.1']).getCriteria();
+    Anna.prototype.criteriaBundle =  new CriteriaProvider(['Link_Has_Link_Text','Link_Has_Title']).getCriteria();
+};
+
+
 /*
  * +----------------------------+
  * | Technique used to navigate |
