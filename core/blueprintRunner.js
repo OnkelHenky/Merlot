@@ -861,18 +861,20 @@ BlueprintRunner.prototype.injectAcessibilityTestScripts = function () {
             }
         });
     }).
-        then(function isJohnDoe() {
+        /*
+         * Malbec extension. If the actor is JohnDoe, then the
+         * the rulest set is taken from 'vin.json' - aka: the preference set
+         * and include as a JavaScript object into the web page.
+         */
+    then(function isJohnDoe() {
             if(self.actor.isJohnDoe()) {
-                console.log('RULLE SET AAAL');
-                console.dir(self.actor.getRuleSet());
-
                 return self.driver.executeScript(function (obj) {
                     window.window.HTMLCS_JohnDoe = obj;
                 }, self.actor.getRuleSet());
             }else{
                 return false;
             }
-        }).
+    }).
     then(function injectGamay() {
         self.driver.executeAsyncScript(function () {
             if (!window.Gamay) {
