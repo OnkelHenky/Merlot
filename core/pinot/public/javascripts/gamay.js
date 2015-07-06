@@ -337,7 +337,7 @@
     * +---------------------------------+
     *
     *  The outline is colored, depending on the issues type,
-    *  4px strong and dotted
+    *  4px strong, and dotted.
     *
     *  Error    = red,
     *  Warning  = yellow,
@@ -386,7 +386,6 @@
 
        var _msg = window.Gamay.getIssueTextForPupUp(issue,_cssStyle);
    //      var _msg = window.Gamay.getManuelInspectionPopUp(issue,_cssStyle);
-
 
        if(!window.Gamay._onlyOneError && !window.Gamay._onlyOneWarning){
             _element.parent().css("outline", _color);
