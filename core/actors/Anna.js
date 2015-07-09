@@ -66,6 +66,13 @@ exports.Anna = Anna = function() {
  */
 Anna.prototype = new Actor;
 
+/**
+ *
+ * @param actorname
+ */
+Anna.prototype.loadPreferenceSetByName = function(actorname){
+    this.loadPreferenceSet();
+};
 
 /**
  * @description

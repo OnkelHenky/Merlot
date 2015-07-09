@@ -523,7 +523,7 @@ BlueprintRunner.prototype.runWithThatActor = function (actor) {
 
         if (ActorProvider.Actors[actor]) {
             that.actor = new ActorProvider.Actors[actor];
-            that.actor.loadPreferenceSet();
+            that.actor.loadPreferenceSetByName(actor);
             this.logger.info('Using "' + that.actor + '" as actor');
         } else {
             throw new ReferenceError('Actor with name "' + actor + '" not found')
@@ -861,19 +861,42 @@ BlueprintRunner.prototype.injectAcessibilityTestScripts = function () {
             }
         });
     }).
+
         /*
-         * Malbec extension. If the actor is JohnDoe, then the
-         * the rulest set is taken from 'vin.json' - aka: the preference set
-         * and include as a JavaScript object into the web page.
+         then(function isJohnDoe() {
+         if(self.actor.isJohnDoe()) {
+         return self.driver.executeScript(function (obj) {
+         window.window.HTMLCS_JohnDoe = obj;
+         }, self.actor.getRuleSet());
+         }else{
+         return false;
+         }
+         }).
          */
-    then(function isJohnDoe() {
-            if(self.actor.isJohnDoe()) {
-                return self.driver.executeScript(function (obj) {
-                    window.window.HTMLCS_JohnDoe = obj;
-                }, self.actor.getRuleSet());
-            }else{
-                return false;
-            }
+
+    /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+     *                                                                             *
+     * NOTE:                                                                       *
+     * ------                                                                      *
+     * Malbec extension. If the actor is JohnDoe, then the                         *
+     * the rulest set is taken from 'JohnDoe.vin.json' - aka: the preference set   *
+     * and include as a JavaScript object into the web page.                       *
+     *                                                                             *
+     * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+    then(function placeRuleSetonTheWebpage() {
+            var _injectObjct = {};
+                _injectObjct.name =  self.actor.getName();
+                _injectObjct.ruleset =  self.actor.getRuleSet();
+            console.log('******** ACTOR IN TEST IS **********');
+            console.dir(_injectObjct);
+
+            return self.driver.executeScript(function (obj) {
+                console.log("HTMLCS_"+obj.name);
+
+                window.window["HTMLCS_"+obj.name] = obj.ruleset;
+                console.log(window.window["HTMLCS_"+obj.name]);
+            }, _injectObjct);
     }).
     then(function injectGamay() {
         self.driver.executeAsyncScript(function () {
