@@ -539,8 +539,8 @@ BlueprintRunner.prototype.runWithThatActor = function (actor) {
 
         if (ActorProvider.Actors[actor]) {
             that.actor = new ActorProvider.Actors[actor];
-            that.actor.setPathToVinFlies(that.vinFiles);
-            that.actor.loadPreferenceSetByName(actor);
+         //   that.actor.setPathToVinFlies(that.vinFiles);
+            that.actor.loadPreferenceSetByName(that.vinFiles,actor);
             this.logger.info('Using "' + that.actor + '" as actor');
         } else {
             throw new ReferenceError('Actor with name "' + actor + '" not found')
