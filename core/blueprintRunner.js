@@ -95,6 +95,7 @@ BlueprintRunner = exports.BlueprintRunner = function (config) {
 
     this.isssuesMsgs         = []; // Array with all found accessibility issues
     this.reportDirectory     = ""; // Path where the accessibility issue report shall be stored.
+    this.vinFiles            = ""; // Path where the vin files (actor rulesets) can be found.
 
     if (config && (config.seleniumPath && config.port && config.browser)) {
         this.addConfiguration(config);
@@ -352,6 +353,21 @@ BlueprintRunner.prototype.resolveAttributeName = function (identifiedBy) {
  */
 BlueprintRunner.prototype.addConfiguration = function (config) {
     var self = this;
+
+    /*
+     * Check if the property 'vinFlies' is specified.
+     * The property should contain a valid path to the directory where
+     * the vin files ares stored.
+     */
+    if (config.vinFiles !== undefined && self.aux.isString(config.vinFiles)) {
+        if(self.utile._fs_.existsSync(config.vinFiles)){
+            self.vinFiles = config.vinFiles;
+           console.log('Vin Files are here: '+ self.vinFiles);
+        }else{
+            throw new Error(config.vinFiles+ ' is not a valid directory!!');
+        }
+    }
+
     /*
      * Enable Merlot debug logger if the config contains the property
      * 'config.logLevel' with a valid 'numeric' value.
@@ -523,6 +539,7 @@ BlueprintRunner.prototype.runWithThatActor = function (actor) {
 
         if (ActorProvider.Actors[actor]) {
             that.actor = new ActorProvider.Actors[actor];
+            that.actor.setPathToVinFlies(that.vinFiles);
             that.actor.loadPreferenceSetByName(actor);
             this.logger.info('Using "' + that.actor + '" as actor');
         } else {
@@ -862,16 +879,16 @@ BlueprintRunner.prototype.injectAcessibilityTestScripts = function () {
         });
     }).
 
-        /*
-         then(function isJohnDoe() {
-         if(self.actor.isJohnDoe()) {
-         return self.driver.executeScript(function (obj) {
-         window.window.HTMLCS_JohnDoe = obj;
-         }, self.actor.getRuleSet());
-         }else{
-         return false;
-         }
-         }).
+        /*  // This is the 'old' implementation that is using only the 'JohnDoe' actor object.
+             then(function isJohnDoe() {
+                 if(self.actor.isJohnDoe()) {
+                     return self.driver.executeScript(function (obj) {
+                     window.window.HTMLCS_JohnDoe = obj;
+                  }, self.actor.getRuleSet());
+                  }else{
+                    return false;
+                  }
+             }).
          */
 
     /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -888,14 +905,8 @@ BlueprintRunner.prototype.injectAcessibilityTestScripts = function () {
             var _injectObjct = {};
                 _injectObjct.name =  self.actor.getName();
                 _injectObjct.ruleset =  self.actor.getRuleSet();
-            console.log('******** ACTOR IN TEST IS **********');
-            console.dir(_injectObjct);
-
             return self.driver.executeScript(function (obj) {
-                console.log("HTMLCS_"+obj.name);
-
                 window.window["HTMLCS_"+obj.name] = obj.ruleset;
-                console.log(window.window["HTMLCS_"+obj.name]);
             }, _injectObjct);
     }).
     then(function injectGamay() {

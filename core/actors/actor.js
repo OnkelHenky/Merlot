@@ -233,7 +233,7 @@ Actor.prototype.loadPreferenceSet = function(){
  * Load the preference set of the actor by a given name (identifier)
  * This function is used with the Malbec GPII branch - Malbec.
  */
-Actor.prototype.loadPreferenceSetByName = function(actorname){
+Actor.prototype.loadPreferenceSetByName = function(path,actorname){
     //TODO: Implement a useful method in actor prototype
 };
 
