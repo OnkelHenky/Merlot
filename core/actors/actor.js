@@ -55,7 +55,6 @@ exports.Actor = Actor =  function(properties) {
      * +----------------------------+
      */
     this.name                = '';
-    this.acessibilityRuleset = '';
     this.ruleset             = '';
 
 
@@ -170,24 +169,6 @@ Actor.prototype.getPassword = function () {
 
 /**
  * @description
- * Set the accessibility rule set for this actor
- * @param {string} the name of the ruleset.
- */
-Actor.prototype.setAcessibilityRuleset = function (ruleset) {
-     this.acessibilityRuleset = ruleset;
-};
-
-/**
- * @description
- * Get the name of the accessibility rule set for this actor
- * @returns {string} the name of the  rule set
- */
-Actor.prototype.getAcessibilityRuleset = function () {
-    return this.acessibilityRuleset;
-};
-
-/**
- * @description
  * Find and navigate to a element on the web page.
  * The function is specific th each actor, and must be
  * implemented accordingly
@@ -263,7 +244,7 @@ Actor.prototype.criteriaBundle = function () {
  * @param rs
  */
 Actor.prototype.setRuleSet = function (rs) {
-    this.ruleset = rs;
+    this.acessibilityRuleset = rs;
 };
 
 /**
@@ -271,5 +252,5 @@ Actor.prototype.setRuleSet = function (rs) {
  * @returns {{}|*} the rule set for JohnDoe
  */
 Actor.prototype.getRuleSet = function () {
-    return  this.ruleset;
+    return  this.acessibilityRuleset;
 };

@@ -52,12 +52,6 @@ exports.GenericActor = GenericActor = function() {
      * +----------------------------+
      */
     this.name = 'GPII_Based_Actor';
-    this.acessibilityRuleset = "";
-    this.ruleset = {};
-
-    this.navigationPattern = {
-        "navStyle" : "TAB"
-    };
 
 };
 
@@ -98,7 +92,6 @@ GenericActor.prototype.loadPreferenceSetByPathAndName = function(path,actorname)
     };
 
     this.setRuleSet(ruleset);
-    this.setAcessibilityRuleset(_actor_name);
     console.log(_util.inspect(this.getRuleSet()));
     var _navstyle = _jsonData.common.WCAG.navigation.style;
 
@@ -155,20 +148,4 @@ GenericActor.prototype.loadPreferenceSetByPathAndName = function(path,actorname)
         Actor.prototype.interactWithSelection = techniqueRepository.techniques['Keyboard_SelectOption'];
 
     }
-};
-
-/**
- *
- * @param rs
- */
-GenericActor.prototype.setRuleSet = function (rs) {
-    this.ruleset = rs;
-};
-
-/**
- *
- * @returns {{}|*} the rule set for JohnDoe
- */
-GenericActor.prototype.getRuleSet = function () {
-  return  this.ruleset;
 };
