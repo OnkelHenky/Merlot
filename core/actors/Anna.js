@@ -70,7 +70,7 @@ Anna.prototype = new Actor;
  *
  * @param actorname
  */
-Anna.prototype.loadPreferenceSetByName = function(actorname){
+Anna.prototype.loadPreferenceSetByPathAndName = function(actorname){
     this.loadPreferenceSet();
 };
 

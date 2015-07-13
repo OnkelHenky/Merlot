@@ -63,7 +63,7 @@ module.exports.Paul = Paul =  function() {
  *
  * @param actorname
  */
-Paul.prototype.loadPreferenceSetByName = function(actorname){
+Paul.prototype.loadPreferenceSetByPathAndName = function(actorname){
     this.loadPreferenceSet();
 };
 

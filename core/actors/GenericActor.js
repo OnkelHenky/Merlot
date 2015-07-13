@@ -86,7 +86,7 @@ GenericActor.prototype.getAcessibilityRuleset = function () {
  * Load the preference set of the actor by a given name (identifier)
  * @param actorname {string} the name of the actor
  */
-GenericActor.prototype.loadPreferenceSetByName = function(path,actorname){
+GenericActor.prototype.loadPreferenceSetByPathAndName = function(path,actorname){
     var _jf   = require('jsonfile'),
         _util = require('util'),
         _path = require('path'),
