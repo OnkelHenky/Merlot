@@ -56,6 +56,8 @@ exports.Actor = Actor =  function(properties) {
      */
     this.name                = '';
     this.acessibilityRuleset = '';
+    this.ruleset             = '';
+
 
     this.username = void 0;  //default value is 'undefined'
     this.password = void 0;  //default value is 'undefined'
@@ -78,9 +80,21 @@ Actor.prototype = new Merlot;
  * @description Overrides prototype version of toString()
  * @returns {string}
  */
-Merlot.prototype.toString = function () {
+Actor.prototype.toString = function () {
     return this.getName();
 };
+
+/**
+ * @description
+ * Set the name of this actor
+ * @param name {string} the name
+ */
+Actor.prototype.setName = function (name) {
+    if(name !== undefined && this.utile._aux_.isString(name)){
+       this.name = name;
+    }
+};
+
 
 /**
  * @description Get the name of this actor
@@ -242,4 +256,20 @@ Actor.prototype.loadPreferenceSetByPathAndName = function(path,actorname){
  */
 Actor.prototype.criteriaBundle = function () {
     //TODO: Implement a useful method in actor prototype
+};
+
+/**
+ *
+ * @param rs
+ */
+Actor.prototype.setRuleSet = function (rs) {
+    this.ruleset = rs;
+};
+
+/**
+ *
+ * @returns {{}|*} the rule set for JohnDoe
+ */
+Actor.prototype.getRuleSet = function () {
+    return  this.ruleset;
 };

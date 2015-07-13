@@ -90,8 +90,8 @@ BlueprintRunner = exports.BlueprintRunner = function (config) {
     this.logger              = new Logger({'logLevel': 0});
     this.driver              = {};
     this.webdriver           = webdriver;
-    this.actor               = new ActorProvider.Actors["Paul"]; //Default actor
-    this.acessibilityRuleset = this.actor.getName()+'A';
+   // this.actor               = new ActorProvider.Actors["Paul"]; //Default actor
+   // this.acessibilityRuleset = this.actor.getName()+'A';
 
     this.isssuesMsgs         = []; // Array with all found accessibility issues
     this.reportDirectory     = ""; // Path where the accessibility issue report shall be stored.
@@ -538,8 +538,8 @@ BlueprintRunner.prototype.runWithThatActor = function (actor) {
     if (_aux.isString(actor)) {
 
         if (ActorProvider.Actors[actor]) {
-            that.actor = new ActorProvider.Actors[actor];
-         //   that.actor.setPathToVinFlies(that.vinFiles);
+            that.actor = new ActorProvider.Actors["GPII_Pref_Based_Actor"];
+            that.actor.setName(actor);
             that.actor.loadPreferenceSetByPathAndName(that.vinFiles,actor);
             this.logger.info('Using "' + that.actor + '" as actor');
         } else {
@@ -708,7 +708,7 @@ BlueprintRunner.prototype.interactWithSelection = function (webElement, domEleme
  */
 BlueprintRunner.prototype.evalAccessibility = function (webElement, domElement,_stepDescr) {
     var self = this,
-        _accessibilityRuleset = self.actor.getAcessibilityRuleset(),
+        _actorName = self.actor.getName(),//self.actor.getAcessibilityRuleset(),
         _deferred = self.webdriver.promise.defer(),
         _issues = [];
 
@@ -726,7 +726,7 @@ BlueprintRunner.prototype.evalAccessibility = function (webElement, domElement,_
         then(function(outerHtml){
             self.driver.executeAsyncScript(function(ruleset,html,domElement) {
                 window.Gamay.accessibilityEvaluationHTMLCS(ruleset,html,domElement,arguments[arguments.length - 1]);
-            }, _accessibilityRuleset, ''+outerHtml,domElement.getCSSSelector())
+            }, _actorName, ''+outerHtml,domElement.getCSSSelector())
                 .then(function checkResult(errors) {
 
                     var _notice    = [],

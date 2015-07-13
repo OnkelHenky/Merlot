@@ -40,6 +40,31 @@ ActorProvider.Actors = [];  // Array with the available actors
  * |     register the actors    |
  * +----------------------------+
  */
+
+/**
+ * The only actor object that shall be used in Merlot!
+ * @type {GenericActor}
+ */
+ActorProvider.Actors['GPII_Pref_Based_Actor']       =  require('./GenericActor').GenericActor;
+
+
+
+/*
+ * Legacy actors, still there for showcasing .... and you'll never know! :-)
+ * A.Henka - 13.07.2015
+ */
+/**
+ * @deprecated
+ * @type {Anna}
+ */
 ActorProvider.Actors['Anna']          =  require('./Anna').Anna;
+/**
+ * @deprecated
+ * @type {Paul}
+ */
 ActorProvider.Actors['Paul']          =  require('./Paul').Paul;
+/**
+ * @deprecated
+ * @type {GenericActor}
+ */
 ActorProvider.Actors['JohnDoe']       =  require('./GenericActor').GenericActor;

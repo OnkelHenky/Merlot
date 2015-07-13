@@ -40,6 +40,7 @@ var Actor =  require('./actor').Actor,
     Paul;
 
 /**
+ * @deprecated
  * @description
  * The profile for the actor Paul
  * @type {Paul}
