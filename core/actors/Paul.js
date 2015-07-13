@@ -60,6 +60,60 @@ module.exports.Paul = Paul =  function() {
 };
 
 /**
+ *
+ * @param actorname
+ */
+Paul.prototype.loadPreferenceSetByPathAndName = function(actorname){
+    this.loadPreferenceSet();
+};
+
+Paul.prototype.loadPreferenceSet = function(){
+
+    /**
+     * @description
+     * Get the actor basic features from the prototype
+     * @type {Actor}
+     */
+    Paul.prototype = new Actor;
+
+    /*
+     * +----------------------------+
+     * | Technique used to navigate |
+     * | on the web application     |
+     * +----------------------------+
+     */
+    Paul.prototype.findElement = techniqueRepository.techniques['PointAndClick_Navigation'];
+
+    /*
+     * +-----------------------------------------+
+     * | Technique used to interact (click)      |
+     * | with a component on the web application |
+     * +-----------------------------------------+
+     */
+    Paul.prototype.click = techniqueRepository.techniques['Click_Mouse'];
+
+    /*
+     * +-----------------------------------------+
+     * | Technique used to interact with:        |
+     * |    + Radio Buttons                      |
+     * |    + Selection (DropDown)               |
+     * +-----------------------------------------+
+     */
+    Paul.prototype.interactWithRadioButton = techniqueRepository.techniques['Click_Mouse'];
+    Paul.prototype.interactWithSelection = techniqueRepository.techniques['PAC_SelectOption'];
+
+    /*
+     * //TODO: DEPRECATED?!
+     * +-----------------------------------------+
+     * | Criteria, for performing                |
+     * |  accessibility test                     |
+     * +-----------------------------------------+
+     */
+    Paul.prototype.criteriaBundle = new CriteriaProvider(['Void']).getCriteria();
+
+};
+
+/**
  * @description
  * Get the actor basic features from the prototype
  * @type {Actor}
