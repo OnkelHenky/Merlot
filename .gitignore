@@ -6,3 +6,4 @@ spielwiese/*
 .DS_Store
 node_modules
 *.log
+projectFilesBackup/*
