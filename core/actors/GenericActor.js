@@ -97,7 +97,7 @@ GenericActor.prototype.loadPreferenceSetByPathAndName = function(path,actorname)
     if('point_and_click' === _navstyle){
 
 
-        Actor.prototype.findElement = techniqueRepository.techniques['PointAndClick_Navigation'];
+        GenericActor.prototype.findElement = techniqueRepository.techniques['PointAndClick_Navigation'];
 
         /*
          * +-----------------------------------------+
@@ -105,7 +105,7 @@ GenericActor.prototype.loadPreferenceSetByPathAndName = function(path,actorname)
          * | with a component on the web application |
          * +-----------------------------------------+
          */
-        Actor.prototype.click = techniqueRepository.techniques['Click_Mouse'];
+        GenericActor.prototype.click = techniqueRepository.techniques['Click_Mouse'];
 
         /*
          * +-----------------------------------------+
@@ -114,8 +114,8 @@ GenericActor.prototype.loadPreferenceSetByPathAndName = function(path,actorname)
          * |    + Selection (DropDown)               |
          * +-----------------------------------------+
          */
-        Actor.prototype.interactWithRadioButton = techniqueRepository.techniques['Click_Mouse'];
-        Actor.prototype.interactWithSelection = techniqueRepository.techniques['PAC_SelectOption'];
+        GenericActor.prototype.interactWithRadioButton = techniqueRepository.techniques['Click_Mouse'];
+        GenericActor.prototype.interactWithSelection = techniqueRepository.techniques['PAC_SelectOption'];
 
 
     }else if('keyboard' === _navstyle){
@@ -125,7 +125,7 @@ GenericActor.prototype.loadPreferenceSetByPathAndName = function(path,actorname)
          * | on the web application     |
          * +----------------------------+
          */
-        Actor.prototype.findElement = techniqueRepository.techniques['Tab_Navigation'];
+        GenericActor.prototype.findElement = techniqueRepository.techniques['Tab_Navigation'];
 
         /*
          * +-----------------------------------------+
@@ -133,7 +133,7 @@ GenericActor.prototype.loadPreferenceSetByPathAndName = function(path,actorname)
          * | with a component on the web application |
          * +-----------------------------------------+
          */
-        Actor.prototype.click = techniqueRepository.techniques['Click_ReturnKey'];
+        GenericActor.prototype.click = techniqueRepository.techniques['Click_ReturnKey'];
 
 
         /*
@@ -143,8 +143,8 @@ GenericActor.prototype.loadPreferenceSetByPathAndName = function(path,actorname)
          * |    + Selection (DropDown)               |
          * +-----------------------------------------+
          */
-        Actor.prototype.interactWithRadioButton = techniqueRepository.techniques['Keyboard_RadioButtonInteraction'];
-        Actor.prototype.interactWithSelection = techniqueRepository.techniques['Keyboard_SelectOption'];
+        GenericActor.prototype.interactWithRadioButton = techniqueRepository.techniques['Keyboard_RadioButtonInteraction'];
+        GenericActor.prototype.interactWithSelection = techniqueRepository.techniques['Keyboard_SelectOption'];
 
     }
 };
