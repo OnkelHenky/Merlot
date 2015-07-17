@@ -207,15 +207,6 @@ Actor.prototype.click = function (domElement) {
 
 /**
  * @description
- * Check if actor is John Doe, if true this actor uses his ruleset data from GPII
- * @returns {boolean}
- */
-Actor.prototype.isJohnDoe = function () {
-    return false;
-};
-
-/**
- * @description
  * Load the preference set of the actor.
  * This function is used with the Malbec GPII branch
  */
@@ -229,13 +220,6 @@ Actor.prototype.loadPreferenceSet = function(){
  * This function is used with the Malbec GPII branch - Malbec.
  */
 Actor.prototype.loadPreferenceSetByPathAndName = function(path,actorname){
-    //TODO: Implement a useful method in actor prototype
-};
-
-/**
- * @deprecated
- */
-Actor.prototype.criteriaBundle = function () {
     //TODO: Implement a useful method in actor prototype
 };
 

@@ -36,7 +36,6 @@
  */
 var Actor =  require('./actor').Actor,
     techniqueRepository = require('../techniques/techniqueRepository').TechniqueRepository,
-    CriteriaProvider = require('../criteria/criteriaProvider').CriteriaProvider,
     GenericActor;
 
 /**
