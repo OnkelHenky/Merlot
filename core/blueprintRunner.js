@@ -45,7 +45,7 @@ var webdriver = require('selenium-webdriver'),
  * +----------------------------+
  */
 var BlueprintRunner,
-    ActorProvider = require('./actors/actorProvider').ActorProvider,
+    genericActor = require('./actors/genericActor').GenericActor,
     DOMElement = require('./auxilium/DOMElement'),
     TagNameDictionary = require('./auxilium/tagNameDictionary'),
     MerlotErrors = require('./auxilium/MerlotErrors'),
@@ -90,9 +90,6 @@ BlueprintRunner = exports.BlueprintRunner = function (config) {
     this.logger              = new Logger({'logLevel': 0});
     this.driver              = {};
     this.webdriver           = webdriver;
-   // this.actor               = new ActorProvider.Actors["Paul"]; //Default actor
-   // this.acessibilityRuleset = this.actor.getName()+'A';
-
     this.isssuesMsgs         = []; // Array with all found accessibility issues
     this.reportDirectory     = ""; // Path where the accessibility issue report shall be stored.
     this.vinFiles            = ""; // Path where the vin files (actor rulesets) can be found.
@@ -536,17 +533,17 @@ BlueprintRunner.prototype.runWithThatActor = function (actor) {
         _aux = that.utile._aux_;
 
     if (_aux.isString(actor)) {
+            try {
+                    that.actor = new genericActor();
+                    that.actor.loadPreferenceSetByPathAndName(that.vinFiles,actor);
+                    that.actor.setName(actor);
+                    that.logger.info('Using "' + that.actor + '" as actor');
 
-        if (ActorProvider.Actors[actor]) {
-            that.actor = new ActorProvider.Actors["GPII_Pref_Based_Actor"];
-            that.actor.setName(actor);
-            that.actor.loadPreferenceSetByPathAndName(that.vinFiles,actor);
-            this.logger.info('Using "' + that.actor + '" as actor');
-        } else {
-            throw new ReferenceError('Actor with name "' + actor + '" not found')
-        }
+                } catch(ex){
+                    throw new ReferenceError('Actor with name "' + actor + '" not found')
+                }
     } else {
-        throw new TypeError('Actor with name "' + actor + '" not defined');
+        throw new TypeError('Actor with name "' + actor + '" is not a valid string, use letters only');
     }
 };
 
