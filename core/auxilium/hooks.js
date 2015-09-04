@@ -11,6 +11,17 @@
  * @type {hooks}
  */
 module.exports = hooks = function () {
+
+    /*
+     * Set the name of the current scenario/ Blueprint.
+     * This hook is executed before the blueprint is evaluated.
+     */
+    this.Before(function (scenario, callback) {
+        var  _browser = this.browser;
+        _browser.setCurrentBlueprint(scenario.getName());
+        callback();
+    });
+
     /*
      * Close the selenium driver (browser) after all features
      * of an scenario had been executed.

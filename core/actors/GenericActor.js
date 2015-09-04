@@ -38,6 +38,8 @@ var Actor =  require('./actor').Actor,
     techniqueRepository = require('../techniques/techniqueRepository').TechniqueRepository,
     GenericActor;
 
+exports.foo = 3;
+
 /**
  * @description
  * The profile for the actor
@@ -53,6 +55,7 @@ exports.GenericActor = GenericActor = function() {
     this.name = 'GPII_Based_Actor';
 
 };
+
 
 
 /**

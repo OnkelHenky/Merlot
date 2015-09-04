@@ -93,6 +93,7 @@ BlueprintRunner = exports.BlueprintRunner = function (config) {
     this.isssuesMsgs         = []; // Array with all found accessibility issues
     this.reportDirectory     = ""; // Path where the accessibility issue report shall be stored.
     this.vinFiles            = ""; // Path where the vin files (actor rulesets) can be found.
+    this.currentBlueprint    = ""; // The name of the current blueprint - aka: "The Scenario" in terms of cucumber
 
     if (config && (config.seleniumPath && config.port && config.browser)) {
         this.addConfiguration(config);
@@ -123,6 +124,33 @@ BlueprintRunner = exports.BlueprintRunner = function (config) {
  * @type {Merlot}
  */
 BlueprintRunner.prototype = new Merlot();
+
+/**
+ * @description
+ * Set the name of the current blueprint.
+ * The name is the name of the cucumber scenario that is defined in the feature description.
+ * @param name_of_the_scenario {string}
+ */
+BlueprintRunner.prototype.setCurrentBlueprint = function (name_of_the_scenario){
+    if(name_of_the_scenario !== undefined && this.aux.isString(name_of_the_scenario)){
+        this.currentBlueprint = name_of_the_scenario;
+        this.logger.info("Current Scenario = " + name_of_the_scenario);
+    }else{
+        this.logger.info("No scenario name found! Name is empty, please set a proper name in your Blueprint descrprion.");
+    }
+};
+
+/**
+ * @description
+ * Get the name of the Blueprin that us currently under evaluation.
+ * @returns {string|*} The name of the blueprint
+ */
+BlueprintRunner.prototype.getCurrentBlueprint = function (){
+    if(this.currentBlueprint !== undefined && this.currentBlueprint !== ""){
+        return this.currentBlueprint
+    }
+    return "";
+};
 
 /**
  * @description
@@ -875,18 +903,6 @@ BlueprintRunner.prototype.injectAcessibilityTestScripts = function () {
             }
         });
     }).
-
-        /*  // This is the 'old' implementation that is using only the 'JohnDoe' actor object.
-             then(function isJohnDoe() {
-                 if(self.actor.isJohnDoe()) {
-                     return self.driver.executeScript(function (obj) {
-                     window.window.HTMLCS_JohnDoe = obj;
-                  }, self.actor.getRuleSet());
-                  }else{
-                    return false;
-                  }
-             }).
-         */
 
     /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
      *                                                                             *
