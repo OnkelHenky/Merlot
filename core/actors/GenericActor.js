@@ -77,6 +77,10 @@ GenericActor.prototype.loadPreferenceSetByPathAndName = function(path,actorname)
         _path = require('path'),
         _actor_name = actorname;
 
+//TODO: Add exception handling if the vin file for the current actor can not be found!
+    console.log('actoname = ' + _actor_name);
+    console.log('path to vins = ' + path);
+
     var _path_to_vin_file = _path.join(path, _actor_name+".vin.json");
     var _jsonData = _jf.readFileSync(_path_to_vin_file);
     var ruleset = {
@@ -85,7 +89,7 @@ GenericActor.prototype.loadPreferenceSetByPathAndName = function(path,actorname)
         sniffs: [
             {
                 standard: 'WCAG2AAA',
-                include: _jsonData.common.WCAG.automatic.include
+                include: _jsonData.common.technical.WCAG.automatic
             }
         ],
         getMsgInfo: function(code) {
@@ -95,8 +99,8 @@ GenericActor.prototype.loadPreferenceSetByPathAndName = function(path,actorname)
 
     this.setRuleSet(ruleset);
     console.log(_util.inspect(this.getRuleSet()));
-    var _navstyle = _jsonData.common.WCAG.navigation.style;
-
+    var _navstyle = _jsonData.common.technical.navigation.style;
+    console.log('_navstyle = ' + _navstyle);
     if('point_and_click' === _navstyle){
 
 
