@@ -38,8 +38,6 @@ var Actor =  require('./actor').Actor,
     techniqueRepository = require('../techniques/techniqueRepository').TechniqueRepository,
     GenericActor;
 
-exports.foo = 3;
-
 /**
  * @description
  * The profile for the actor
@@ -71,25 +69,42 @@ GenericActor.prototype = new Actor;
  * Load the preference set of the actor by a given name (identifier)
  * @param actorname {string} the name of the actor
  */
-GenericActor.prototype.loadPreferenceSetByPathAndName = function(path,actorname){
+//TODO: Add exception handling if the vin file for the current actor can not be found!
+GenericActor.prototype.loadPreferenceSet = function(path,actorname,blueprint_name){
     var _jf   = require('jsonfile'),
         _util = require('util'),
         _path = require('path'),
-        _actor_name = actorname;
+        _actor_name = actorname,
 
-//TODO: Add exception handling if the vin file for the current actor can not be found!
+        /*
+         * Replace blank " " with underscore _ in the blueprint name
+         * to match the name of the user scenario in the persona's rule set.
+         * Be default there are written with _ instead of " "
+         */
+        _blueprint_name = blueprint_name.split(' ').join('_');
+
+    /*
     console.log('actoname = ' + _actor_name);
     console.log('path to vins = ' + path);
+    console.log('_blueprint_name = ' + _blueprint_name);
+    */
 
     var _path_to_vin_file = _path.join(path, _actor_name+".vin.json");
     var _jsonData = _jf.readFileSync(_path_to_vin_file);
+
+    /*
+     * Get the correct rule set for the current blueprint (user scenario)
+     * TODO: Check if rule set with given name exist!
+     */
+    var rule_for_the_current_blueprint = _jsonData[_blueprint_name];
+
     var ruleset = {
         name: _actor_name,
         description: 'Accessibility Guidelines for '+_actor_name,
         sniffs: [
             {
                 standard: 'WCAG2AAA',
-                include: _jsonData.common.technical.WCAG.automatic
+                include: rule_for_the_current_blueprint.technical.WCAG.automatic
             }
         ],
         getMsgInfo: function(code) {
@@ -98,9 +113,9 @@ GenericActor.prototype.loadPreferenceSetByPathAndName = function(path,actorname)
     };
 
     this.setRuleSet(ruleset);
-    console.log(_util.inspect(this.getRuleSet()));
-    var _navstyle = _jsonData.common.technical.navigation.style;
-    console.log('_navstyle = ' + _navstyle);
+    this.setSemenaticRuleSet(rule_for_the_current_blueprint.semantic);
+    var _navstyle = rule_for_the_current_blueprint.technical.navigation.style;
+
     if('point_and_click' === _navstyle){
 
 

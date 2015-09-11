@@ -563,7 +563,7 @@ BlueprintRunner.prototype.runWithThatActor = function (actor) {
     if (_aux.isString(actor)) {
             try {
                     that.actor = new genericActor();
-                    that.actor.loadPreferenceSetByPathAndName(that.vinFiles,actor);
+                    that.actor.loadPreferenceSet(that.vinFiles,actor,that.getCurrentBlueprint());
                     that.actor.setName(actor);
                     that.logger.info('Using "' + that.actor + '" as actor');
 
@@ -577,11 +577,41 @@ BlueprintRunner.prototype.runWithThatActor = function (actor) {
 
 /**
  * @description
+ * Applying a semantic requirement statement on the web application, which is being evaluated in the current Blueprint.
+ * The semantic requirement statement is shown to the tester in form of a pop-up.
+ * @param _domElement the element on the web application for which the semantic requirement applies to.
+ * @param callback the callback for cucumber
+ * @param semanticRequirementStatement semantic requirement statement - Array
+ */
+BlueprintRunner.prototype.applySemanticRequirementStatement = function(_domElement,semanticRequirementStatement,callback){
+    var self = this;
+
+    self.driver.executeAsyncScript(function checkIfElementExistsOnThePage(_domElement) {
+        window.Gamay.isValidElement(_domElement,arguments[arguments.length - 1]);
+
+    }, _domElement.getCSSSelector()).then(function outlineError(validStatus){
+        if(!validStatus){ //not valid, maybe it a typo.
+            callback.fail(new MerlotErrors.ElementNotFoundError("Element " + _domElement + " does not exit check for typos").message);
+        }else{ //valid
+            //self.addAccessibilityIssue(obj);
+            self.driver.executeAsyncScript(function(_domElement,semanticRequirementStatement) {
+                window.Gamay.markSemanticRequirement(_domElement,semanticRequirementStatement,arguments[arguments.length - 1]);
+            }, _domElement.getCSSSelector(), semanticRequirementStatement).then(function(ok){
+                callback.fail(new MerlotErrors.AbortEvaluationError(self.actor.getName()+" can't continue with the scenario due to an error."
+                    + " \n See the Error report, or the highlighted section on your web page for more details.").message);
+            });
+        }
+    });
+
+};
+
+/**
+ * @description
  * Handling any errors
- * @param error
- * @param _domElement
- * @param callback
- * @param _stepDescription
+ * @param error, the Error
+ * @param _domElement the element on the web application that caused the error
+ * @param callback the callback for cucumber, should be called after the error handling is done.
+ * @param _stepDescription the description of the current step in the blueprint description.
  */
 BlueprintRunner.prototype.errorHandler = function(error, _domElement,_stepDescription,callback){
     var self = this;
@@ -610,7 +640,7 @@ BlueprintRunner.prototype.errorHandler = function(error, _domElement,_stepDescri
               window.Gamay.isValidElement(_domElement,arguments[arguments.length - 1]);
 
           }, _domElement.getCSSSelector()).then(function outlineError(validStatus){
-              if(!validStatus){ //not valid, maybe it a typo.
+              if(!validStatus){ //not valid, maybe it's a typo.
                   callback.fail(new MerlotErrors.ElementNotFoundError("Element " + _domElement + " does not exit check for typos").message);
               }else{ //valid
                   self.addAccessibilityIssue(obj);

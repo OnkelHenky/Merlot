@@ -533,7 +533,7 @@
 
         var _issueObj = issue[0],
             _color =  window.Gamay._OUTLINE_STYLE,
-            _cssStyle = "merlotIssuesStyleHeaderWARNING";
+            _cssStyle = "merlotIssuesStyleHeaderWARNING",
             _domElement = $(domElement);
 
         switch (_issueObj.typeCode) {
@@ -562,6 +562,57 @@
         var _msg = window.Gamay.getIssueTextForPupUp(_issueObj,_cssStyle);
 
      //   var _msg = window.Gamay.getManuelInspectionPopUp(_issueObj,_cssStyle);
+
+        _domElement.parent().tooltipster({
+            theme: 'merlotIssuesStyle',
+            content: $(_msg),
+            animation: 'grow',
+            delay: 100
+        });
+
+        callback();
+    };
+
+
+
+    /**
+     * @description
+     * Outline the section of a web application where a semantic requirement should be presented
+     * @param domElement {object} the domElement that should be marked.
+     * @param semanticRequirementStatement  {object} semantic requirement statements - Array!
+     * @param callback {function}, call the blueprint runner when the operation is down.
+     */
+    window.Gamay.markSemanticRequirement = function(domElement,semanticRequirementStatement,callback){
+
+        var _issueObj = issue[0],
+            _color =  window.Gamay._OUTLINE_STYLE,
+            _cssStyle = "merlotIssuesStyleHeaderWARNING",
+            _domElement = $(domElement);
+
+        switch (_issueObj.typeCode) {
+            case HTMLCS.ERROR:
+                _color += window.Gamay._ERROR_OUTLINE_COLOR;
+                _cssStyle = "merlotIssuesStyleHeaderERROR";
+                break;
+            case HTMLCS.WARNING:
+                _color += window.Gamay._WARNING_OUTLINE_COLOR;
+                _cssStyle = "merlotIssuesStyleHeaderWARNING";
+                break;
+            case HTMLCS.NOTICE:
+                _color += window.Gamay._NOTICE_OUTLINE_COLOR;
+                _cssStyle = "merlotIssuesStyleHeaderNOTICE";
+                break;
+            default:
+                _color += window.Gamay._WARNING_OUTLINE_COLOR;
+                _cssStyle = "merlotIssuesStyleHeaderWARNING";
+                break;
+        }
+
+
+        _domElement.parent().css("outline", _color);
+        _domElement.parent().addClass("tooltip");
+
+        var _msg = window.Gamay.getIssueTextForPupUp(_issueObj,_cssStyle);
 
         _domElement.parent().tooltipster({
             theme: 'merlotIssuesStyle',

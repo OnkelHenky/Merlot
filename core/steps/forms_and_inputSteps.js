@@ -23,6 +23,7 @@ module.exports = forms_and_input_Steps = function () {
      */
     this.When(/^The actor enters "([^"]*)" into textfield whose ([^"]*) is "([^"]*)"$/, function(text, identifiedBy, identifierValue ,callback) {
         var that = this,
+            _elementType = "text_field",
             _domElement = this.browser.createDOMElement({
                 'tagName': 'textField',
                 'identifiedBy': identifiedBy,
@@ -49,6 +50,18 @@ module.exports = forms_and_input_Steps = function () {
             }).
             then(function enterText(webElement) {
                 return that.browser.enterText(webElement, text); //  auxilia.inputText.call(that,text,webElement);
+            }).
+            then(function checkForSemantics(webElement) {
+                console.log('++++++++++++++++++++++++++++++++++++++++++++++ SEMANTICS ++++++++++++++++++++++++++++++++++++++++++++++');
+                var _semantics = that.browser.actor.hastSomethingtoSayAboutSemenatics(_elementType);
+                if (_semantics){
+                    console.dir(_semantics);
+                    that.browser.applySemanticRequirementStatement(_domElement,_semantics,callback);
+                }else{
+                    console.log('Not semantic rules');
+                    callback();
+                }
+                callback();
             }).
             then(function onOk(prm) {
                 callback();

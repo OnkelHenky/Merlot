@@ -55,7 +55,8 @@ exports.Actor = Actor =  function(properties) {
      * +----------------------------+
      */
     this.name                = '';
-    this.ruleset             = '';
+    this.ruleset             = {};
+    this.semanticRules       = {};
 
 
     this.username = void 0;  //default value is 'undefined'
@@ -104,15 +105,58 @@ Actor.prototype.getName = function () {
 };
 
 /**
- * @description Get the navigation pattern of this actor
- * @return {object}
+ * @description
+ * Set the semantic rules for an actor
+ * @param _sementicRules {object}
+ */
+Actor.prototype.setSemenaticRuleSet = function (_sementicRules){
+    if(_sementicRules !== undefined){
+        this.semanticRules = _sementicRules;
+    }
+};
+
+/**
+ * @description
+ * Get the semantic rules of an actor.
+ * @returns {{object}|*} The semantic rul eset of an actor for a specific blueprint
+ */
+Actor.prototype.getSemenaticRuleSet = function (){
+   return this.semanticRules;
+};
+
+/**
+ * @description
+ * Check if the actor has semantic requirements of a given element.
+ * If the answers is YES, this function will return an array of semantic requirement statements (strings)
+ * with the the semantic requirements.
+ * NOTE: This function will return FALSE if no semantic requirement are provided for the current
+ * step in the blueprint`s evaluation.
+ * @param elementName
+ * The name of the element that is currently checked in the blueprint
+ * @returns {{Array}|*} Returns an Array with semantic requirement statements on FALSE otherwise.
+ */
+Actor.prototype.hastSomethingtoSayAboutSemenatics = function (elementName){
+    var _semantics = this.getSemenaticRuleSet();
+
+    if(_semantics[elementName]){
+       return _semantics[elementName];
+    } else{
+        return false
+    }
+};
+
+/**
+ * @description
+ * Get the navigation pattern of this actor
+ * @return {object} The specific navigation pattern of this actor.
  */
 Actor.prototype.getNavigationPattern = function () {
     return this.navigationPattern;
 };
 
 /**
- * @description Add the properties for Actor.
+ * @description
+ * Add the properties for Actor.
  * @param properties
  */
 Actor.prototype.addPoperties = function(properties){
@@ -139,7 +183,7 @@ Actor.prototype.setUsername = function (username) {
  * The username may by used for login credentials.
  * This function returns undefined is no username is defined
  * fot this actor.
- * @returns {*} the username
+ * @returns {*} String - The username
  */
 Actor.prototype.getUsername = function () {
     return this.username;
@@ -207,19 +251,10 @@ Actor.prototype.click = function (domElement) {
 
 /**
  * @description
- * Load the preference set of the actor.
- * This function is used with the Malbec GPII branch
- */
-Actor.prototype.loadPreferenceSet = function(){
-    //TODO: Implement a useful method in actor prototype
-};
-
-/**
- * @description
  * Load the preference set of the actor by a given name (identifier)
  * This function is used with the Malbec GPII branch - Malbec.
  */
-Actor.prototype.loadPreferenceSetByPathAndName = function(path,actorname){
+Actor.prototype.loadPreferenceSet = function(path,actorname,blueprint_name){
     //TODO: Implement a useful method in actor prototype
 };
 
