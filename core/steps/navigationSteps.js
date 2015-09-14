@@ -95,6 +95,7 @@ module.exports = navigationSteps = function () {
      */
     this.When(/^The actor interacts with a hyperlink whose ([^"]*) is "([^"]*)"$/, function (identifiedBy, identifierValue, callback) {
         var that = this,
+            _elementType = "hyperlink",
             _domElement = this.browser.createDOMElement({
                 'tagName': 'hyperlink',
                 'identifiedBy': identifiedBy,
@@ -115,7 +116,8 @@ module.exports = navigationSteps = function () {
                 return deferred.promise;
             }). */
             then(function runAccessibilityEvaluation(webElement) {
-                return that.browser.evalAccessibility(webElement,_domElement,_stepDescr)
+                var _semantics = that.browser.actor.hastSomethingtoSayAboutSemenatics(_elementType);
+                return that.browser.evalAccessibilityWithSemantic(webElement,_domElement,_stepDescr,_semantics)
                     .then(function storeIssues(issues) {
                         if(issues){
                             var obj = {};
@@ -148,8 +150,8 @@ module.exports = navigationSteps = function () {
      * 'callback' is the cucumber callback.
      */
     this.When(/^The actor interacts with a button whose ([^"]*) is "([^"]*)"$/, function (identifiedBy, identifierValue, callback) {
-
         var that = this,
+            _elementType = "button",
             _domElement = this.browser.createDOMElement({
                 'tagName': 'button',
                 'identifiedBy': identifiedBy,
@@ -170,7 +172,8 @@ module.exports = navigationSteps = function () {
                 return deferred.promise;
             }). */
             then(function runAccessibilityEvaluation(webElement) {
-                return that.browser.evalAccessibility(webElement,_domElement,_stepDescr)
+                var _semantics = that.browser.actor.hastSomethingtoSayAboutSemenatics(_elementType);
+                return that.browser.evalAccessibilityWithSemantic(webElement,_domElement,_stepDescr,_semantics)
                     .then(function storeIssues(issues) {
                         if(issues){
                             var obj = {};
@@ -204,6 +207,7 @@ module.exports = navigationSteps = function () {
      */
     this.When(/^The actor interacts with a "([^"]*)" element whose ([^"]*) is "([^"]*)"$/, function (elementName, identifiedBy, identifierValue, callback) {
         var that = this,
+            _elementType = elementName,//TODO: Check if 'elementName' is a valid elementName!!
             _domElement = this.browser.createDOMElement({
                 'tagName': elementName,
                 'identifiedBy': identifiedBy,
@@ -223,7 +227,8 @@ module.exports = navigationSteps = function () {
                 return deferred.promise;
             }). */
             then(function runAccessibilityEvaluation(webElement) {
-                return that.browser.evalAccessibility(webElement,_domElement,_stepDescr)
+                var _semantics = that.browser.actor.hastSomethingtoSayAboutSemenatics(_elementType);
+                return that.browser.evalAccessibilityWithSemantic(webElement,_domElement,_stepDescr,_semantics)
                        .then(function storeIssues(issues) {
                                if(issues){
                                    var obj = {};

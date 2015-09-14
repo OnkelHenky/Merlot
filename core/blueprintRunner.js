@@ -755,6 +755,99 @@ BlueprintRunner.prototype.interactWithSelection = function (webElement, domEleme
     return _actor.interactWithSelection.call(this, webElement, domElement);
 };
 
+
+/**
+ * @description
+ * Perform an accessibility evaluation on the provided element
+ * @param {object} webElement the element to tes
+ * @returns {webdriver.promise.Deferred.promise|*} a promise that will be resolved when the evaluation is completed
+ */
+BlueprintRunner.prototype.evalAccessibilityWithSemantic = function (webElement, domElement,_stepDescr,semantics) {
+    var self = this,
+        _actorName = self.actor.getName(),//self.actor.getAcessibilityRuleset(),
+        _deferred = self.webdriver.promise.defer(),
+        _semantics = semantics;
+        _issues = [];
+
+    webElement.getOuterHtml().
+        then(function(outerHtml){
+            return outerHtml;
+        }).
+        /*
+         then(function injectPinot(outerHtml) {
+         return self.injectAcessibilityTestScripts().
+         then(function(){
+         return outerHtml;
+         });
+         }). */
+        then(function(outerHtml){
+            self.driver.executeAsyncScript(function(ruleset,html,domElement,_semantics) {
+                window.Gamay.accessibilityEvaluationHTMLCS_WITHSEMANTICS(ruleset,html,domElement,_semantics,arguments[arguments.length - 1]);
+            }, _actorName, ''+outerHtml,domElement.getCSSSelector(),_semantics)
+                .then(function checkResult(errors) {
+
+                    var _notice    = [],
+                        _warning   = [],
+                        _error     = [],
+                        _def       = [];
+
+                    errors.forEach(function(error){
+                        switch(error.type){
+                            case 'NOTICE':
+                                _notice.push(error);
+                                break;
+                            case 'WARNING':
+                                _warning.push(error);
+                                break;
+                            case 'ERROR':
+                                _error.push(error);
+                                break;
+                            default:
+                                _def.push(error);
+                                break;
+                        }
+                    });
+
+                    if(_notice.length > 0){
+                        _issues.push({
+                            type: 'NOTICE',
+                            msgs: _notice
+                        });
+                    }
+                    if(_warning.length > 0){
+                        _issues.push({
+                            type: 'WARNING',
+                            msgs: _warning
+                        });
+                    }
+                    if(_error.length > 0){
+                        _issues.push({
+                            type: 'ERROR',
+                            msgs: _error
+                        });
+                        var obj = {};
+                        obj.stepDescr = _stepDescr;
+                        obj.isssues = _issues;
+                        self.addAccessibilityIssue(obj);
+                        throw new MerlotErrors.AbortEvaluationError("ErrorFound");
+                    }
+                    if(_def.length > 0){
+                        _issues.push({
+                            type: 'UNKNOWN ISSUE',
+                            msgs: _def
+                        });
+                    }
+
+                });
+        }).
+        then(function onOK() {
+            _deferred.fulfill(_issues);
+        });
+
+    return _deferred.promise;
+
+};
+
 /**
  * @description
  * Perform an accessibility evaluation on the provided element

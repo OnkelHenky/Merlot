@@ -262,6 +262,9 @@
     window.Gamay.outlineIssuedTooltip = function(element, msgs){
         var _tooltip = "";
 
+        console.dir(msgs);
+
+
         msgs.forEach(function (msg) {_tooltip += msg;});
 
         element.parent().tooltipster({
@@ -295,11 +298,29 @@
 
     };
 
-   /*
-    * +---------------------------------+
-    * | The default text of the pop up  |
-    * +---------------------------------+
-    */
+
+    /*
+     * +---------------------------------+
+     * |   Get the text for the pop up   |
+     * +---------------------------------+
+     */
+    window.Gamay.getIssueTextForSEMANTICPupUp = function(sem,_cssStyle){
+
+        return  "<article class='"+_cssStyle+"'>" +
+                    "<header>" +
+                        "<h4>Semantic Issue</h4>" +
+                    "</header>" +
+                    "<section>" +
+                        "<p>"+sem+"</p>" +
+                    "</section>" +
+                "</article>";
+    };
+
+    /*
+     * +---------------------------------+
+     * | The default text of the pop up  |
+     * +---------------------------------+
+     */
     window.Gamay.getDEFAULTTextForPupUp = function(){
 
      return  "<article class='merlotIssuesStyleHeaderWARNING'>" +
@@ -352,13 +373,14 @@
     *  $(type~="accordion"][value~="expand"]
     *  var r = $("input[type=radio][value='AmericanExpress']");
     */
-    window.Gamay.outlineIssuedElement = function(domElementCSSSelector, issue, _issuesMSGs,_accessIssues){
+    window.Gamay.outlineIssuedElement = function(domElementCSSSelector, issue, _issuesMSGs,_accessIssues, semantics){
 
         var _error   = false,
             _warning = false,
             _color   = window.Gamay._OUTLINE_STYLE,
             _element = $(domElementCSSSelector),
             _cssStyle = "merlotIssuesStyleHeaderWARNING";
+
 
         console.log('domElementCSSSelector = '+domElementCSSSelector);
 
@@ -418,10 +440,89 @@
                 _accessIssues.push(issue);
             }
 
-        }
-
-
+       } if (semantics){
+            semantics.forEach(function (sem) {
+                var _sem = window.Gamay.getIssueTextForSEMANTICPupUp(sem,"merlotIssuesStyleHeaderWARNING");
+                if( _issuesMSGs.indexOf(_sem) === -1){
+                    _issuesMSGs.push(_sem);
+                    _accessIssues.push(_sem);
+                }
+            });
+       }
     };
+
+
+    /*
+     * +---------------------------------------------+
+     * | Evaluation Function using HTML CodeSniffer  |
+     * +---------------------------------------------+
+     */
+    window.Gamay.accessibilityEvaluationHTMLCS_WITHSEMANTICS =  function(ruleset, html, domElement, semantics, callback) {
+        console.log('accessibilityEvaluationHTMLCS_WITHSEMANTICS');
+        console.log('+++++++++++ SEMANTICS +++++++++++ ');
+        console.dir(semantics);
+
+        var _callback = function () {
+
+            var _accessIssues = [], //Array with all found accessibility issues
+                _messages = HTMLCS.getMessages(),
+                _issuesMSGs = [];
+
+            _messages.forEach(function(msg){
+                var _typeName = 'UNKNOWN';
+                switch (msg.type) {
+                    case HTMLCS.ERROR:
+                        _typeName = 'ERROR';
+                        break;
+                    case HTMLCS.WARNING:
+                        _typeName = 'WARNING';
+                        break;
+                    case HTMLCS.NOTICE:
+                        _typeName = 'NOTICE';
+                        break;
+                    default:
+                        _typeName = 'UNKNOWN';
+                        break;
+                } //end switch
+
+                var _splittedCode = msg.code.split('.'),
+                    wcagConf      = _splittedCode[0],
+                    wcagGuideline = _splittedCode[1],
+                    wcagPrinciple = _splittedCode[2]+'.'+ _splittedCode[3],
+                    wcagTechnique = _splittedCode[4];
+
+                var issue = new AccessibilityIssue({
+                    type: _typeName,
+                    typeCode: msg.type,
+                    code: msg.code,
+                    wcagConf: wcagConf,
+                    wcagGuideline: wcagGuideline,
+                    wcagPrinciple: wcagPrinciple,
+                    wcagTechnique: wcagTechnique,
+                    msg: msg.msg,
+                    nodeName: msg.element.nodeName.toLowerCase(),
+                    className: msg.element.className,
+                    id: msg.element.id,
+                    element: msg.element
+                });
+
+                window.Gamay.outlineIssuedElement(domElement,issue,_issuesMSGs,_accessIssues,semantics);
+
+                //_accessIssues.push(issue);
+            }); //End forEach
+            window.Gamay.outlineIssuedTooltip($(domElement),_issuesMSGs);
+            callback(_accessIssues); //calling back Merlot (selenium)
+        };
+        window.Gamay._onlyOneError   = false; //reset the error
+        window.Gamay._onlyOneWarning = false; //reset the warning
+
+        console.log('standard = '+ruleset +' | '+ ' content:'+html);
+        console.log($(domElement));
+        console.log('EnvironmentSnapshot:'+ $(domElement).Gamay_GetEnvironmentSnapshot());
+
+        HTMLCS.process(ruleset,$(domElement).Gamay_GetEnvironmentSnapshot(), _callback); // run the accessibility evaluation
+
+    }; // End of function 'accessibilityEvaluationHTMLCS'
 
 
    /*
