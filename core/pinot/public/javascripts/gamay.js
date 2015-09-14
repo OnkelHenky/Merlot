@@ -308,7 +308,7 @@
 
         return  "<article class='"+_cssStyle+"'>" +
                     "<header>" +
-                        "<h4>Semantic Issue</h4>" +
+                        "<h4>Semantic Requirement Statement</h4>" +
                     "</header>" +
                     "<section>" +
                         "<p>"+sem+"</p>" +
@@ -442,7 +442,7 @@
 
        } if (semantics){
             semantics.forEach(function (sem) {
-                var _sem = window.Gamay.getIssueTextForSEMANTICPupUp(sem,"merlotIssuesStyleHeaderWARNING");
+                var _sem = window.Gamay.getIssueTextForSEMANTICPupUp(sem,"merlotIssuesStyleHeaderSRS");
                 if( _issuesMSGs.indexOf(_sem) === -1){
                     _issuesMSGs.push(_sem);
                     _accessIssues.push(_sem);
