@@ -453,9 +453,9 @@
 
 
     /*
-     * +---------------------------------------------+
-     * | Evaluation Function using HTML CodeSniffer  |
-     * +---------------------------------------------+
+     * +---------------------------------------------------------------------------------------+
+     * | Evaluation Function using HTML CodeSniffer and semantic requirement statements (SRS)  |
+     * +---------------------------------------------------------------------------------------+
      */
     window.Gamay.accessibilityEvaluationHTMLCS_WITHSEMANTICS =  function(ruleset, html, domElement, semantics, callback) {
         console.log('accessibilityEvaluationHTMLCS_WITHSEMANTICS');
@@ -522,7 +522,7 @@
 
         HTMLCS.process(ruleset,$(domElement).Gamay_GetEnvironmentSnapshot(), _callback); // run the accessibility evaluation
 
-    }; // End of function 'accessibilityEvaluationHTMLCS'
+    }; // End of function 'accessibilityEvaluationWithSemanticsHTMLCS'
 
 
    /*
