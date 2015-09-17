@@ -251,6 +251,28 @@
     window.Gamay._WARNING_OUTLINE_COLOR  = ' goldenRod';
 
 
+    /*
+     <div class="main">
+         <ul class="tabs">
+             <li >
+                 <input  type="radio" checked name="tabs" id="tab1">
+                 <label for="tab1">Issues</label>
+                 <div id="tab-content1" class="tab-content animated fadeIn">
+                 "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+                 </div>
+             </li>
+             <li>
+                 <input  type="radio" name="tabs" id="tab2">
+                 <label for="tab2">Semanti Requirement</label>
+                 <div id="tab-content2" class="tab-content animated fadeIn">
+                 "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?
+                 </div>
+             </li>
+         </ul>
+     </div>
+
+
+     */
 
 
    /*
@@ -260,21 +282,77 @@
     * +--------------------------------------+
     */
     window.Gamay.outlineIssuedTooltip = function(element, msgs){
-        var _tooltip = "";
+        var _htmlForIssuesTab = "",
+            _htmlForSRSTab    = "";
 
         console.dir(msgs);
 
+        if(typeof  msgs.issues != "undefined" &&  msgs.issues != null &&  msgs.issues.length > 0){
 
-        msgs.forEach(function (msg) {_tooltip += msg;});
+        msgs.issues.forEach(function (msg) {_htmlForIssuesTab += msg;});
+
+
+        var _tabBackboneSTART =  "<div>"+
+                                    "<ul class='tabs'>"+
+                                    "<li>"+
+                                        "<input  type='radio' checked name='tabs' id='tab1'>"+
+                                        "<label for='tab1'>Issues</label>"+
+                                        " <div id='tab-content1' class='tab-content animated fadeIn'>";
+        _tabBackboneSTART += _htmlForIssuesTab;
+        _tabBackboneSTART += "</div></li>";
+
+
+            if(typeof  msgs.srs != "undefined" &&  msgs.srs != null &&  msgs.srs.length > 0){
+
+                msgs.srs.forEach(function (msg) {_htmlForSRSTab += msg;});
+
+                var _tabcontenForSRS =  "<div>"+
+                    "<ul class='tabs'>"+
+                    "<li>"+
+                    "<input  type='radio' checked name='tabs' id='tab2'>"+
+                    "<label for='tab2'>SRS</label>"+
+                    " <div id='tab-content2' class='tab-content animated fadeIn'>";
+                _tabcontenForSRS += _htmlForSRSTab;
+                _tabcontenForSRS += "</div></li>";
+
+                _tabBackboneSTART+= _tabcontenForSRS;
+
+            }
+
+            _tabBackboneSTART += "</ul> </div>";
+
+
+            var t = "<div>"+
+                "<ul class='tabs'>"+
+                    "<li>"+
+                        "<input  type='radio' checked name='tabs' id='tab1'>"+
+                        "<label for='tab1'>Issues</label>"+
+                        " <div id='tab-content1' class='tab-content animated fadeIn'>"+
+                        "Content sdhsdhsdhsd" +
+                        "</div>" +
+                    "</li>"+
+                    "<li>"+
+                        "<input  type='radio' checked name='tabs' id='tab1'>"+
+                        "<label for='tab1'>SRS</label>"+
+                        " <div id='tab-content1' class='tab-content animated fadeIn'>"+
+                "Content ahsfdhaskdjaskldmalkdmöalksöasdbjknlsmaö," +
+                        "</div>" +
+                    "</li>" +
+                "</ul> " +
+                "</div>";
+
 
         element.parent().tooltipster({
-            content: $(_tooltip),
+          //  content: $(_htmlForIssuesTab+_htmlForSRSTab),
+            content: $(t),
             theme: 'merlotIssuesStyle',
             contentAsHTML : true,
             interactive: true,
             animation: 'grow',
             delay: 100
         });
+
+        }
     };
 
 
@@ -297,6 +375,24 @@
                 "</article>";
 
     };
+
+    window.Gamay.getIssueTextForPupUp_TabStyle = function(issue,_cssStyle){
+
+        return  "<article class='"+_cssStyle+"'>" +
+                    "<header>" +
+                        "<h4>"+issue.type+"</h4>" +
+                    "</header>" +
+                    "<section>" +
+                        "<p>"+issue.wcagPrinciple+"</p>" +
+                        "<p>"+issue.wcagGuideline+"</p>" +
+                        "<p>"+issue.msg+"</p>" +
+                    "</section>" +
+                "</article>";
+
+    };
+
+
+
 
 
     /*
@@ -357,8 +453,7 @@
     * | Outline any issued HTML Element |
     * +---------------------------------+
     *
-    *  The outline is colored, depending on the issues type,
-    *  4px strong, and dotted.
+    *  The outline is colored (depending on the issues type), 4px strong and dotted.
     *
     *  Error    = red,
     *  Warning  = yellow,
@@ -413,8 +508,8 @@
             _element.parent().css("outline", _color);
             _element.parent().addClass("tooltip");
 
-            if( _issuesMSGs.indexOf(_msg) === -1){
-                _issuesMSGs.push(_msg);
+            if( _issuesMSGs.issues.indexOf(_msg) === -1){
+                _issuesMSGs.issues.push(_msg);
                 _accessIssues.push(issue);
             }
 
@@ -424,8 +519,8 @@
             _element.parent().css("outline", _color);
             _element.parent().addClass("tooltip");
 
-            if( _issuesMSGs.indexOf(_msg) === -1){
-                _issuesMSGs.push(_msg);
+            if( _issuesMSGs.issues.indexOf(_msg) === -1){
+                _issuesMSGs.issues.push(_msg);
                 _accessIssues.push(issue);
             }
 
@@ -435,16 +530,16 @@
             _element.parent().css("outline", _color);
             _element.parent().addClass("tooltip");
 
-            if( _issuesMSGs.indexOf(_msg) === -1){
-                _issuesMSGs.push(_msg);
+            if( _issuesMSGs.issues.indexOf(_msg) === -1){
+                _issuesMSGs.issues.push(_msg);
                 _accessIssues.push(issue);
             }
 
        } if (semantics){
             semantics.forEach(function (sem) {
                 var _sem = window.Gamay.getIssueTextForSEMANTICPupUp(sem,"merlotIssuesStyleHeaderSRS");
-                if( _issuesMSGs.indexOf(_sem) === -1){
-                    _issuesMSGs.push(_sem);
+                if( _issuesMSGs.srs.indexOf(_sem) === -1){
+                    _issuesMSGs.srs.push(_sem);
                     _accessIssues.push(_sem);
                 }
             });
@@ -466,7 +561,9 @@
 
             var _accessIssues = [], //Array with all found accessibility issues
                 _messages = HTMLCS.getMessages(),
-                _issuesMSGs = [];
+                _issuesMSGs = {};
+                _issuesMSGs.issues = [];   //For errors, warnings and notice
+                _issuesMSGs.srs    = [];   //For Semantic Requirement statements - SRS
 
             _messages.forEach(function(msg){
                 var _typeName = 'UNKNOWN';
