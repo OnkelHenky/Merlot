@@ -66,6 +66,11 @@
 	color:  magenta !important;
 }
 
+.merlotIssuesStyle .tooltipster-content button {
+	margin-left: 85%;
+}
+
+
 .merlotMenuelInspection {
 
 }

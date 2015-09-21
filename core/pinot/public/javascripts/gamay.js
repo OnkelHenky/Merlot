@@ -281,7 +281,7 @@
     * | accessibility issues                 |
     * +--------------------------------------+
     */
-    window.Gamay.outlineIssuedTooltip = function(element, msgs){
+    window.Gamay.outlineIssuedTooltip = function(element,x, msgs){
         var _htmlForIssuesTab = "",
             _htmlForSRSTab    = "";
 
@@ -321,8 +321,21 @@
 
             _tabBackboneSTART += "</ul> </div>";
 
+            console.dir("PARANT");
+            console.dir(typeof  element.parent());
+            console.dir(element.parent());
+            console.dir(element.parent()[0]);
+
+            console.log('X ==== ');
+            console.log(x);
+
 
             var t = "<div>"+
+              // "<button onclick='$(\'"+element.parent()+"\').tooltipster(\"hide\");'>"+"Got it, thanks!</button>"+
+              // "<button onclick='$(\'"+element.parent()+"\').tooltipster(\"hide\");'>"+"Got it, thanks!</button>"+
+             //   "<button onclick='$(\".tooltip\").tooltipster(\"hide\");'>Got it, thanks!</button>"+
+                "<button onclick=\"$(\'"+x+"\').parent().tooltipster(\'hide\');\">Got it, thanks!</button>"+
+             //   "<button onclick=\"this.tooltipster('hide');\">Got it, thanks!</button>"+
                 "<ul class='tabs'>"+
                     "<li>"+
                         "<input  type='radio' checked name='tabs' id='tab1'>"+
@@ -341,16 +354,22 @@
                 "</ul> " +
                 "</div>";
 
+            console.log('T =======');
+            console.dir(t);
 
-        element.parent().tooltipster({
+
+            element.parent().tooltipster({
           //  content: $(_htmlForIssuesTab+_htmlForSRSTab),
             content: $(t),
             theme: 'merlotIssuesStyle',
             contentAsHTML : true,
             interactive: true,
+            autoClose : false,
+            trigger: 'hover',
             animation: 'grow',
             delay: 100
         });
+
 
         }
     };
@@ -607,7 +626,7 @@
 
                 //_accessIssues.push(issue);
             }); //End forEach
-            window.Gamay.outlineIssuedTooltip($(domElement),_issuesMSGs);
+            window.Gamay.outlineIssuedTooltip($(domElement),domElement,_issuesMSGs);
             callback(_accessIssues); //calling back Merlot (selenium)
         };
         window.Gamay._onlyOneError   = false; //reset the error
@@ -677,7 +696,7 @@
                 window.Gamay.outlineIssuedElement(domElement,issue,_issuesMSGs,_accessIssues);
                 //_accessIssues.push(issue);
             }); //End forEach
-            window.Gamay.outlineIssuedTooltip($(domElement),_issuesMSGs);
+            window.Gamay.outlineIssuedTooltip($(domElement),domElement,_issuesMSGs);
             callback(_accessIssues); //calling back Merlot (selenium)
         };
         window.Gamay._onlyOneError   = false; //reset the error
