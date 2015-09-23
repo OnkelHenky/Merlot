@@ -66,6 +66,14 @@
 	color:  magenta !important;
 }
 
+.merlotIssuesStyleSRS_Content{
+	font-family: Arial, sans-serif;
+	font-size: 14px;
+	line-height: 16px;
+	padding: 8px 10px;
+}
+
+
 .merlotIssuesStyle .tooltipster-content button {
 	margin-left: 85%;
 }

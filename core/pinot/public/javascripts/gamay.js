@@ -303,7 +303,7 @@
                  */
                 msgs.srs.forEach(function (msg) {_htmlForSRSTab += msg;});
 
-                var _tabcontenForSRS =  "<section class=\"merlotSRS\">";
+                var _tabcontenForSRS =  "<section class=\"merlotIssuesStyleHeaderSRS\">"+"<h4>Semantic Requirement Statement</h4>";
                     _tabcontenForSRS += _htmlForSRSTab;
                     _tabcontenForSRS += "</section>";
 
@@ -382,12 +382,9 @@
     window.Gamay.getIssueTextForSEMANTICPupUp = function(sem,_cssStyle){
 
         return  "<article class='"+_cssStyle+"'>" +
-                    "<header>" +
-                        "<h4>Semantic Requirement Statement</h4>" +
-                    "</header>" +
                     "<section>" +
-                        "<p>"+sem+"</p>" +
-                    "</section>" +
+                            sem +
+                    "</section>"+
                 "</article>";
     };
 
@@ -411,8 +408,6 @@
 
 
     /*
-     *
-     */
     window.Gamay.getManuelInspectionPopUp = function(issue,_cssStyle){
 
         return  "<article class='"+_cssStyle+"'>" +
@@ -426,6 +421,7 @@
                 "</article>";
 
     };
+    */
 
    /*
     * +---------------------------------+
@@ -516,7 +512,7 @@
 
        } if (semantics){
             semantics.forEach(function (sem) {
-                var _sem = window.Gamay.getIssueTextForSEMANTICPupUp(sem,"merlotIssuesStyleHeaderSRS");
+                var _sem = window.Gamay.getIssueTextForSEMANTICPupUp(sem,"merlotIssuesStyleSRS_Content");
                 if( _issuesMSGs.srs.indexOf(_sem) === -1){
                     _issuesMSGs.srs.push(_sem);
                     _accessIssues.push(_sem);
