@@ -281,7 +281,7 @@
     * | accessibility issues                 |
     * +--------------------------------------+
     */
-    window.Gamay.outlineIssuedTooltip = function(domElement, msgs){
+    window.Gamay.outlineIssuedTooltip = function(domElement, msgs, actor_info){
         var _htmlForIssuesTab = "",
             _htmlForSRSTab    = "";
 
@@ -295,6 +295,7 @@
         msgs.issues.forEach(function (msg) {_htmlForIssuesTab += msg;});
 
         var _issuesPopUpHTMLMarkup =  "<div> <button onclick=\"$(\'"+domElement+"\').parent().tooltipster(\'hide\');\">Got it, thanks!</button>";
+            _issuesPopUpHTMLMarkup +=  "<section class=\"merlot_image_section\"><image href='"+actor_info.image+"'></image></section>";
             _issuesPopUpHTMLMarkup += _htmlForIssuesTab; // adding any issues;
 
             if(typeof  msgs.srs != "undefined" &&  msgs.srs != null &&  msgs.srs.length > 0){
@@ -527,10 +528,16 @@
      * | Evaluation Function using HTML CodeSniffer and semantic requirement statements (SRS)  |
      * +---------------------------------------------------------------------------------------+
      */
-    window.Gamay.accessibilityEvaluationHTMLCS_WITHSEMANTICS =  function(ruleset, html, domElement, semantics, callback) {
+    window.Gamay.accessibilityEvaluationHTMLCS_WITHSEMANTICS =  function(_actorInfo, html, domElement, semantics, callback) {
         console.log('accessibilityEvaluationHTMLCS_WITHSEMANTICS');
         console.log('+++++++++++ SEMANTICS +++++++++++ ');
         console.dir(semantics);
+
+        /*
+         * The name of the actor
+         * The name mus match the name of the rule set
+         */
+        var _actor_name = _actorInfo.name;
 
         var _callback = function () {
 
@@ -579,20 +586,19 @@
                 });
 
                 window.Gamay.outlineIssuedElement(domElement,issue,_issuesMSGs,_accessIssues,semantics);
-
-                //_accessIssues.push(issue);
             }); //End forEach
-            window.Gamay.outlineIssuedTooltip(domElement,_issuesMSGs);
-            callback(_accessIssues); //calling back Merlot (selenium)
+
+            window.Gamay.outlineIssuedTooltip(domElement,_issuesMSGs,_actorInfo);
+            callback(_accessIssues); //calling back 'Merlot' (selenium)
         };
         window.Gamay._onlyOneError   = false; //reset the error
         window.Gamay._onlyOneWarning = false; //reset the warning
 
-        console.log('standard = '+ruleset +' | '+ ' content:'+html);
+        console.log('standard = '+_actor_name +' | '+ ' content:'+html);
         console.log($(domElement));
         console.log('EnvironmentSnapshot:'+ $(domElement).Gamay_GetEnvironmentSnapshot());
 
-        HTMLCS.process(ruleset,$(domElement).Gamay_GetEnvironmentSnapshot(), _callback); // run the accessibility evaluation
+        HTMLCS.process(_actor_name,$(domElement).Gamay_GetEnvironmentSnapshot(), _callback); // run the accessibility evaluation
 
     }; // End of function 'accessibilityEvaluationWithSemanticsHTMLCS'
 
@@ -601,7 +607,7 @@
     * +---------------------------------------------+
     * | Evaluation Function using HTML CodeSniffer  |
     * +---------------------------------------------+
-    */
+
     window.Gamay.accessibilityEvaluationHTMLCS =  function(ruleset, html, domElement, callback) {
         console.log('accessibilityEvaluationHTMLCS');
 
@@ -665,7 +671,7 @@
         HTMLCS.process(ruleset,$(domElement).Gamay_GetEnvironmentSnapshot(), _callback); // run the accessibility evaluation
 
     }; // End of function 'accessibilityEvaluationHTMLCS'
-
+    */
 
     /*
      * +-----------------------------------+

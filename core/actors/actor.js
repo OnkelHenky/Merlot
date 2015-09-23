@@ -57,6 +57,7 @@ exports.Actor = Actor =  function(properties) {
     this.name                = '';
     this.ruleset             = {};
     this.semanticRules       = {};
+    this.image               = ""; //URL to a image of the current actor. This is only set of an image is provided in the rule set.
 
 
     this.username = void 0;  //default value is 'undefined'
@@ -69,6 +70,7 @@ exports.Actor = Actor =  function(properties) {
 };
 
 /**
+ * @description
  * Get the core functionality
  * @type {Merlot}
  */
@@ -77,6 +79,19 @@ Actor.prototype = new Merlot;
 
 /**
  * @description
+ * Get the Actors information as json object
+ * @returns {{object}}
+ */
+//TODO: Add description about the format of the JSON object in the jsDoc comment!
+Actor.prototype.getActorInformation_AsJSON = function () {
+   var _jsonActorInfo = {};
+       _jsonActorInfo.name  = this.getName();  //The name of the actor
+       _jsonActorInfo.image = this.getImage(); //The URL to the actor`s image
+
+    return _jsonActorInfo;
+};
+
+/**
  * @description Overrides prototype version of toString()
  * @returns {string}
  */
@@ -122,6 +137,29 @@ Actor.prototype.setSemenaticRuleSet = function (_sementicRules){
  */
 Actor.prototype.getSemenaticRuleSet = function (){
    return this.semanticRules;
+};
+
+/**
+ * @description
+ * Set the URL of the actors image.
+ * This is only set of an image is provided in the rule set.
+ * @param image_url
+ */
+Actor.prototype.setImage = function(image_url){
+    if(image_url !== undefined){
+        this.image = image_url;
+    }
+};
+
+/**
+ * @description
+ * Get the URL the user image.
+ * This function will return an empty string if not image url was set for this actor.
+ * This can be true if no image was defined in the actor´s rule set.
+ * @returns {*}, the URL to the image of this actor.
+ */
+Actor.prototype.getImage = function(){
+    return this.image;
 };
 
 /**

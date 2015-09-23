@@ -67,7 +67,9 @@ GenericActor.prototype = new Actor;
  * @override
  * @descripton
  * Load the preference set of the actor by a given name (identifier)
+ * @param path the path to the actors rule set.
  * @param actorname {string} the name of the actor
+ * @param blueprint_name {string} the name of current blueprint test case
  */
 //TODO: Add exception handling if the vin file for the current actor can not be found!
 GenericActor.prototype.loadPreferenceSet = function(path,actorname,blueprint_name){
@@ -96,7 +98,7 @@ GenericActor.prototype.loadPreferenceSet = function(path,actorname,blueprint_nam
      * Get the correct rule set for the current blueprint (user scenario)
      * TODO: Check if rule set with given name exist!
      */
-    var rule_for_the_current_blueprint = _jsonData[_blueprint_name];
+    var rule_for_the_current_blueprint = _jsonData.rule_sets[_blueprint_name];
 
     var ruleset = {
         name: _actor_name,
@@ -112,6 +114,10 @@ GenericActor.prototype.loadPreferenceSet = function(path,actorname,blueprint_nam
         }
     };
 
+    console.log('+++++ Actor Infor +++++');
+    console.dir(_jsonData.actor_info);
+
+    this.setImage(_jsonData.actor_info.image);
     this.setRuleSet(ruleset);
     this.setSemenaticRuleSet(rule_for_the_current_blueprint.semantic);
     var _navstyle = rule_for_the_current_blueprint.technical.navigation.style;

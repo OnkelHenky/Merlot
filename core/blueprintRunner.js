@@ -764,7 +764,7 @@ BlueprintRunner.prototype.interactWithSelection = function (webElement, domEleme
  */
 BlueprintRunner.prototype.evalAccessibilityWithSemantic = function (webElement, domElement,_stepDescr,semantics) {
     var self = this,
-        _actorName = self.actor.getName(),//self.actor.getAcessibilityRuleset(),
+        _actorInfo = self.actor.getActorInformation_AsJSON(),//self.actor.getAcessibilityRuleset(),
         _deferred = self.webdriver.promise.defer(),
         _semantics = semantics;
         _issues = [];
@@ -781,9 +781,9 @@ BlueprintRunner.prototype.evalAccessibilityWithSemantic = function (webElement, 
          });
          }). */
         then(function(outerHtml){
-            self.driver.executeAsyncScript(function(ruleset,html,domElement,_semantics) {
-                window.Gamay.accessibilityEvaluationHTMLCS_WITHSEMANTICS(ruleset,html,domElement,_semantics,arguments[arguments.length - 1]);
-            }, _actorName, ''+outerHtml,domElement.getCSSSelector(),_semantics)
+            self.driver.executeAsyncScript(function(_actorInfo,html,domElement,_semantics) {
+                window.Gamay.accessibilityEvaluationHTMLCS_WITHSEMANTICS(_actorInfo,html,domElement,_semantics,arguments[arguments.length - 1]);
+            }, _actorInfo, ''+outerHtml,domElement.getCSSSelector(),_semantics)
                 .then(function checkResult(errors) {
 
                     var _notice    = [],
@@ -1032,8 +1032,8 @@ BlueprintRunner.prototype.injectAcessibilityTestScripts = function () {
      * NOTE:                                                                       *
      * ------                                                                      *
      * Malbec extension. If the actor is JohnDoe, then the                         *
-     * the rulest set is taken from 'JohnDoe.vin.json' - aka: the preference set   *
-     * and include as a JavaScript object into the web page.                       *
+     * the rule set set is taken from 'JohnDoe.vin.json' - aka: the preference set *
+     * and included as a JavaScript object into the web page.                      *
      *                                                                             *
      * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

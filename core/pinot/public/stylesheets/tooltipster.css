@@ -73,14 +73,13 @@
 	padding: 8px 10px;
 }
 
-
-.merlotIssuesStyle .tooltipster-content button {
-	margin-left: 85%;
+.merlot_image_section image {
+	width: auto;
 }
 
 
-.merlotMenuelInspection {
-
+.merlotIssuesStyle .tooltipster-content button {
+	margin-left: 85%;
 }
 
 
