@@ -289,69 +289,45 @@
 
         if(typeof  msgs.issues != "undefined" &&  msgs.issues != null &&  msgs.issues.length > 0){
 
+        /*
+         * Adding any issues massages.
+         */
         msgs.issues.forEach(function (msg) {_htmlForIssuesTab += msg;});
 
-
-        var _tabBackboneSTART =  "<div>"+
-                                    "<ul class='tabs'>"+
-                                    "<li>"+
-                                        "<input  type='radio' checked name='tabs' id='tab1'>"+
-                                        "<label for='tab1'>Issues</label>"+
-                                        " <div id='tab-content1' class='tab-content animated fadeIn'>";
-        _tabBackboneSTART += _htmlForIssuesTab;
-        _tabBackboneSTART += "</div></li>";
-
+        var _issuesPopUpHTMLMarkup =  "<div> <button onclick=\"$(\'"+domElement+"\').parent().tooltipster(\'hide\');\">Got it, thanks!</button>";
+            _issuesPopUpHTMLMarkup += _htmlForIssuesTab; // adding any issues;
 
             if(typeof  msgs.srs != "undefined" &&  msgs.srs != null &&  msgs.srs.length > 0){
-
+                /*
+                 * Adding any semantic requirement statement massages (SRS).
+                 */
                 msgs.srs.forEach(function (msg) {_htmlForSRSTab += msg;});
 
-                var _tabcontenForSRS =  "<div>"+
-                    "<ul class='tabs'>"+
-                    "<li>"+
-                    "<input  type='radio' checked name='tabs' id='tab2'>"+
-                    "<label for='tab2'>SRS</label>"+
-                    " <div id='tab-content2' class='tab-content animated fadeIn'>";
-                _tabcontenForSRS += _htmlForSRSTab;
-                _tabcontenForSRS += "</div></li>";
+                var _tabcontenForSRS =  "<section class=\"merlotSRS\">";
+                    _tabcontenForSRS += _htmlForSRSTab;
+                    _tabcontenForSRS += "</section>";
 
-                _tabBackboneSTART+= _tabcontenForSRS;
+                _issuesPopUpHTMLMarkup+= _tabcontenForSRS;
 
             }
 
-            _tabBackboneSTART += "</ul> </div>";
-
-            var t = "<div>"+
-                "<button onclick=\"$(\'"+domElement+"\').parent().tooltipster(\'hide\');\">Got it, thanks!</button>"+
-                "<ul class='tabs'>"+
-                    "<li>"+
-                        "<input  type='radio' checked name='tabs' id='tab1'>"+
-                        "<label for='tab1'>Issues</label>"+
-                        " <div id='tab-content1' class='tab-content animated fadeIn'>"+
-                        "Content sdhsdhsdhsd" +
-                        "</div>" +
-                    "</li>"+
-                    "<li>"+
-                        "<input  type='radio' checked name='tabs' id='tab1'>"+
-                        "<label for='tab1'>SRS</label>"+
-                        " <div id='tab-content1' class='tab-content animated fadeIn'>"+
-                "Content ahsfdhaskdjaskldmalkdmöalksöasdbjknlsmaö," +
-                        "</div>" +
-                    "</li>" +
-                "</ul> " +
-                "</div>";
+            _issuesPopUpHTMLMarkup += "</div>"; // closing the div element of the '_issuesPopUpHTMLMarkup'.
 
 
+        /*
+         * Setting up the pop-up.
+         * This is done using tooltipster.js
+         * http://iamceege.github.io/tooltipster/
+         */
         $(domElement).parent().tooltipster({
-          //  content: $(_htmlForIssuesTab+_htmlForSRSTab),
-            content: $(t),
-            theme: 'merlotIssuesStyle',  //issues-pop-up specific style information -> defined in: "/core/pinot/public/stylesheets.css"
-            contentAsHTML : true,
-            interactive: true,
-            autoClose : false,
-            trigger: 'hover',
-            animation: 'grow',
-            delay: 100
+            content: $(_issuesPopUpHTMLMarkup),
+            theme: 'merlotIssuesStyle',  //Issues-pop-up specific style information -> defined in: "/core/pinot/public/stylesheets.css".
+            contentAsHTML : true,        // Mark content as HTML.
+            interactive: true,           // A user can interact with the content.
+            autoClose : false,           // No auto closing of the pop-up -> a user must use the button to close it.
+            trigger: 'hover',            // Pop-up is visible when the user hovers with the mouse over an marked issues.
+            animation: 'grow',           // The animation-style of the pop-up
+            delay: 100                   // delay of 100ms.
         });
 
 
