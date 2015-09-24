@@ -304,11 +304,11 @@
                  */
                 msgs.srs.forEach(function (msg) {_htmlForSRSTab += msg;});
 
-                var _tabcontenForSRS =  "<section class=\"merlotIssuesStyleHeaderSRS\">"+"<h4>Semantic Requirement Statement</h4>";
-                    _tabcontenForSRS += _htmlForSRSTab;
-                    _tabcontenForSRS += "</section>";
+                var contentForSRS =  "<section class=\"merlotIssuesStyleHeaderSRS\">"+"<h4>Semantic Requirement Statement</h4>";
+                    contentForSRS += _htmlForSRSTab;
+                    contentForSRS += "</section>";
 
-                _issuesPopUpHTMLMarkup+= _tabcontenForSRS;
+                _issuesPopUpHTMLMarkup+= contentForSRS;
 
             }
 
