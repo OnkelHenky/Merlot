@@ -294,9 +294,9 @@
          */
         msgs.issues.forEach(function (msg) {_htmlForIssuesTab += msg;});
 
-        var _issuesPopUpHTMLMarkup =  "<div> <button onclick=\"$(\'"+domElement+"\').parent().tooltipster(\'hide\');\">Got it, thanks!</button>";
-            _issuesPopUpHTMLMarkup +=  "<section class=\"merlot_image_section\"><image href='"+actor_info.image+"'></image></section>";
-            _issuesPopUpHTMLMarkup += _htmlForIssuesTab; // adding any issues;
+        var _issuesPopUpHTMLMarkup  =  "<div> <button onclick=\"$(\'"+domElement+"\').parent().tooltipster(\'hide\');\">Got it, thanks!</button>";
+            _issuesPopUpHTMLMarkup +=  "<section class=\"merlot_image_section\"><image src='"+actor_info.image+"'></image></section>";
+            _issuesPopUpHTMLMarkup +=  _htmlForIssuesTab; // adding any issues;
 
             if(typeof  msgs.srs != "undefined" &&  msgs.srs != null &&  msgs.srs.length > 0){
                 /*
