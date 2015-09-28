@@ -252,26 +252,47 @@
 
 
     /*
-     <div class="main">
-         <ul class="tabs">
-             <li >
-                 <input  type="radio" checked name="tabs" id="tab1">
-                 <label for="tab1">Issues</label>
-                 <div id="tab-content1" class="tab-content animated fadeIn">
-                 "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
-                 </div>
-             </li>
-             <li>
-                 <input  type="radio" name="tabs" id="tab2">
-                 <label for="tab2">Semanti Requirement</label>
-                 <div id="tab-content2" class="tab-content animated fadeIn">
-                 "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?
-                 </div>
-             </li>
-         </ul>
-     </div>
 
-
+     <article class="merlotBlueprintPopUP ">
+         <article class="merlotBlueprintPopUP_ActionBar">
+             <div></div>
+             <div class="algnRight">
+                <button>Got it, thanks Anna!</button>
+             </div>
+         </article>
+         <article class="merlotIssuesMainArticle">
+             <section class="merlotActorInfo">
+                 <img src="./images/Anna.jpg">
+                 <section class="actorBio">
+                     <ul>
+                     <li>Anna</li>
+                     <li>25 Jahre</li>
+                     <li>Stuttgart</li>
+                     <li>Blind</li>
+                     </ul>
+                 </section>
+                 </section>
+                 <section class="merlotIssueInfo">
+                     <section class="techIssues">
+                         <div>
+                             <h4>Notice</h4>
+                             <section class="techIssuesList">
+                                  <p>adsdsadsdsdsadassSDDSADSDS</p>
+                              </section>
+                       </div>
+                     </section>
+                     <section class="techIssues">
+                         <h4>Semantic Requirements</h4>
+                         <section class="srsIssuesList">
+                         <p>adsdsadsdsdsadassSDDSADSDS</p>
+                         <p>adsdsadsdsdsadassSDDSADSDS</p>
+                         <p>adsdsadsdsdsadassSDDSADSDS</p>
+                         <p>adsdsadsdsdsadassSDDSADSDS</p>
+                     </section>
+                 </section>
+             </section>
+         </article>
+     </article>
      */
 
 
@@ -294,9 +315,23 @@
          */
         msgs.issues.forEach(function (msg) {_htmlForIssuesTab += msg;});
 
-        var _issuesPopUpHTMLMarkup  =  "<div> <button onclick=\"$(\'"+domElement+"\').parent().tooltipster(\'hide\');\">Got it, thanks!</button>";
-            _issuesPopUpHTMLMarkup +=  "<section class=\"merlot_image_section\"><image src='"+actor_info.image+"'></image></section>";
+        var _issuesPopUpHTMLMarkup  =  "<article class=\"merlotBlueprintPopUP\">"+
+                                            "<article class=\"merlotBlueprintPopUP_ActionBar\">"+
+                                                "<div></div>"+
+                                                "<div class=\"algnRight\">"+
+                                                   "<button onclick=\"$(\'"+domElement+"\').parent().tooltipster(\'hide\');\">Got it, thanks "+ actor_info.name+"!</button>"+
+                                                "</div>" +
+                                            "</article>";
+            _issuesPopUpHTMLMarkup +=  "<article class=\"merlotIssuesMainArticle\">"+
+                                       "<section class=\"merlotActorInfo\">"+
+                                            "<image src='"+actor_info.image+"'></image></section>"+
+                                        //    "<section class=\"actorBio\">"+
+                                      //      "</section>"+
+                                       "</section>"+
+                                       "<section class=\"merlotIssueInfo\">"+
+                                            "<section class=\"techIssues\">";
             _issuesPopUpHTMLMarkup +=  _htmlForIssuesTab; // adding any issues;
+            _issuesPopUpHTMLMarkup +=   "</section>"; // END adding any issues;
 
             if(typeof  msgs.srs != "undefined" &&  msgs.srs != null &&  msgs.srs.length > 0){
                 /*
@@ -304,7 +339,7 @@
                  */
                 msgs.srs.forEach(function (msg) {_htmlForSRSTab += msg;});
 
-                var contentForSRS =  "<section class=\"merlotIssuesStyleHeaderSRS\">"+"<h4>Semantic Requirement Statement</h4>";
+                var contentForSRS =  "<section class=\"techIssues\">"+"<h4>Semantic Requirement Statement</h4>";
                     contentForSRS += _htmlForSRSTab;
                     contentForSRS += "</section>";
 
@@ -312,7 +347,8 @@
 
             }
 
-            _issuesPopUpHTMLMarkup += "</div>"; // closing the div element of the '_issuesPopUpHTMLMarkup'.
+            _issuesPopUpHTMLMarkup += "</article>"+ // closing the div element of the '_issuesPopUpHTMLMarkup'.
+                                      "</article>";
 
 
         /*

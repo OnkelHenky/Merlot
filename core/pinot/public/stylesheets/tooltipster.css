@@ -70,16 +70,60 @@
 	font-family: Arial, sans-serif;
 	font-size: 14px;
 	line-height: 16px;
-	padding: 8px 10px;
-}
-
-.merlot_image_section image {
-	width: auto;
+	/* padding: 8px 10px; */
 }
 
 
-.merlotIssuesStyle .tooltipster-content button {
-	margin-left: 85%;
+
+
+/*
+ * +--------------------------------------+
+ * |    PopUp specific CSS information    |
+ * +--------------------------------------+
+ */
+
+
+.merlotBlueprintPopUP{
+	padding: 1em;
+	display: table;
+}
+
+.merlotBlueprintPopUP_ActionBar{
+	display: table-row;
+}
+
+.merlotBlueprintPopUP_ActionBar button{
+	padding: 1%;
+}
+
+.merlotBlueprintPopUP_ActionBar div{
+	display: table-cell;
+}
+
+.algnRight{
+	text-align: right;
+}
+
+.merlotIssuesMainArticle{
+
+	height: auto;
+	margin: 0;
+	width: 100%;
+	display: table-row;
+
+}
+
+.merlotActorInfo {
+	display: table-cell;
+}
+
+
+.merlotIssueInfo{
+	margin-left: 9em;
+	padding: 1%;
+	width: 90%;
+	display: table-cell;
+	vertical-align: top;
 }
 
 
@@ -88,7 +132,7 @@
  * |    Tab specific CSS information      |
  * +--------------------------------------+
 
-*/
+
 
 .tabs input[type=radio] {
 	position: relative;
@@ -167,7 +211,7 @@
 	animation-duration: 0.5s;
 }
 
-
+*/
 /*
  * +--------------------------------------+
  * |   END - Merlot Custom Theme - END    |
