@@ -1,30 +1,3 @@
-/**
- *  gamay.js is part of Merlot
- *  Copyright (c) by Alexander Henka, 15.09.14.
- *  Project URL: https://github.com/OnkelHenky/Merlot
- *
- * +--------------------------------------------------------------------------+
- * | LICENSE INFORMATION                                                      |
- * | ===================                                                      |
- * |                                                                          |
- * | Licensed under the Apache License, Version 2.0 (the "License");          |
- * | you may not use this file except in compliance with the License.         |
- * | You may obtain a copy of the License at                                  |
- * |                                                                          |
- * | http://www.apache.org/licenses/LICENSE-2.0                               |
- * |                                                                          |
- * | Unless required by applicable law or agreed to in writing, software      |
- * | distributed under the License is distributed on an "AS IS" BASIS,        |
- * | WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. |
- * | See the License for the specific language governing permissions and      |
- * | limitations under the License.                                           |
- * |                                                                          |
- * |  For more information see:                                               |
- * |  https://github.com/OnkelHenky/Merlot/blob/master/LICENSE.md             |
- * |                                                                          |
- * +--------------------------------------------------------------------------+
- */
-
 
 /*
  * +---------------------------------------------------------------------------+
@@ -186,6 +159,7 @@
         }
     };
 
+
     /**
      * @description
      * Adding properties to the error object
@@ -208,25 +182,53 @@
         return this.typeName + '|' + this.code + '|' + this.msg + '|' + this.nodeName + '|' + this.className + '|' + this.id;
     };
 
-   /*
-    * +--------------------------------------+
-    * | Flags to indicated that we           |
-    * | have an error on a specific element  |
-    * +--------------------------------------+
-    *
-    *  If we haven an error on HTML element, than this error
-    *  should be visible on the web page, regardless
-    *  of any potential warning or notice.
-    *
-    *  If we have an warning (and no error)for an specific element,
-    *  then this waring should be visible, regardless
-    *  of any notice
-    *
-    *  The hierarchy is as follows:
-    *
-    *  Error > Warning > Notice > No Error
-    *
-    */
+    /**
+     * @description
+     * Output the issues in an formatted way.
+     * @returns {object} the formatted issues
+     */
+    AccessibilityIssue.prototype.getFormattedRepresentation = function(){
+
+        /* Principle format -> Principle1 */
+      //  var _splitPrinciple = this.wcagPrinciple.split("Principle");
+        var _formattedPrinciple =   this.wcagPrinciple.split("Principle").join("Principle "); // + _splitPrinciple[1];
+        console.log('_formattedPrinciple = ' +_formattedPrinciple);
+
+        this.wcagPrinciple = _formattedPrinciple;
+
+        /* Guideline format -> Guideline1_1.1_1_1 */
+        var _splitGuidleline = this.wcagGuideline.split("."); // Result after this step: [Guideline1_1, 1_1_1]
+        var _guidlineFirstPart =  _splitGuidleline[0].split("Guideline"); // Result after this step: [Guideline,1_1]
+        var _guidlineNumberPart =  _guidlineFirstPart[1].split("_").join("."); // Result after this step: [1,1] -> after join "1.1"
+
+        var _formattedGuidline =  "Guideline " + _guidlineNumberPart; // Result after this step: "Guideline 1.1"
+            _formattedGuidline += " Success Criterion "+ _splitGuidleline[1].split("_").join(".");
+
+        this.wcagGuideline = _formattedGuidline;
+
+
+    };
+
+
+    /*
+     * +--------------------------------------+
+     * | Flags to indicated that we           |
+     * | have an error on a specific element  |
+     * +--------------------------------------+
+     *
+     *  If we haven an error on HTML element, than this error
+     *  should be visible on the web page, regardless
+     *  of any potential warning or notice.
+     *
+     *  If we have an warning (and no error)for an specific element,
+     *  then this waring should be visible, regardless
+     *  of any notice
+     *
+     *  The hierarchy is as follows:
+     *
+     *  Error > Warning > Notice > No Error
+     *
+     */
     window.Gamay._onlyOneError   = false;
     window.Gamay._onlyOneWarning = false;
 
@@ -326,12 +328,13 @@
                                        "<section class=\"merlotActorInfo\">"+
                                             "<image src='"+actor_info.image+"'></image></section>"+
                                         //    "<section class=\"actorBio\">"+
-                                      //      "</section>"+
+                                       //     "</section>"+
                                        "</section>"+
                                        "<section class=\"merlotIssueInfo\">"+
-                                            "<section class=\"techIssues\">";
-            _issuesPopUpHTMLMarkup +=  _htmlForIssuesTab; // adding any issues;
-            _issuesPopUpHTMLMarkup +=   "</section>"; // END adding any issues;
+                                            "<section class=\"techIssues\">"+
+                                            "<div class=\"merlotIssuesGreetingText\"> \'Hi evaluator this is "+actor_info.name+" - i found some issues on this element that concerns me\'</div>";
+            _issuesPopUpHTMLMarkup +=                _htmlForIssuesTab; // adding any issues;
+            _issuesPopUpHTMLMarkup +=        "</section>"; // END adding any issues;
 
             if(typeof  msgs.srs != "undefined" &&  msgs.srs != null &&  msgs.srs.length > 0){
                 /*
@@ -339,7 +342,7 @@
                  */
                 msgs.srs.forEach(function (msg) {_htmlForSRSTab += msg;});
 
-                var contentForSRS =  "<section class=\"techIssues\">"+"<h4>Semantic Requirement Statement</h4>";
+                var contentForSRS =  "<section class=\"merlotSemanticIssuesSection\">"+"<h4>Semantic Requirements</h4>";
                     contentForSRS += _htmlForSRSTab;
                     contentForSRS += "</section>";
 
@@ -358,7 +361,7 @@
          */
         $(domElement).parent().tooltipster({
             content: $(_issuesPopUpHTMLMarkup),
-            theme: 'merlotIssuesStyle',  //Issues-pop-up specific style information -> defined in: "/core/pinot/public/stylesheets.css".
+            theme: 'merlotIssuesStyle',  // Issues-pop-up specific style information -> defined in: "/core/pinot/public/stylesheets.css".
             contentAsHTML : true,        // Mark content as HTML.
             interactive: true,           // A user can interact with the content.
             autoClose : false,           // No auto closing of the pop-up -> a user must use the button to close it.
@@ -371,22 +374,30 @@
         }
     };
 
-
-   /*
+   /**
+    * @description
     * +---------------------------------+
     * |   Get the text for the pop up   |
     * +---------------------------------+
     */
     window.Gamay.getIssueTextForPupUp = function(issue,_cssStyle){
 
-        return  "<article class='"+_cssStyle+"'>" +
+        issue.getFormattedRepresentation();
+
+
+        console.log("getIssueTextForPupUp");
+        console.dir(issue);
+
+
+        return  "<article class='merlotIssuesContent "+_cssStyle+"'>" +
                     "<header>" +
                         "<h4>"+issue.type+"</h4>" +
                     "</header>" +
                     "<section>" +
+                        "<p>"+issue.msg+"</p>" +
                         "<p>"+issue.wcagPrinciple+"</p>" +
                         "<p>"+issue.wcagGuideline+"</p>" +
-                        "<p>"+issue.msg+"</p>" +
+                        "<p><a href=\"http://personabrowser.gpii.eu/richtlinien/\" target=\"_blank\">Show this Issues in the PersonaBrowser</a></p>"
                     "</section>" +
                 "</article>";
 
@@ -602,9 +613,15 @@
 
                 var _splittedCode = msg.code.split('.'),
                     wcagConf      = _splittedCode[0],
-                    wcagGuideline = _splittedCode[1],
-                    wcagPrinciple = _splittedCode[2]+'.'+ _splittedCode[3],
+                    wcagPrinciple = _splittedCode[1], //.split("Principle").join("Principle "),
+                    wcagGuideline = _splittedCode[2]+'.'+ _splittedCode[3],
                     wcagTechnique = _splittedCode[4];
+
+
+               /* var t =  _splittedCode[1].split("Principle")
+                console.dir(t);
+                console.dir(t.join(" ")); */
+
 
                 var issue = new AccessibilityIssue({
                     type: _typeName,
