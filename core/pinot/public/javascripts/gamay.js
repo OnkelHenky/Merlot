@@ -159,6 +159,18 @@
         }
     };
 
+    /**
+     * @description
+     * Lookup table to translate the number of a principle, which is provided by HTMLCS,
+     * into its name.
+     * @type {{1: string, 2: string, 3: string, 4: string}}
+     */
+    AccessibilityIssue.prototype.WCAGPrincipleTranslation = {
+        "1" : "Perceivable",
+        "2" : "Operable",
+        "3" : "Understandable",
+        "4" : "Robust"
+    };
 
     /**
      * @description
@@ -191,7 +203,7 @@
 
         /* Principle format -> Principle1 */
       //  var _splitPrinciple = this.wcagPrinciple.split("Principle");
-        var _formattedPrinciple =   this.wcagPrinciple.split("Principle").join("Principle "); // + _splitPrinciple[1];
+        var _formattedPrinciple =   this.wcagPrinciple.split("Principle").join("Principle ")+ " - "+ this.WCAGPrincipleTranslation[this.wcagPrinciple.split("Principle")]; // + _splitPrinciple[1];
         console.log('_formattedPrinciple = ' +_formattedPrinciple);
 
         this.wcagPrinciple = _formattedPrinciple;
