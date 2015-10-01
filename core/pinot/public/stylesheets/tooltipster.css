@@ -36,10 +36,11 @@
 
 
 .merlotIssuesStyle {
-    border-radius: 5px;
-    border: 2px dotted red;
-    background: #4c4c4c;
-    color: #fff;
+   border-radius: 10px;
+   border-style: solid;
+ /*   border: 2px dotted red; */
+    background-color: #fdfdfd;
+    color: black;
 }
 
 /* Use this next selector to style things like font-size and line-height: */
@@ -48,6 +49,12 @@
     font-size: 14px;
     width: 50em;
 }
+
+
+.merlotIssuesContent {
+
+}
+
 
 .merlotIssuesStyleHeaderERROR header h4{
     color: red !important;
@@ -58,7 +65,7 @@
 }
 
 .merlotIssuesStyleHeaderNOTICE header h4{
-    color:  #b3d4fc !important;
+    color: deepskyblue !important;
 }
 
 .merlotIssuesStyleHeaderSRS header h4{
@@ -94,6 +101,9 @@
 }
 
 .merlotBlueprintPopUP_ActionBar button{
+    margin-bottom: 2%;
+    border-radius: 1px;
+    background-color: #cdcdcd;
 	padding: 1%;
 }
 
@@ -106,12 +116,9 @@
 }
 
 .merlotIssuesMainArticle{
-
-	height: auto;
+    height: auto;
 	margin: 0;
-
 	display: table-row;
-
 }
 
 .merlotActorInfo {
@@ -122,9 +129,20 @@
 .merlotIssueInfo{
 	margin-left: 9em;
 	padding: 1%;
+    margin-top: 2px;
 	width: 90%;
 	display: table-cell;
 	vertical-align: top;
+}
+
+.merlotIssuesGreetingText{
+	padding: 2px;
+    vertical-align: top;
+	font-style: italic;
+}
+
+.merlotSemanticIssuesSection{
+    margin-top: 8%;
 }
 
 
