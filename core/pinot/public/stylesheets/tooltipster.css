@@ -48,36 +48,65 @@
     font-family: Arial, sans-serif;
     font-size: 14px;
     width: 50em;
+    word-wrap: break-word;
 }
 
 
 .merlotIssuesContent {
+    margin-top: 3.5%;
 
 }
 
 
-.merlotIssuesStyleHeaderERROR header h4{
+.merlotIssuesStyleHeaderERROR fieldset legend{
     color: red !important;
 }
 
-.merlotIssuesStyleHeaderWARNING header h4{
+.merlotIssuesStyleHeaderERROR fieldset {
+    border: 1px solid red !important;
+}
+
+.merlotIssuesStyleHeaderWARNING fieldset legend{
     color: goldenRod !important;
 }
 
-.merlotIssuesStyleHeaderNOTICE header h4{
-    color: dodgerblue !important;
+.merlotIssuesStyleHeaderWARNING fieldset {
+    border: 1px solid goldenrod !important;
 }
+
+
+.merlotIssuesStyleHeaderNOTICE fieldset legend{
+    color: dodgerblue !important;
+
+}
+
+.merlotIssuesStyleHeaderNOTICE fieldset{
+    border:1px solid dodgerblue !important;
+
+}
+
+.merlotIssuesStyleHeaderSRS legend{
+	color:  magenta !important;
+}
+
+.merlotIssuesStyleHeaderSRS  {
+    border: 1px solid magenta !important;
+}
+
+
+/*
 
 .merlotIssuesStyleHeaderSRS header h4{
 	color:  magenta !important;
 }
+*/
 
 .merlotIssuesStyleSRS_Content{
 	font-family: Arial, sans-serif;
 	font-size: 14px;
 	line-height: 16px;
 
-    /* padding: 8px 10px; */
+  /*   padding: 8px 10px; */
 }
 
 
@@ -145,89 +174,107 @@
     margin-top: 8%;
 }
 
+.merlotIssuesSolution{
+	margin-top: 4%;
+}
+
+fieldset.merlotStyle  {
+ /*   border:1px solid black; */
+    margin-bottom: 1.25em;
+    padding: 0.5em;
+}
+
+fieldset.merlotStyle legend {
+  /*  border:1px solid green; */
+    padding: 0.5em 0.5em;
+/*  color:green; */
+  font-size:100%;
+  font-weight: bold;
+  text-align:left;
+}
 
 /*
- * +--------------------------------------+
- * |    Tab specific CSS information      |
- * +--------------------------------------+
+* +--------------------------------------+
+* |    Tab specific CSS information      |
+* +--------------------------------------+
 
 
 
 .tabs input[type=radio] {
-	position: relative;
-	top: 0px;
-	left: 0px;
+  position: relative;
+  top: 0px;
+  left: 0px;
 }
 
 
 .tabs {
-	width: 100%;
-	float: none;
-	list-style: none;
-	position: relative;
-	padding: 0;
+  width: 100%;
+  float: none;
+  list-style: none;
+  position: relative;
+  padding: 0;
 
 }
 
 .tabs li{
-	float: left;
+  float: left;
 }
 
 
 .tabs label {
-	display: block;
-	padding: 10px 20px;
-	border-radius: 2px 2px 0 0;
-	color: #08C;
-	font-size: 24px;
-	font-weight: normal;
-	font-family: 'Roboto', helveti;
-	background: rgba(255,255,255,0.2);
-	cursor: pointer;
-	position: relative;
-	top: 3px;
-	-webkit-transition: all 0.2s ease-in-out;
-	-moz-transition: all 0.2s ease-in-out;
-	-o-transition: all 0.2s ease-in-out;
-	transition: all 0.2s ease-in-out;
+  display: block;
+  padding: 10px 20px;
+  border-radius: 2px 2px 0 0;
+  color: #08C;
+  font-size: 24px;
+  font-weight: normal;
+  font-family: 'Roboto', helveti;
+  background: rgba(255,255,255,0.2);
+  cursor: pointer;
+  position: relative;
+  top: 3px;
+  -webkit-transition: all 0.2s ease-in-out;
+  -moz-transition: all 0.2s ease-in-out;
+  -o-transition: all 0.2s ease-in-out;
+  transition: all 0.2s ease-in-out;
 }
 
 
 .tabs label:hover {
-	background: rgba(255,255,255,0.5);
-	top: 0;
+  background: rgba(255,255,255,0.5);
+  top: 0;
 }
 
 [id^=tab]:checked + label {
-	background: #08C;
-	color: white;
-	top: 0;
+  background: #08C;
+  color: white;
+  top: 0;
 }
 
 [id^=tab]:checked ~ [id^=tab-content] {
-	display: block;
+  display: block;
 }
 
 
 .tab-content{
-	z-index: 2;
-	display: none;
-	text-align: left;
-	width: 100%;
-	font-size: 20px;
-	line-height: 140%;
-	padding-top: 10px;
-	background: #08C;
-	padding: 15px;
-	color: white;
-	position: absolute;
-	top: 53px;
-	left: 0;
-	box-sizing: border-box;
-	-webkit-animation-duration: 0.5s;
-	-o-animation-duration: 0.5s;
-	-moz-animation-duration: 0.5s;
-	animation-duration: 0.5s;
+  z-index: 2;
+  display: none;
+  text-align: left;
+  width: 100%;
+  font-size: 20px;
+  line-height: 140%;
+  padding-top: 10px;
+  background: #08C;
+  padding: 15px;
+  color: white;
+  position: absolute;
+  top: 53px;
+  left: 0;
+  box-sizing: border-box;
+  -webkit-animation-duration: 0.5s;
+  -o-animation-duration: 0.5s;
+  -moz-animation-duration: 0.5s;
+  animation-duration: 0.5s;
 }
 
 */

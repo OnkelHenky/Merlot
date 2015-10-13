@@ -1,27 +1,5 @@
 
-/*
- * +---------------------------------------------------------------------------+
- * |                                GAMAY                                      |
- * |                           ================                                |
- * |                  Merlot´s sidekick on the client side                     |
- * +---------------------------------------------------------------------------+
- *
- * +---------------------------------------------------------------------------+
- * | From Wikipedia                                                            |
- * | ==============                                                            |
- * |                                                                           |
- * | GAMAY is a purple-colored grape variety used to make red wines,           |
- * | most notably grown in Beaujolais and in the Loire Valley around Tours.    |
- * | Its full name is Gamay Noir à Jus Blanc.                                  |
- * |                                                                           |
- * | It is a very old cultivar, mentioned as long ago as the 15th century.     |
- * | It has been often cultivated because it makes for abundant production;    |
- * | however, it can produce wines of distinction when planted on acidic soils,|
- * | which help to soften the grape's naturally high acidity.                  |
- * |                                                                           |
- * | Source: http://en.wikipedia.org/wiki/Gamay                                |
- * +---------------------------------------------------------------------------+
- */
+
 
 (function () {
 
@@ -203,7 +181,7 @@
 
         /* Principle format -> Principle1 */
       //  var _splitPrinciple = this.wcagPrinciple.split("Principle");
-        var _formattedPrinciple =   this.wcagPrinciple.split("Principle").join("Principle ")+ " - "+ this.WCAGPrincipleTranslation[this.wcagPrinciple.split("Principle")]; // + _splitPrinciple[1];
+        var _formattedPrinciple =   this.wcagPrinciple.split("Principle").join("Principle ")+ " - "+ this.WCAGPrincipleTranslation[this.wcagPrinciple.split("Principle")[1]]; // + _splitPrinciple[1];
         console.log('_formattedPrinciple = ' +_formattedPrinciple);
 
         this.wcagPrinciple = _formattedPrinciple;
@@ -354,10 +332,35 @@
                  */
                 msgs.srs.forEach(function (msg) {_htmlForSRSTab += msg;});
 
-                var contentForSRS =  "<section class=\"merlotSemanticIssuesSection\">"+"<h4>Semantic Requirements</h4>";
-                    contentForSRS += _htmlForSRSTab;
-                    contentForSRS += "</section>";
 
+
+                /*
+
+
+                 "<fieldset class=\"merlotStyle\"><legend>"+issue.type+"</legend>"+
+                 "<section>" +
+                 "<p>WCAG "+issue.wcagPrinciple+" - "+issue.wcagGuideline+"</p>"+
+                 "<p>"+issue.msg+"</p>" +
+                 "</section>" +
+                 "<section class=\"merlotIssuesSolution\">" +
+                 "<header>" +
+                 "<h5>Solution Possibilities</h5>" +
+                 "</header>" +
+                 "<p>More information and solution guidance can be found in the PersonaBrowser</p>" +
+                 "<p><a href=\"http://personabrowser.gpii.eu/richtlinien/\" target=\"_blank\">Show this Issues in the PersonaBrowser</a></p>"+
+                 "</section>"+
+                 "</fieldset>"+
+                 */
+
+                var contentForSRS =   "<fieldset class=\"merlotStyle merlotIssuesStyleHeaderSRS\"><legend>Semantic Requirements</legend>"
+                    contentForSRS += _htmlForSRSTab;
+                    contentForSRS += "</fieldset>";
+
+/*
+                var contentForSRS =  "<section class=\"merlotSemanticIssuesSection\">"+"<h4>Semantic Requirements</h4>";
+                contentForSRS += _htmlForSRSTab;
+                contentForSRS += "</section>";
+*/
                 _issuesPopUpHTMLMarkup+= contentForSRS;
 
             }
@@ -396,23 +399,21 @@
 
         issue.getFormattedRepresentation();
 
-
-        console.log("getIssueTextForPupUp");
-        console.dir(issue);
-
-
         return  "<article class='merlotIssuesContent "+_cssStyle+"'>" +
-                    "<header>" +
-                        "<h4>"+issue.type+"</h4>" +
-                    "</header>" +
-                    "<section>" +
+                 "<fieldset class=\"merlotStyle\"><legend>"+issue.type+"</legend>"+
+                        "<section>" +
+                        "<p>WCAG "+issue.wcagPrinciple+" - "+issue.wcagGuideline+"</p>"+
                         "<p>"+issue.msg+"</p>" +
-                        "<p>"+issue.wcagPrinciple+"</p>" +
-                        "<p>"+issue.wcagGuideline+"</p>" +
-                        "<p><a href=\"http://personabrowser.gpii.eu/richtlinien/\" target=\"_blank\">Show this Issues in the PersonaBrowser</a></p>"
-                    "</section>" +
+                        "</section>" +
+                        "<section class=\"merlotIssuesSolution\">" +
+                            "<header>" +
+                            "<h5>Solution Possibilities</h5>" +
+                            "</header>" +
+                        "<p>More information and solution guidance can be found in the PersonaBrowser</p>" +
+                        "<p><a href=\"http://personabrowser.gpii.eu/richtlinien/\" target=\"_blank\">Show this Issues in the PersonaBrowser</a></p>"+
+                        "</section>"+
+                   "</fieldset>"+
                 "</article>";
-
     };
 
     window.Gamay.getIssueTextForPupUp_TabStyle = function(issue,_cssStyle){
@@ -440,6 +441,8 @@
      * +---------------------------------+
      */
     window.Gamay.getIssueTextForSEMANTICPupUp = function(sem,_cssStyle){
+
+
 
         return  "<article class='"+_cssStyle+"'>" +
                     "<section>" +
