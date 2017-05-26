@@ -568,7 +568,7 @@ BlueprintRunner.prototype.runWithThatActor = function (actor) {
                     that.logger.info('Using "' + that.actor + '" as actor');
 
                 } catch(ex){
-                    throw new ReferenceError('Actor with name "' + actor + '" not found')
+                    throw new ReferenceError('Actor with name "' + actor + '" not found');
                 }
     } else {
         throw new TypeError('Actor with name "' + actor + '" is not a valid string, use letters only');

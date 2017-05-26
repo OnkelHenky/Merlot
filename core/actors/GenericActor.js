@@ -85,11 +85,11 @@ GenericActor.prototype.loadPreferenceSet = function(path,actorname,blueprint_nam
          */
         _blueprint_name = blueprint_name.split(' ').join('_');
 
-    /*
+
     console.log('actoname = ' + _actor_name);
     console.log('path to vins = ' + path);
     console.log('_blueprint_name = ' + _blueprint_name);
-    */
+
 
     var _path_to_vin_file = _path.join(path, _actor_name+".vin.json");
     var _jsonData = _jf.readFileSync(_path_to_vin_file);

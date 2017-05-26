@@ -57,7 +57,7 @@ exports.Actor = Actor =  function(properties) {
     this.name                = '';
     this.ruleset             = {};
     this.semanticRules       = {};
-    this.image               = ""; //URL to a image of the current actor. This is only set of an image is provided in the rule set.
+    this.image               = ''; //URL to a image of the current actor. This is only set of an image is provided in the rule set.
 
 
     this.username = void 0;  //default value is 'undefined'

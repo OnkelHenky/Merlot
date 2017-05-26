@@ -16,6 +16,7 @@ module.exports = navigationSteps = function () {
      * TODO: maybe implement check if 'url' is a valid url-pattern string.
      */
     this.Given(/^Actor navigates to the website with URL: "([^"]*)"$/, function (url, callback) {
+        console.log('sdsdsdsdsfasdlfhasdkfhadsfgadiufhgag');
         this.browser.goTo(url, callback);
     });
 
