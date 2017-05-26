@@ -180,7 +180,8 @@ DOMElement.prototype.getCSSSelector = function () {
     if('textNode' === this.getSearchAttributeName()){
         return this.getTagName()+":containsExactCase("+this.getSearchAttributeValue() +")";
     }else{
-        return this.getTagName()+"["+ this.getSearchAttributeName() + "='" + this.getSearchAttributeValue()+ "']";
+     //   return this.getTagName()+"["+ this.getSearchAttributeName() + "='" + this.getSearchAttributeValue()+ "']";
+        return this.getTagName()+"["+ this.getSearchAttributeName() + "=" + this.getSearchAttributeValue()+ "]";
     }
 
     /*

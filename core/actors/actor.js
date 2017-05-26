@@ -55,7 +55,10 @@ exports.Actor = Actor =  function(properties) {
      * +----------------------------+
      */
     this.name                = '';
-    this.acessibilityRuleset = '';
+    this.ruleset             = {};
+    this.semanticRules       = {};
+    this.image               = ''; //URL to a image of the current actor. This is only set of an image is provided in the rule set.
+
 
     this.username = void 0;  //default value is 'undefined'
     this.password = void 0;  //default value is 'undefined'
@@ -67,6 +70,7 @@ exports.Actor = Actor =  function(properties) {
 };
 
 /**
+ * @description
  * Get the core functionality
  * @type {Merlot}
  */
@@ -75,12 +79,37 @@ Actor.prototype = new Merlot;
 
 /**
  * @description
+ * Get the Actors information as json object
+ * @returns {{object}}
+ */
+//TODO: Add description about the format of the JSON object in the jsDoc comment!
+Actor.prototype.getActorInformation_AsJSON = function () {
+   var _jsonActorInfo = {};
+       _jsonActorInfo.name  = this.getName();  //The name of the actor
+       _jsonActorInfo.image = this.getImage(); //The URL to the actor`s image
+
+    return _jsonActorInfo;
+};
+
+/**
  * @description Overrides prototype version of toString()
  * @returns {string}
  */
-Merlot.prototype.toString = function () {
+Actor.prototype.toString = function () {
     return this.getName();
 };
+
+/**
+ * @description
+ * Set the name of this actor
+ * @param name {string} the name
+ */
+Actor.prototype.setName = function (name) {
+    if(name !== undefined && this.utile._aux_.isString(name)){
+       this.name = name;
+    }
+};
+
 
 /**
  * @description Get the name of this actor
@@ -91,15 +120,81 @@ Actor.prototype.getName = function () {
 };
 
 /**
- * @description Get the navigation pattern of this actor
- * @return {object}
+ * @description
+ * Set the semantic rules for an actor
+ * @param _sementicRules {object}
+ */
+Actor.prototype.setSemenaticRuleSet = function (_sementicRules){
+    if(_sementicRules !== undefined){
+        this.semanticRules = _sementicRules;
+    }
+};
+
+/**
+ * @description
+ * Get the semantic rules of an actor.
+ * @returns {{object}|*} The semantic rul eset of an actor for a specific blueprint
+ */
+Actor.prototype.getSemenaticRuleSet = function (){
+   return this.semanticRules;
+};
+
+/**
+ * @description
+ * Set the URL of the actors image.
+ * This is only set of an image is provided in the rule set.
+ * @param image_url
+ */
+Actor.prototype.setImage = function(image_url){
+    if(image_url !== undefined){
+        this.image = image_url;
+    }
+};
+
+/**
+ * @description
+ * Get the URL the user image.
+ * This function will return an empty string if not image url was set for this actor.
+ * This can be true if no image was defined in the actor´s rule set.
+ * @returns {*}, the URL to the image of this actor.
+ */
+Actor.prototype.getImage = function(){
+    return this.image;
+};
+
+/**
+ * @description
+ * Check if the actor has semantic requirements of a given element.
+ * If the answers is YES, this function will return an array of semantic requirement statements (strings)
+ * with the the semantic requirements.
+ * NOTE: This function will return FALSE if no semantic requirement are provided for the current
+ * step in the blueprint`s evaluation.
+ * @param elementName
+ * The name of the element that is currently checked in the blueprint
+ * @returns {{Array}|*} Returns an Array with semantic requirement statements on FALSE otherwise.
+ */
+Actor.prototype.hastSomethingtoSayAboutSemenatics = function (elementName){
+    var _semantics = this.getSemenaticRuleSet();
+
+    if(_semantics[elementName]){
+       return _semantics[elementName];
+    } else{
+        return false
+    }
+};
+
+/**
+ * @description
+ * Get the navigation pattern of this actor
+ * @return {object} The specific navigation pattern of this actor.
  */
 Actor.prototype.getNavigationPattern = function () {
     return this.navigationPattern;
 };
 
 /**
- * @description Add the properties for Actor.
+ * @description
+ * Add the properties for Actor.
  * @param properties
  */
 Actor.prototype.addPoperties = function(properties){
@@ -126,7 +221,7 @@ Actor.prototype.setUsername = function (username) {
  * The username may by used for login credentials.
  * This function returns undefined is no username is defined
  * fot this actor.
- * @returns {*} the username
+ * @returns {*} String - The username
  */
 Actor.prototype.getUsername = function () {
     return this.username;
@@ -152,24 +247,6 @@ Actor.prototype.setPassword = function (password) {
  */
 Actor.prototype.getPassword = function () {
     return this.password;
-};
-
-/**
- * @description
- * Set the accessibility rule set for this actor
- * @param {string} the name of the ruleset.
- */
-Actor.prototype.setAcessibilityRuleset = function (ruleset) {
-     this.acessibilityRuleset = ruleset;
-};
-
-/**
- * @description
- * Get the name of the accessibility rule set for this actor
- * @returns {string} the name of the  rule set
- */
-Actor.prototype.getAcessibilityRuleset = function () {
-    return this.acessibilityRuleset;
 };
 
 /**
@@ -212,34 +289,25 @@ Actor.prototype.click = function (domElement) {
 
 /**
  * @description
- * Check if actor is John Doe, if true this actor uses his ruleset data from GPII
- * @returns {boolean}
- */
-Actor.prototype.isJohnDoe = function () {
-    return false;
-};
-
-/**
- * @description
- * Load the preference set of the actor.
- * This function is used with the Malbec GPII branch
- */
-Actor.prototype.loadPreferenceSet = function(){
-    //TODO: Implement a useful method in actor prototype
-};
-
-/**
- * @description
  * Load the preference set of the actor by a given name (identifier)
  * This function is used with the Malbec GPII branch - Malbec.
  */
-Actor.prototype.loadPreferenceSetByPathAndName = function(path,actorname){
+Actor.prototype.loadPreferenceSet = function(path,actorname,blueprint_name){
     //TODO: Implement a useful method in actor prototype
 };
 
 /**
- * @deprecated
+ *
+ * @param rs
  */
-Actor.prototype.criteriaBundle = function () {
-    //TODO: Implement a useful method in actor prototype
+Actor.prototype.setRuleSet = function (rs) {
+    this.acessibilityRuleset = rs;
+};
+
+/**
+ *
+ * @returns {{}|*} the rule set for JohnDoe
+ */
+Actor.prototype.getRuleSet = function () {
+    return  this.acessibilityRuleset;
 };

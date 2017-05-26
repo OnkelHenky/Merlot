@@ -3,8 +3,14 @@
   "version": "0.0.2",
   "description": "Persona Based Accessibility Evaluation using Selenium, Cucumber, Node.js and Personas",
   "author": "Alexander Henka,  Alexander.Henka@googlemail.com",
-  "license": "Apache 2.0",
+  "license": "Apache-2.0",
   "main": "./core/index.js",
+
+  "repository": {
+    "type": "git",
+    "url": "https://OnkelHenky@github.com/OnkelHenky/Merlot.git"
+  },
+
   "keywords": [
     "selenium",
     "merlot",

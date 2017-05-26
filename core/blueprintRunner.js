@@ -45,7 +45,7 @@ var webdriver = require('selenium-webdriver'),
  * +----------------------------+
  */
 var BlueprintRunner,
-    ActorProvider = require('./actors/actorProvider').ActorProvider,
+    genericActor = require('./actors/genericActor').GenericActor,
     DOMElement = require('./auxilium/DOMElement'),
     TagNameDictionary = require('./auxilium/tagNameDictionary'),
     MerlotErrors = require('./auxilium/MerlotErrors'),
@@ -90,12 +90,10 @@ BlueprintRunner = exports.BlueprintRunner = function (config) {
     this.logger              = new Logger({'logLevel': 0});
     this.driver              = {};
     this.webdriver           = webdriver;
-    this.actor               = new ActorProvider.Actors["Paul"]; //Default actor
-    this.acessibilityRuleset = this.actor.getName()+'A';
-
     this.isssuesMsgs         = []; // Array with all found accessibility issues
     this.reportDirectory     = ""; // Path where the accessibility issue report shall be stored.
     this.vinFiles            = ""; // Path where the vin files (actor rulesets) can be found.
+    this.currentBlueprint    = ""; // The name of the current blueprint - aka: "The Scenario" in terms of cucumber
 
     if (config && (config.seleniumPath && config.port && config.browser)) {
         this.addConfiguration(config);
@@ -126,6 +124,33 @@ BlueprintRunner = exports.BlueprintRunner = function (config) {
  * @type {Merlot}
  */
 BlueprintRunner.prototype = new Merlot();
+
+/**
+ * @description
+ * Set the name of the current blueprint.
+ * The name is the name of the cucumber scenario that is defined in the feature description.
+ * @param name_of_the_scenario {string}
+ */
+BlueprintRunner.prototype.setCurrentBlueprint = function (name_of_the_scenario){
+    if(name_of_the_scenario !== undefined && this.aux.isString(name_of_the_scenario)){
+        this.currentBlueprint = name_of_the_scenario;
+        this.logger.info("Current Scenario = " + name_of_the_scenario);
+    }else{
+        this.logger.info("No scenario name found! Name is empty, please set a proper name in your Blueprint descrprion.");
+    }
+};
+
+/**
+ * @description
+ * Get the name of the Blueprin that us currently under evaluation.
+ * @returns {string|*} The name of the blueprint
+ */
+BlueprintRunner.prototype.getCurrentBlueprint = function (){
+    if(this.currentBlueprint !== undefined && this.currentBlueprint !== ""){
+        return this.currentBlueprint
+    }
+    return "";
+};
 
 /**
  * @description
@@ -536,27 +561,57 @@ BlueprintRunner.prototype.runWithThatActor = function (actor) {
         _aux = that.utile._aux_;
 
     if (_aux.isString(actor)) {
+            try {
+                    that.actor = new genericActor();
+                    that.actor.loadPreferenceSet(that.vinFiles,actor,that.getCurrentBlueprint());
+                    that.actor.setName(actor);
+                    that.logger.info('Using "' + that.actor + '" as actor');
 
-        if (ActorProvider.Actors[actor]) {
-            that.actor = new ActorProvider.Actors[actor];
-         //   that.actor.setPathToVinFlies(that.vinFiles);
-            that.actor.loadPreferenceSetByPathAndName(that.vinFiles,actor);
-            this.logger.info('Using "' + that.actor + '" as actor');
-        } else {
-            throw new ReferenceError('Actor with name "' + actor + '" not found')
-        }
+                } catch(ex){
+                    throw new ReferenceError('Actor with name "' + actor + '" not found');
+                }
     } else {
-        throw new TypeError('Actor with name "' + actor + '" not defined');
+        throw new TypeError('Actor with name "' + actor + '" is not a valid string, use letters only');
     }
 };
 
 /**
  * @description
+ * Applying a semantic requirement statement on the web application, which is being evaluated in the current Blueprint.
+ * The semantic requirement statement is shown to the tester in form of a pop-up.
+ * @param _domElement the element on the web application for which the semantic requirement applies to.
+ * @param callback the callback for cucumber
+ * @param semanticRequirementStatement semantic requirement statement - Array
+ */
+BlueprintRunner.prototype.applySemanticRequirementStatement = function(_domElement,semanticRequirementStatement,callback){
+    var self = this;
+
+    self.driver.executeAsyncScript(function checkIfElementExistsOnThePage(_domElement) {
+        window.Gamay.isValidElement(_domElement,arguments[arguments.length - 1]);
+
+    }, _domElement.getCSSSelector()).then(function outlineError(validStatus){
+        if(!validStatus){ //not valid, maybe it a typo.
+            callback.fail(new MerlotErrors.ElementNotFoundError("Element " + _domElement + " does not exit check for typos").message);
+        }else{ //valid
+            //self.addAccessibilityIssue(obj);
+            self.driver.executeAsyncScript(function(_domElement,semanticRequirementStatement) {
+                window.Gamay.markSemanticRequirement(_domElement,semanticRequirementStatement,arguments[arguments.length - 1]);
+            }, _domElement.getCSSSelector(), semanticRequirementStatement).then(function(ok){
+                callback.fail(new MerlotErrors.AbortEvaluationError(self.actor.getName()+" can't continue with the scenario due to an error."
+                    + " \n See the Error report, or the highlighted section on your web page for more details.").message);
+            });
+        }
+    });
+
+};
+
+/**
+ * @description
  * Handling any errors
- * @param error
- * @param _domElement
- * @param callback
- * @param _stepDescription
+ * @param error, the Error
+ * @param _domElement the element on the web application that caused the error
+ * @param callback the callback for cucumber, should be called after the error handling is done.
+ * @param _stepDescription the description of the current step in the blueprint description.
  */
 BlueprintRunner.prototype.errorHandler = function(error, _domElement,_stepDescription,callback){
     var self = this;
@@ -585,7 +640,7 @@ BlueprintRunner.prototype.errorHandler = function(error, _domElement,_stepDescri
               window.Gamay.isValidElement(_domElement,arguments[arguments.length - 1]);
 
           }, _domElement.getCSSSelector()).then(function outlineError(validStatus){
-              if(!validStatus){ //not valid, maybe it a typo.
+              if(!validStatus){ //not valid, maybe it's a typo.
                   callback.fail(new MerlotErrors.ElementNotFoundError("Element " + _domElement + " does not exit check for typos").message);
               }else{ //valid
                   self.addAccessibilityIssue(obj);
@@ -700,6 +755,99 @@ BlueprintRunner.prototype.interactWithSelection = function (webElement, domEleme
     return _actor.interactWithSelection.call(this, webElement, domElement);
 };
 
+
+/**
+ * @description
+ * Perform an accessibility evaluation on the provided element
+ * @param {object} webElement the element to tes
+ * @returns {webdriver.promise.Deferred.promise|*} a promise that will be resolved when the evaluation is completed
+ */
+BlueprintRunner.prototype.evalAccessibilityWithSemantic = function (webElement, domElement,_stepDescr,semantics) {
+    var self = this,
+        _actorInfo = self.actor.getActorInformation_AsJSON(),//self.actor.getAcessibilityRuleset(),
+        _deferred = self.webdriver.promise.defer(),
+        _semantics = semantics;
+        _issues = [];
+
+    webElement.getOuterHtml().
+        then(function(outerHtml){
+            return outerHtml;
+        }).
+        /*
+         then(function injectPinot(outerHtml) {
+         return self.injectAcessibilityTestScripts().
+         then(function(){
+         return outerHtml;
+         });
+         }). */
+        then(function(outerHtml){
+            self.driver.executeAsyncScript(function(_actorInfo,html,domElement,_semantics) {
+                window.Gamay.accessibilityEvaluationHTMLCS_WITHSEMANTICS(_actorInfo,html,domElement,_semantics,arguments[arguments.length - 1]);
+            }, _actorInfo, ''+outerHtml,domElement.getCSSSelector(),_semantics)
+                .then(function checkResult(errors) {
+
+                    var _notice    = [],
+                        _warning   = [],
+                        _error     = [],
+                        _def       = [];
+
+                    errors.forEach(function(error){
+                        switch(error.type){
+                            case 'NOTICE':
+                                _notice.push(error);
+                                break;
+                            case 'WARNING':
+                                _warning.push(error);
+                                break;
+                            case 'ERROR':
+                                _error.push(error);
+                                break;
+                            default:
+                                _def.push(error);
+                                break;
+                        }
+                    });
+
+                    if(_notice.length > 0){
+                        _issues.push({
+                            type: 'NOTICE',
+                            msgs: _notice
+                        });
+                    }
+                    if(_warning.length > 0){
+                        _issues.push({
+                            type: 'WARNING',
+                            msgs: _warning
+                        });
+                    }
+                    if(_error.length > 0){
+                        _issues.push({
+                            type: 'ERROR',
+                            msgs: _error
+                        });
+                        var obj = {};
+                        obj.stepDescr = _stepDescr;
+                        obj.isssues = _issues;
+                        self.addAccessibilityIssue(obj);
+                        throw new MerlotErrors.AbortEvaluationError("ErrorFound");
+                    }
+                    if(_def.length > 0){
+                        _issues.push({
+                            type: 'UNKNOWN ISSUE',
+                            msgs: _def
+                        });
+                    }
+
+                });
+        }).
+        then(function onOK() {
+            _deferred.fulfill(_issues);
+        });
+
+    return _deferred.promise;
+
+};
+
 /**
  * @description
  * Perform an accessibility evaluation on the provided element
@@ -708,7 +856,7 @@ BlueprintRunner.prototype.interactWithSelection = function (webElement, domEleme
  */
 BlueprintRunner.prototype.evalAccessibility = function (webElement, domElement,_stepDescr) {
     var self = this,
-        _accessibilityRuleset = self.actor.getAcessibilityRuleset(),
+        _actorName = self.actor.getName(),//self.actor.getAcessibilityRuleset(),
         _deferred = self.webdriver.promise.defer(),
         _issues = [];
 
@@ -726,7 +874,7 @@ BlueprintRunner.prototype.evalAccessibility = function (webElement, domElement,_
         then(function(outerHtml){
             self.driver.executeAsyncScript(function(ruleset,html,domElement) {
                 window.Gamay.accessibilityEvaluationHTMLCS(ruleset,html,domElement,arguments[arguments.length - 1]);
-            }, _accessibilityRuleset, ''+outerHtml,domElement.getCSSSelector())
+            }, _actorName, ''+outerHtml,domElement.getCSSSelector())
                 .then(function checkResult(errors) {
 
                     var _notice    = [],
@@ -879,25 +1027,13 @@ BlueprintRunner.prototype.injectAcessibilityTestScripts = function () {
         });
     }).
 
-        /*  // This is the 'old' implementation that is using only the 'JohnDoe' actor object.
-             then(function isJohnDoe() {
-                 if(self.actor.isJohnDoe()) {
-                     return self.driver.executeScript(function (obj) {
-                     window.window.HTMLCS_JohnDoe = obj;
-                  }, self.actor.getRuleSet());
-                  }else{
-                    return false;
-                  }
-             }).
-         */
-
     /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
      *                                                                             *
      * NOTE:                                                                       *
      * ------                                                                      *
      * Malbec extension. If the actor is JohnDoe, then the                         *
-     * the rulest set is taken from 'JohnDoe.vin.json' - aka: the preference set   *
-     * and include as a JavaScript object into the web page.                       *
+     * the rule set set is taken from 'JohnDoe.vin.json' - aka: the preference set *
+     * and included as a JavaScript object into the web page.                      *
      *                                                                             *
      * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

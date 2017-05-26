@@ -23,6 +23,7 @@ module.exports = forms_and_input_Steps = function () {
      */
     this.When(/^The actor enters "([^"]*)" into textfield whose ([^"]*) is "([^"]*)"$/, function(text, identifiedBy, identifierValue ,callback) {
         var that = this,
+            _elementType = "text_field",
             _domElement = this.browser.createDOMElement({
                 'tagName': 'textField',
                 'identifiedBy': identifiedBy,
@@ -36,7 +37,8 @@ module.exports = forms_and_input_Steps = function () {
 
         this.browser.actorTryToFindThisElement(_domElement).
             then(function runAccessibilityEvaluation(webElement) {
-                return that.browser.evalAccessibility(webElement,_domElement,_stepDescr)
+                var _semantics = that.browser.actor.hastSomethingtoSayAboutSemenatics(_elementType);
+                return that.browser.evalAccessibilityWithSemantic(webElement,_domElement,_stepDescr,_semantics)
                     .then(function storeIssues(issues) {
                         if(issues){
                             var obj = {};
@@ -50,6 +52,19 @@ module.exports = forms_and_input_Steps = function () {
             then(function enterText(webElement) {
                 return that.browser.enterText(webElement, text); //  auxilia.inputText.call(that,text,webElement);
             }).
+            /*
+            then(function checkForSemantics(webElement) {
+                console.log('++++++++++++++++++++++++++++++++++++++++++++++ SEMANTICS ++++++++++++++++++++++++++++++++++++++++++++++');
+                var _semantics = that.browser.actor.hastSomethingtoSayAboutSemenatics(_elementType);
+                if (_semantics){
+                    console.dir(_semantics);
+                    that.browser.applySemanticRequirementStatement(_domElement,_semantics,callback);
+                }else{
+                    console.log('Not semantic rules');
+                    callback();
+                }
+                callback();
+            }). */
             then(function onOk(prm) {
                 callback();
             }).
@@ -73,6 +88,7 @@ module.exports = forms_and_input_Steps = function () {
     this.When(/^The actor enters the username into textfield whose ([^"]*) is "([^"]*)"$/, function(identifiedBy, identifierValue ,callback) {
         var that = this,
             _domElement,
+            _elementType = "text_field",
             _logger = this.browser.logger;
 
         if (that.browser.actor.getUsername() !== undefined) {
@@ -90,7 +106,8 @@ module.exports = forms_and_input_Steps = function () {
 
             this.browser.actorTryToFindThisElement(_domElement).
                 then(function runAccessibilityEvaluation(webElement) {
-                    return that.browser.evalAccessibility(webElement,_domElement,_stepDescr)
+                    var _semantics = that.browser.actor.hastSomethingtoSayAboutSemenatics(_elementType);
+                    return that.browser.evalAccessibilityWithSemantic(webElement,_domElement,_stepDescr,_semantics)
                         .then(function storeIssues(issues) {
                             if(issues){
                                 var obj = {};
@@ -130,6 +147,7 @@ module.exports = forms_and_input_Steps = function () {
      */
     this.When(/^The actor enters the password into textfield whose ([^"]*) is "([^"]*)"$/, function(identifiedBy, identifierValue ,callback) {
         var that = this,
+            _elementType = "text_field",
             _domElement; // that.browser.actor.getPassword() || "NOPE, no PW",//callback.fail(new ReferenceError("No password defined for this actor, use 'Given Password is 'password'' in the cucumber scenario definition, to set a password ").message),
 
         if (that.browser.actor.getPassword() !== undefined) {
@@ -146,7 +164,8 @@ module.exports = forms_and_input_Steps = function () {
 
             this.browser.actorTryToFindThisElement(_domElement).
                 then(function runAccessibilityEvaluation(webElement) {
-                    return that.browser.evalAccessibility(webElement,_domElement,_stepDescr)
+                    var _semantics = that.browser.actor.hastSomethingtoSayAboutSemenatics(_elementType);
+                    return that.browser.evalAccessibilityWithSemantic(webElement,_domElement,_stepDescr,_semantics)
                         .then(function storeIssues(issues) {
                             if(issues){
                                 var obj = {};
@@ -186,6 +205,7 @@ module.exports = forms_and_input_Steps = function () {
      */
     this.When(/^The actor selects the option whose ([^"]*) is "([^"]*)" from the radiogroup "([^"]*)"$/, function(identifiedBy,identifierValue,radiogroupName,callback) {
         var that = this,
+            _elementType = "radio_button",
             _domElement = this.browser.createDOMElement({
                 'tagName' : 'radiobutton',
                 'name' : radiogroupName,
@@ -202,7 +222,8 @@ module.exports = forms_and_input_Steps = function () {
         /*Find the radio group first*/
         this.browser.actorTryToFindThisElement(_domElement).
             then(function runAccessibilityEvaluation(webElement) {
-                return that.browser.evalAccessibility(webElement,_domElement,_stepDescr)
+                var _semantics = that.browser.actor.hastSomethingtoSayAboutSemenatics(_elementType);
+                return that.browser.evalAccessibilityWithSemantic(webElement,_domElement,_stepDescr,_semantics)
                     .then(function storeIssues(issues) {
                         if(issues){
                             var obj = {};
@@ -238,6 +259,7 @@ module.exports = forms_and_input_Steps = function () {
      */
     this.When(/^The actor chooses "([^"]*)" from the selection whose ([^"]*) is "([^"]*)"$/, function(chooseValue,identifiedBy,identifierValue,callback) {
         var that = this,
+            _elementType = "drop_down",
             _SELECTdomElement = this.browser.createDOMElement({
                 'tagName': 'select',
                 'identifiedBy': identifiedBy,
@@ -255,7 +277,8 @@ module.exports = forms_and_input_Steps = function () {
 
         this.browser.actorTryToFindThisElement(_SELECTdomElement).
             then(function runAccessibilityEvaluation(webElement) {
-                return that.browser.evalAccessibility(webElement,_SELECTdomElement,_stepDescr)
+                var _semantics = that.browser.actor.hastSomethingtoSayAboutSemenatics(_elementType);
+                return that.browser.evalAccessibilityWithSemantic(webElement,_SELECTdomElement,_stepDescr,_semantics)
                     .then(function storeIssues(issues) {
                         if(issues){
                             var obj = {};
@@ -290,6 +313,7 @@ module.exports = forms_and_input_Steps = function () {
      */
     this.When(/^The actor interacts with an image whose ([^"]*) is "([^"]*)"$/, function(identifiedBy, value ,callback) {
         var that = this,
+            _elementType = "image",
             _domElement = this.browser.createDOMElement({
                 'tagName' : 'img',
                 'searchAttribute' : {
@@ -304,7 +328,8 @@ module.exports = forms_and_input_Steps = function () {
 
         this.browser.actorTryToFindThisElement(_domElement).
             then(function runAccessibilityEvaluation(webElement) {
-                return that.browser.evalAccessibility(webElement,_domElement,_stepDescr)
+                var _semantics = that.browser.actor.hastSomethingtoSayAboutSemenatics(_elementType);
+                return that.browser.evalAccessibilityWithSemantic(webElement,_domElement,_stepDescr,_semantics)
                     .then(function storeIssues(issues) {
                         if(issues){
                             var obj = {};
