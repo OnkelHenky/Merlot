@@ -968,6 +968,8 @@ BlueprintRunner.prototype.injectAcessibilityTestScripts = function () {
 
             document.head.appendChild(_jqueryScriptTag);
 
+
+
             /*
                 //Old or alternative implementation for triggering the Selenium callback
                 jqueryScriptTag.onload = function () {
