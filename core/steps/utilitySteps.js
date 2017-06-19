@@ -9,38 +9,43 @@
  * Like the actor that is used or user name and password.
  * @type {utility_Steps}
  */
-module.exports = utility_Steps = function () {
+
+var {defineSupportCode} = require('cucumber');
+
+
+defineSupportCode(function({Given}) {
+//module.exports = utility_Steps = function () {
 
     /**
      * Set the actor, tell the browser to run with a specific actor
      */
-    this.Given(/^Actor is "([^"]*)"$/, function (thisActor, callback) {
-        this.browser.runWithThatActor(thisActor);
+   Given(/^Actor is "([^"]*)"$/, function (thisActor, callback) {
+        this.driver.runWithThatActor(thisActor);
         callback();
     });
 
     /**
      * Setting the user name used in a scenario 'globally'
      */
-    this.Given(/^Username is "([^"]*)"$/, function (username, callback) {
-        this.browser.setLoginCredentialsForActor('username', username);
+    Given(/^Username is "([^"]*)"$/, function (username, callback) {
+        this.driver.setLoginCredentialsForActor('username', username);
         callback();
     });
 
     /**
      * Setting the password used in a scenario 'globally'
      */
-    this.Given(/^Password is "([^"]*)"$/, function (password, callback) {
-        this.browser.setLoginCredentialsForActor('password', password);
+    Given(/^Password is "([^"]*)"$/, function (password, callback) {
+        this.driver.setLoginCredentialsForActor('password', password);
         callback();
     });
 
     /**
      * Set the WCAG conformance level (A, AA or AAA)
      */
-    this.Given(/^The WCAG conformance level shall be "([^"]*)"$/, function (conformanceLevel, callback) {
-        this.browser.setConformanceLevel(conformanceLevel);
+    Given(/^The WCAG conformance level shall be "([^"]*)"$/, function (conformanceLevel, callback) {
+        this.driver.setConformanceLevel(conformanceLevel);
         callback();
     });
 
-};
+});

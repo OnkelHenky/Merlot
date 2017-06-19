@@ -136,7 +136,7 @@ BlueprintRunner.prototype.setCurrentBlueprint = function (name_of_the_scenario){
         this.currentBlueprint = name_of_the_scenario;
         this.logger.info("Current Scenario = " + name_of_the_scenario);
     }else{
-        this.logger.info("No scenario name found! Name is empty, please set a proper name in your Blueprint descrprion.");
+        this.logger.info("No scenario name found! Name is empty, please set a proper name in your Blueprint description.");
     }
 };
 
@@ -204,20 +204,21 @@ BlueprintRunner.prototype.getReportDirectory = function(){
 BlueprintRunner.prototype.getAccessibilityIssuesBuffer = function(ScenarioName, issues, cb){
     var self    = this,
         _buffer ='';
+    console.dir(self);
 
-   /*
-    * MU Template:
-    *
-    * {{#msgs}}
-    *  STEP: {{stepDescr}}
-    *        {{#issues}}
-    *            ###### {{type}}
-    *            {{#msg}}
-    *                * {{m}}
-    *            {{/msg}}
-    *        {{/issues}}
-    * {{/msgs}}
-    */
+    /*
+     * MU Template:
+     *
+     * {{#msgs}}
+     *  STEP: {{stepDescr}}
+     *        {{#issues}}
+     *            ###### {{type}}
+     *            {{#msg}}
+     *                * {{m}}
+     *            {{/msg}}
+     *        {{/issues}}
+     * {{/msgs}}
+     */
     mu.root = __dirname + '/reports';
     var data =  issues.map(function(step){
                                 return {
@@ -261,7 +262,7 @@ BlueprintRunner.prototype.printIssuesBuffer = function(buffer,scenario,callback)
         _issues    = self.getArrayWithAccessibilityIssues();
 
     _logger.log('Buffer = ' +buffer);
-    _logger.log("Writing report for =" + scenario.getName());
+    _logger.log("Writing report for =" + scenario.scenario.name);
     var issuePath = _path.join(_reportDIR, '/report.md');
 
     _fs.writeFile(issuePath, buffer, function (err) {
@@ -309,6 +310,7 @@ BlueprintRunner.prototype.printEvaluationReport = function(scenario,callback){
         _issues    = self.getArrayWithAccessibilityIssues();
 
     _logger.info("Generating evaluation report");
+    callback();
 
     _fs.exists(_reportDIR, function (exists) {
         if (!exists) {
@@ -317,17 +319,18 @@ BlueprintRunner.prototype.printEvaluationReport = function(scenario,callback){
                     _logger.error("Error during creation of the reports directory" +err);
                     callback(err);
                 }else{
-                    self.getAccessibilityIssuesBuffer(scenario.getName(), _issues, function(buffer){
+                    self.getAccessibilityIssuesBuffer(scenario.scenario.name, _issues, function(buffer){
                         self.printIssuesBuffer(buffer,scenario,callback);
                     });
                 }
             });
         } else {
-            self.getAccessibilityIssuesBuffer(scenario.getName(), _issues, function(buffer){
+            self.getAccessibilityIssuesBuffer(scenario.scenario.name, _issues, function(buffer){
                  self.printIssuesBuffer(buffer,scenario,callback);
             });
         }
     });
+
 };
 
 /**
