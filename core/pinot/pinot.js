@@ -24,12 +24,9 @@ var Pinot = exports.Pinot = function () {
     this.app.use(express.static(path.join(__dirname, 'public')));
     this.app.use(errorHandler());
 
-        if ('development' == this.app.get('env')) {
+        if ('development' === this.app.get('env')) {
             this.app.use(errorHandler());
         }
-
-
-
 };
 
 /**
