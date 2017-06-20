@@ -12,14 +12,11 @@
 
 var {defineSupportCode} = require('cucumber');
 
-
 defineSupportCode(function({Given}) {
-//module.exports = utility_Steps = function () {
-
     /**
      * Set the actor, tell the browser to run with a specific actor
      */
-   Given(/^Actor is "([^"]*)"$/, function (thisActor, callback) {
+    Given(/^Actor is "([^"]*)"$/, function (thisActor, callback) {
         this.driver.runWithThatActor(thisActor);
         callback();
     });
@@ -47,5 +44,4 @@ defineSupportCode(function({Given}) {
         this.driver.setConformanceLevel(conformanceLevel);
         callback();
     });
-
 });
