@@ -5,12 +5,10 @@
   "author": "Alexander Henka,  Alexander.Henka@googlemail.com",
   "license": "Apache-2.0",
   "main": "./core/index.js",
-
   "repository": {
     "type": "git",
     "url": "https://OnkelHenky@github.com/OnkelHenky/Merlot.git"
   },
-
   "keywords": [
     "selenium",
     "merlot",
@@ -19,6 +17,7 @@
     "accessibility evaluation"
   ],
   "dependencies": {
+    "cucumber": "^2.3.1",
     "errorhandler": "^1.2.0",
     "express": "^4.9.0",
     "jsonfile": "^2.0.0",
