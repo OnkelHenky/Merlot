@@ -31,7 +31,7 @@ module.exports = function ({Given, When, Then}) {
             .then(function (pageTitle) {
                 if (title === pageTitle) {
                   //  callback();
-                    console.log('page Tile = ' + pageTitle);
+                  //  console.log('page Tile = ' + pageTitle);
                 } else {
                     callback.fail(new Error("Expected to be on page with title " + title + "but was on: '" + pageTitle + "'"));
                 }
