@@ -182,8 +182,8 @@ BlueprintRunner.prototype.getArrayWithAccessibilityIssues = function(){
  * @param issue
  */
 BlueprintRunner.prototype.addAccessibilityIssue = function(issue){
-    console.dir(issue);
-    console.dir(issue.isssues[0].msgs);
+    //console.dir(issue);
+  //  console.dir(issue.isssues[0].msgs);
     this.isssuesMsgs.push(issue);
 };
 
@@ -618,9 +618,6 @@ BlueprintRunner.prototype.applySemanticRequirementStatement = function(_domEleme
  */
 BlueprintRunner.prototype.errorHandler = function(error, _domElement,_stepDescription,callback){
     var self = this;
-
-    console.dir(error);
-    console.dir(callback);
 
     /*TODO: This should be somewhat actor-specific*/
       if(MerlotErrors.ERROR_ISSUES_FOUND === error.getMsg()){
