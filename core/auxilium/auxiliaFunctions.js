@@ -4,8 +4,6 @@
  */
 
 
-var exports = module.exports;
-
 /**
  * @description
  * Check if a property is a not undefined and a valid string
@@ -25,4 +23,3 @@ module.exports.isString = function(stringToTest) {
 module.exports.isNumber = function(numberToTest) {
     return !isNaN(numberToTest);
 };
-
