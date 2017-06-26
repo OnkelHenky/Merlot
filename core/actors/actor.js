@@ -34,6 +34,7 @@
  * +----------------------------+
  */
 var Merlot = require('../Merlot').Merlot,
+    Logger = require('./../auxilium/logger').Logger,
     Actor;
 
 /**
@@ -62,6 +63,7 @@ exports.Actor = Actor =  function(properties) {
 
     this.username = void 0;  //default value is 'undefined'
     this.password = void 0;  //default value is 'undefined'
+    this.logger = new Logger({'logLevel': 2});
 
     if(properties){
         this.addPoperties(properties);
