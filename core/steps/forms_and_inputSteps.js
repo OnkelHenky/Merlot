@@ -9,7 +9,7 @@
  * Contains steps for interacting with form and input element on a web page
  * @type {navigationSteps}
  */
-module.exports = forms_and_input_Steps = function () {
+module.exports = function ({When, Then}) {
 
     /**
      * Step to interact with an text field aka:  <input type='text'> element.
@@ -21,7 +21,7 @@ module.exports = forms_and_input_Steps = function () {
      *                Allowed values are: Any string or numeric combination, that is allowed in the respective identifiedBy property
      * 'callback' is the cucumber callback.
      */
-    this.When(/^The actor enters "([^"]*)" into textfield whose ([^"]*) is "([^"]*)"$/, function(text, identifiedBy, identifierValue ,callback) {
+    When(/^The actor enters "([^"]*)" into textfield whose ([^"]*) is "([^"]*)"$/, function(text, identifiedBy, identifierValue ,callback) {
         var that = this,
             _elementType = "text_field",
             _domElement = this.browser.createDOMElement({
@@ -85,7 +85,7 @@ module.exports = forms_and_input_Steps = function () {
      *                Allowed values are: Any string or numeric combination, that is allowed in the respective identifiedBy property
      * 'callback' is the cucumber callback.
      */
-    this.When(/^The actor enters the username into textfield whose ([^"]*) is "([^"]*)"$/, function(identifiedBy, identifierValue ,callback) {
+    When(/^The actor enters the username into textfield whose ([^"]*) is "([^"]*)"$/, function(identifiedBy, identifierValue ,callback) {
         var that = this,
             _domElement,
             _elementType = "text_field",
@@ -145,14 +145,14 @@ module.exports = forms_and_input_Steps = function () {
      *                Allowed values are: Any string or numeric combination, that is allowed in the respective identifiedBy property
      * 'callback' is the cucumber callback.
      */
-    this.When(/^The actor enters the password into textfield whose ([^"]*) is "([^"]*)"$/, function(identifiedBy, identifierValue ,callback) {
+    When(/^The actor enters the password into textfield whose ([^"]*) is "([^"]*)"$/, function(identifiedBy, identifierValue ,callback) {
         var that = this,
             _elementType = "text_field",
             _domElement; // that.browser.actor.getPassword() || "NOPE, no PW",//callback.fail(new ReferenceError("No password defined for this actor, use 'Given Password is 'password'' in the cucumber scenario definition, to set a password ").message),
 
-        if (that.browser.actor.getPassword() !== undefined) {
-            var _password = that.browser.actor.getPassword();
-            _domElement = this.browser.createDOMElement({
+        if (that.driver.actor.getPassword() !== undefined) {
+            var _password = that.driver.actor.getPassword();
+            _domElement = this.driver.createDOMElement({
                 'tagName': 'textField',
                 'identifiedBy': identifiedBy,
                 'identifierValue': identifierValue
@@ -162,28 +162,28 @@ module.exports = forms_and_input_Steps = function () {
                 +_domElement.getSearchAttributeName()
                 +" is "+ _domElement.getSearchAttributeValue();
 
-            this.browser.actorTryToFindThisElement(_domElement).
+            this.driver.actorTryToFindThisElement(_domElement).
                 then(function runAccessibilityEvaluation(webElement) {
-                    var _semantics = that.browser.actor.hastSomethingtoSayAboutSemenatics(_elementType);
-                    return that.browser.evalAccessibilityWithSemantic(webElement,_domElement,_stepDescr,_semantics)
+                    var _semantics = that.driver.actor.hastSomethingtoSayAboutSemenatics(_elementType);
+                    return that.driver.evalAccessibilityWithSemantic(webElement,_domElement,_stepDescr,_semantics)
                         .then(function storeIssues(issues) {
                             if(issues){
                                 var obj = {};
                                 obj.stepDescr = _stepDescr;
                                 obj.isssues = issues;
-                                that.browser.addAccessibilityIssue(obj);
+                                that.driver.addAccessibilityIssue(obj);
                             }
                             return webElement
                         });
                 }).
                 then(function (webElement) {
-                    return that.browser.enterText(webElement, _password);
+                    return that.driver.enterText(webElement, _password);
                 }).
                 then(function onOk(prm) {
                     callback();
                 }).
                 then(null, function onError(err) {
-                    that.browser.errorHandler(err,_SELECTdomElement,_stepDescr,callback);
+                    that.driver.errorHandler(err,_SELECTdomElement,_stepDescr,callback);
                    // callback.fail(new Error("Merlot reported an error! " + err + " with DOMElement: " + _domElement).message);
                 });
 
@@ -203,10 +203,10 @@ module.exports = forms_and_input_Steps = function () {
      * 'radiogroupName' is the name attribute of the radio group
      * 'callback' is the cucumber callback.
      */
-    this.When(/^The actor selects the option whose ([^"]*) is "([^"]*)" from the radiogroup "([^"]*)"$/, function(identifiedBy,identifierValue,radiogroupName,callback) {
+    When(/^The actor selects the option whose ([^"]*) is "([^"]*)" from the radiogroup "([^"]*)"$/, function(identifiedBy,identifierValue,radiogroupName,callback) {
         var that = this,
             _elementType = "radio_button",
-            _domElement = this.browser.createDOMElement({
+            _domElement = this.driver.createDOMElement({
                 'tagName' : 'radiobutton',
                 'name' : radiogroupName,
                 'identifiedBy' : identifiedBy,
@@ -220,30 +220,30 @@ module.exports = forms_and_input_Steps = function () {
             +"from the radiogroup " + radiogroupName ;
 
         /*Find the radio group first*/
-        this.browser.actorTryToFindThisElement(_domElement).
+        this.driver.actorTryToFindThisElement(_domElement).
             then(function runAccessibilityEvaluation(webElement) {
-                var _semantics = that.browser.actor.hastSomethingtoSayAboutSemenatics(_elementType);
-                return that.browser.evalAccessibilityWithSemantic(webElement,_domElement,_stepDescr,_semantics)
+                var _semantics = that.driver.actor.hastSomethingtoSayAboutSemenatics(_elementType);
+                return that.driver.evalAccessibilityWithSemantic(webElement,_domElement,_stepDescr,_semantics)
                     .then(function storeIssues(issues) {
                         if(issues){
                             var obj = {};
                             obj.stepDescr = _stepDescr;
                             obj.isssues = issues;
-                            that.browser.addAccessibilityIssue(obj);
+                            that.driver.addAccessibilityIssue(obj);
                         }
                         return webElement
                     });
             }).
             then(function findTheRadioButtonInTheRadioGroup(webElement){
                 /*Here we have the first element in the radio group*/
-                return that.browser.interactWithRadioButton(webElement,_domElement);
+                return that.driver.interactWithRadioButton(webElement,_domElement);
             }).
             then(function onOK() {
                 callback();
             }).
             then(null, function onError(err) {
-                that.browser.logger.error(err.name + ": " + err.message);
-                that.browser.errorHandler(err,_SELECTdomElement,_stepDescr,callback);
+                that.driver.logger.error(err.name + ": " + err.message);
+                that.driver.errorHandler(err,_SELECTdomElement,_stepDescr,callback);
                 //callback.fail(err.name + ": " + err.message);
             });
     });
@@ -257,15 +257,15 @@ module.exports = forms_and_input_Steps = function () {
      *                Allowed values are: Any string or numeric combination, that is allowed in the respective identifiedBy property
      * 'callback' is the cucumber callback.
      */
-    this.When(/^The actor chooses "([^"]*)" from the selection whose ([^"]*) is "([^"]*)"$/, function(chooseValue,identifiedBy,identifierValue,callback) {
+    When(/^The actor chooses "([^"]*)" from the selection whose ([^"]*) is "([^"]*)"$/, function(chooseValue,identifiedBy,identifierValue,callback) {
         var that = this,
             _elementType = "drop_down",
-            _SELECTdomElement = this.browser.createDOMElement({
+            _SELECTdomElement = this.driver.createDOMElement({
                 'tagName': 'select',
                 'identifiedBy': identifiedBy,
                 'identifierValue': identifierValue
             }),
-            _SELECTOptionElement = this.browser.createDOMElement({
+            _SELECTOptionElement = this.driver.createDOMElement({
                 'tagName': 'option',
                 'identifiedBy': 'textNode',
                 'identifierValue': chooseValue
@@ -275,28 +275,28 @@ module.exports = forms_and_input_Steps = function () {
             +_SELECTdomElement.getSearchAttributeName()
             +" is "+ _SELECTdomElement.getSearchAttributeValue();
 
-        this.browser.actorTryToFindThisElement(_SELECTdomElement).
+        this.driver.actorTryToFindThisElement(_SELECTdomElement).
             then(function runAccessibilityEvaluation(webElement) {
-                var _semantics = that.browser.actor.hastSomethingtoSayAboutSemenatics(_elementType);
-                return that.browser.evalAccessibilityWithSemantic(webElement,_SELECTdomElement,_stepDescr,_semantics)
+                var _semantics = that.driver.actor.hastSomethingtoSayAboutSemenatics(_elementType);
+                return that.driver.evalAccessibilityWithSemantic(webElement,_SELECTdomElement,_stepDescr,_semantics)
                     .then(function storeIssues(issues) {
                         if(issues){
                             var obj = {};
                             obj.stepDescr = _stepDescr;
                             obj.isssues = issues;
-                            that.browser.addAccessibilityIssue(obj);
+                            that.driver.addAccessibilityIssue(obj);
                         }
                         return webElement
                     });
             }).
             then(function interactWithSelectionAndChooseOption(selectionElement) {
-                return that.browser.interactWithSelection(selectionElement, _SELECTOptionElement);
+                return that.driver.interactWithSelection(selectionElement, _SELECTOptionElement);
             }).
             then(function onOk() {
                 callback();
             }).
             then(null, function onError(err) {
-                that.browser.errorHandler(err,_SELECTdomElement,_stepDescr,callback);
+                that.driver.errorHandler(err,_SELECTdomElement,_stepDescr,callback);
                // callback.fail(new Error("Merlot reported an error! " + err + " with DOMElement: " + _SELECTdomElement).message);
             });
 
@@ -311,10 +311,10 @@ module.exports = forms_and_input_Steps = function () {
      *                Allowed values are: Any string or numeric combination, that is allowed in the respective identifiedBy property
      * 'callback' is the cucumber callback.
      */
-    this.When(/^The actor interacts with an image whose ([^"]*) is "([^"]*)"$/, function(identifiedBy, value ,callback) {
+    When(/^The actor interacts with an image whose ([^"]*) is "([^"]*)"$/, function(identifiedBy, value ,callback) {
         var that = this,
             _elementType = "image",
-            _domElement = this.browser.createDOMElement({
+            _domElement = this.driver.createDOMElement({
                 'tagName' : 'img',
                 'searchAttribute' : {
                     "name":  'id',
@@ -326,28 +326,28 @@ module.exports = forms_and_input_Steps = function () {
             +_domElement.getSearchAttributeName()
             +" is "+ _domElement.getSearchAttributeValue();
 
-        this.browser.actorTryToFindThisElement(_domElement).
+        this.driver.actorTryToFindThisElement(_domElement).
             then(function runAccessibilityEvaluation(webElement) {
-                var _semantics = that.browser.actor.hastSomethingtoSayAboutSemenatics(_elementType);
-                return that.browser.evalAccessibilityWithSemantic(webElement,_domElement,_stepDescr,_semantics)
+                var _semantics = that.driver.actor.hastSomethingtoSayAboutSemenatics(_elementType);
+                return that.driver.evalAccessibilityWithSemantic(webElement,_domElement,_stepDescr,_semantics)
                     .then(function storeIssues(issues) {
                         if(issues){
                             var obj = {};
                             obj.stepDescr = _stepDescr;
                             obj.isssues = issues;
-                            that.browser.addAccessibilityIssue(obj);
+                            that.driver.addAccessibilityIssue(obj);
                         }
                         return webElement
                     });
             }).
             then(function (webElement) {
-                return that.browser.click(webElement,that.browser.webdriver.Key.ENTER);
+                return that.driver.click(webElement,that.driver.webdriver.Key.ENTER);
             }).
             then(function onOk() {
                 callback();
             }).
             then(null, function onError(err) {
-                that.browser.errorHandler(err,_domElement,_stepDescr,callback);
+                that.driver.errorHandler(err,_domElement,_stepDescr,callback);
                // callback.fail(new Error("Merlot reported an error! " + err +" with DOMElement: "+_domElement).message);
             });
 

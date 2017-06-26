@@ -619,9 +619,12 @@ BlueprintRunner.prototype.applySemanticRequirementStatement = function(_domEleme
 BlueprintRunner.prototype.errorHandler = function(error, _domElement,_stepDescription,callback){
     var self = this;
 
-      /*TODO: This should be somewhat actor-specific*/
+    console.dir(error);
+    console.dir(callback);
+
+    /*TODO: This should be somewhat actor-specific*/
       if(MerlotErrors.ERROR_ISSUES_FOUND === error.getMsg()){
-          callback.fail(new MerlotErrors.AbortEvaluationError(self.actor.getName()+" can't continue with the scenario due to an error."
+          callback(new MerlotErrors.AbortEvaluationError(self.actor.getName()+" can't continue with the scenario due to an error."
                         + " \n See the Error report, or the highlighted section on your web page for more details.").message);
       }
       else if(MerlotErrors.LOOP_ERROR === error.getMsg()){

@@ -9,15 +9,14 @@
  * And to perform interaction with basic html element.
  * @type {navigationSteps}
  */
-module.exports = navigationSteps = function () {
+module.exports = function ({Given, When, Then}) {
 
     /**
      * Step to navigate to the provided URL
      * TODO: maybe implement check if 'url' is a valid url-pattern string.
      */
-    this.Given(/^Actor navigates to the website with URL: "([^"]*)"$/, function (url, callback) {
-        console.log('sdsdsdsdsfasdlfhasdkfhadsfgadiufhgag');
-        this.browser.goTo(url, callback);
+    Given(/^Actor navigates to the website with URL: "([^"]*)"$/, function (url, callback) {
+        this.driver.goTo(url, callback);
     });
 
     /**
@@ -26,9 +25,9 @@ module.exports = navigationSteps = function () {
      * Currently this steps throws an error if the the current page title
      * didn't match the provided 'title' property.
      */
-    this.Then(/^The actor should be on a web page with "([^"]*)" in the title$/, function (title, callback) {
+    Then(/^The actor should be on a web page with "([^"]*)" in the title$/, function (title, callback) {
         var self = this;
-        this.browser.getPageTitle()
+        this.driver.getPageTitle()
             .then(function (pageTitle) {
                 if (title === pageTitle) {
                   //  callback();
@@ -52,18 +51,18 @@ module.exports = navigationSteps = function () {
      * Any following step should relay on the fact, that the web page in the
      * new tab is fully loaded and ready.
      */
-    this.Then(/^The actor switches to a new page in a new browser tab$/, function (callback) {
+    Then(/^The actor switches to a new page in a new browser tab$/, function (callback) {
         var that = this,
             _currentWindowHandle = void 0;
 
-        this.browser.getCurrentWindowHandle().
+        this.driver.getCurrentWindowHandle().
             then(function (currentWindowHandle) {
                 _currentWindowHandle = currentWindowHandle;
             });
-        this.browser.getAllWindowHandles().
+        this.driver.getAllWindowHandles().
             then(function findTheNewHandle(allHandlers) {
-//TODO: Refactoring is necessary, so only the next handle in the array list with != current handle will be taken.
-                var deferred = that.browser.webdriver.promise.defer();
+                //TODO: Refactoring is necessary, so only the next handle in the array list with != current handle will be taken.
+                var deferred = that.driver.webdriver.promise.defer();
                 allHandlers.forEach(function (handle) {
                     if (_currentWindowHandle != handle) {
                         deferred.fulfill(handle);
@@ -73,7 +72,7 @@ module.exports = navigationSteps = function () {
                 return deferred.promise;
             }).
             then(function switchToNewHandle(handle) {
-                return that.browser.switchToNewHandle(handle);
+                return that.driver.switchToNewHandle(handle);
             }).
             then(function onOK() {
                 callback();
@@ -94,7 +93,7 @@ module.exports = navigationSteps = function () {
      *                Allowed values are: Any string or numeric combination, that is allowed in the respective identifiedBy property
      * 'callback' is the cucumber callback.
      */
-    this.When(/^The actor interacts with a hyperlink whose ([^"]*) is "([^"]*)"$/, function (identifiedBy, identifierValue, callback) {
+    When(/^The actor interacts with a hyperlink whose ([^"]*) is "([^"]*)"$/, function (identifiedBy, identifierValue, callback) {
         var that = this,
             _elementType = "hyperlink",
             _domElement = this.browser.createDOMElement({
@@ -107,7 +106,7 @@ module.exports = navigationSteps = function () {
             +_domElement.getSearchAttributeName()
             +" is "+ _domElement.getSearchAttributeValue();
 
-        this.browser.actorTryToFindThisElement(_domElement).
+        this.driver.actorTryToFindThisElement(_domElement).
           /*  then(function (webElement) {
                 var deferred = that.browser.webdriver.promise.defer();
                 that.browser.applyCriteria(webElement, function (webElement) {
@@ -117,26 +116,26 @@ module.exports = navigationSteps = function () {
                 return deferred.promise;
             }). */
             then(function runAccessibilityEvaluation(webElement) {
-                var _semantics = that.browser.actor.hastSomethingtoSayAboutSemenatics(_elementType);
-                return that.browser.evalAccessibilityWithSemantic(webElement,_domElement,_stepDescr,_semantics)
+                var _semantics = that.driver.actor.hastSomethingtoSayAboutSemenatics(_elementType);
+                return that.driver.evalAccessibilityWithSemantic(webElement,_domElement,_stepDescr,_semantics)
                     .then(function storeIssues(issues) {
                         if(issues){
                             var obj = {};
                             obj.stepDescr = _stepDescr;
                             obj.isssues = issues;
-                            that.browser.addAccessibilityIssue(obj);
+                            that.driver.addAccessibilityIssue(obj);
                         }
                         return webElement
                     });
             }).
             then(function (webElement) {
-                return that.browser.click(webElement);
+                return that.driver.click(webElement);
             }).
             then(function onOK() {
                 callback();
             }).
             then(null, function onError(err) {
-                that.browser.errorHandler(err,_domElement,_stepDescr,callback);
+                that.driver.errorHandler(err,_domElement,_stepDescr,callback);
             });
     });
 
@@ -150,10 +149,10 @@ module.exports = navigationSteps = function () {
      *                Allowed values are: Any string or numeric combination, that is allowed in the respective identifiedBy property
      * 'callback' is the cucumber callback.
      */
-    this.When(/^The actor interacts with a button whose ([^"]*) is "([^"]*)"$/, function (identifiedBy, identifierValue, callback) {
+    When(/^The actor interacts with a button whose ([^"]*) is "([^"]*)"$/, function (identifiedBy, identifierValue, callback) {
         var that = this,
             _elementType = "button",
-            _domElement = this.browser.createDOMElement({
+            _domElement = this.driver.createDOMElement({
                 'tagName': 'button',
                 'identifiedBy': identifiedBy,
                 'identifierValue': identifierValue
@@ -164,7 +163,7 @@ module.exports = navigationSteps = function () {
             +" is "+ _domElement.getSearchAttributeValue();
 
 
-        this.browser.actorTryToFindThisElement(_domElement).
+        this.driver.actorTryToFindThisElement(_domElement).
             /* then(function (webElement) {
                 var deferred = that.browser.webdriver.promise.defer();
                 that.browser.applyCriteria(webElement, function (webElement) {
@@ -173,26 +172,26 @@ module.exports = navigationSteps = function () {
                 return deferred.promise;
             }). */
             then(function runAccessibilityEvaluation(webElement) {
-                var _semantics = that.browser.actor.hastSomethingtoSayAboutSemenatics(_elementType);
-                return that.browser.evalAccessibilityWithSemantic(webElement,_domElement,_stepDescr,_semantics)
+                var _semantics = that.driver.actor.hastSomethingtoSayAboutSemenatics(_elementType);
+                return that.driver.evalAccessibilityWithSemantic(webElement,_domElement,_stepDescr,_semantics)
                     .then(function storeIssues(issues) {
                         if(issues){
                             var obj = {};
                             obj.stepDescr = _stepDescr;
                             obj.isssues = issues;
-                            that.browser.addAccessibilityIssue(obj);
+                            that.driver.addAccessibilityIssue(obj);
                         }
                         return webElement
                     });
             }).
             then(function (webElement) {
-                return that.browser.click(webElement, that.browser.webdriver.Key.ENTER);
+                return that.driver.click(webElement, that.driver.webdriver.Key.ENTER);
             }).
             then(function onOK() {
                 callback();
             }).
             then(null, function onError(err) {
-                that.browser.errorHandler(err,_domElement,_stepDescr,callback);
+                that.driver.errorHandler(err,_domElement,_stepDescr,callback);
             });
     });
 
@@ -206,10 +205,10 @@ module.exports = navigationSteps = function () {
      *                Allowed values are: Any string or numeric combination, that is allowed in the respective identifiedBy property
      * 'callback' is the cucumber callback.
      */
-    this.When(/^The actor interacts with a "([^"]*)" element whose ([^"]*) is "([^"]*)"$/, function (elementName, identifiedBy, identifierValue, callback) {
+    When(/^The actor interacts with a "([^"]*)" element whose ([^"]*) is "([^"]*)"$/, function (elementName, identifiedBy, identifierValue, callback) {
         var that = this,
             _elementType = elementName,//TODO: Check if 'elementName' is a valid elementName!!
-            _domElement = this.browser.createDOMElement({
+            _domElement = this.driver.createDOMElement({
                 'tagName': elementName,
                 'identifiedBy': identifiedBy,
                 'identifierValue': identifierValue
@@ -219,7 +218,7 @@ module.exports = navigationSteps = function () {
                           +_domElement.getSearchAttributeName()
                           +" is "+ _domElement.getSearchAttributeValue();
 
-        this.browser.actorTryToFindThisElement(_domElement).
+        this.driver.actorTryToFindThisElement(_domElement).
            /* then(function (webElement) {
                 var deferred = that.browser.webdriver.promise.defer();
                 that.browser.applyCriteria(webElement, function (webElement) {
@@ -228,27 +227,27 @@ module.exports = navigationSteps = function () {
                 return deferred.promise;
             }). */
             then(function runAccessibilityEvaluation(webElement) {
-                var _semantics = that.browser.actor.hastSomethingtoSayAboutSemenatics(_elementType);
-                return that.browser.evalAccessibilityWithSemantic(webElement,_domElement,_stepDescr,_semantics)
+                var _semantics = that.driver.actor.hastSomethingtoSayAboutSemenatics(_elementType);
+                return that.driver.evalAccessibilityWithSemantic(webElement,_domElement,_stepDescr,_semantics)
                        .then(function storeIssues(issues) {
                                if(issues){
                                    var obj = {};
                                    obj.stepDescr = _stepDescr;
                                    obj.isssues = issues;
-                                   that.browser.addAccessibilityIssue(obj);
+                                   that.driver.addAccessibilityIssue(obj);
                                }
                                return webElement
                         });
             }).
             then(function (webElement) {
-                return that.browser.click(webElement);
+                return that.driver.click(webElement);
             }).
             then(function onOK() {
                 callback();
             }).
             then(null, function onError(err) {
                 console.dir();
-                that.browser.errorHandler(err,_domElement,_stepDescr,callback);
+                that.driver.errorHandler(err,_domElement,_stepDescr,callback);
             });
     });
 

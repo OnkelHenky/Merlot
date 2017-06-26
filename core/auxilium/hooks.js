@@ -10,15 +10,17 @@
  * is being executed.
  * @type {hooks}
  */
-module.exports = hooks = function () {
+module.exports = function ({After, Before}) {
 
     /*
      * Set the name of the current scenario/ Blueprint.
      * This hook is executed before the blueprint is evaluated.
      */
-    Before(function (scenario, callback) {
-        var  _browser = this.browser;
-        _browser.setCurrentBlueprint(scenario.getName());
+    Before(function (ScenarioResult, callback) {
+        let  _browser = this.driver;
+        let  _logger = _browser.logger;
+        _logger.info('Applying "Before Hooks"');
+        _browser.setCurrentBlueprint(ScenarioResult.scenario.name);
         callback();
     });
 
@@ -26,24 +28,24 @@ module.exports = hooks = function () {
      * Close the selenium driver (browser) after all features
      * of an scenario had been executed.
      */
-    After(function (scenario, callback) {
-        var self    = this,
-            _logger = this.browser.logger;
-
-        self.browser.printEvaluationReport(scenario, function (err) {
+    After(function (ScenarioResult, callback){
+     //   let self    = this,
+          let _logger = this.driver.logger;
+        _logger.info('Applying "After Hooks"');
+        this.driver.printEvaluationReport(ScenarioResult,  (err) => {
             if (err) {
                 _logger.log("Error, closing server");
-                self.browser.pinotServer.stop(); //stop the pinot server
+                this.driver.pinotServer.stop(); //stop the pinot server
                 callback();
             } else {
-                _logger.info("Finished scenario: '" + scenario.getName() + "'");
+                _logger.info("Finished scenario: '" + ScenarioResult.scenario.name + "'");
                 if (_logger.getLogLevel() < 3) {
                     _logger.info("Closing selenium driver");
                     _logger.info("To keep the browser up and running set Merlot log level 3 (Error level) in the Blueprint config");
-                    self.browser.pinotServer.stop(); //stop the pinot server
-                    self.browser.closeDriver(); //closing the selenium driver (browser)
+                    this.driver.pinotServer.stop(); //stop the pinot server
+                    this.driver.closeDriver(); //closing the selenium driver (browser)
                 }
-                self.browser.pinotServer.stop(); //stop the pinot server
+                this.driver.pinotServer.stop(); //stop the pinot server
                 callback();
             }
 

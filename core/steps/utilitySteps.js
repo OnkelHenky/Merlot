@@ -10,9 +10,7 @@
  * @type {utility_Steps}
  */
 
-var {defineSupportCode} = require('cucumber');
-
-defineSupportCode(function({Given}) {
+module.exports = function({Given}) {
     /**
      * Set the actor, tell the browser to run with a specific actor
      */
@@ -44,4 +42,4 @@ defineSupportCode(function({Given}) {
         this.driver.setConformanceLevel(conformanceLevel);
         callback();
     });
-});
+};

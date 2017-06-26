@@ -20,7 +20,7 @@ var Pinot = exports.Pinot = function () {
     this.server = require('http').Server(this.app);
 
     this.app.set('port', process.env.PORT || 3000);
-    this.app.use(logger('dev'));
+  //  this.app.use(logger('dev')); // logging
     this.app.use(express.static(path.join(__dirname, 'public')));
     this.app.use(errorHandler());
 
@@ -36,7 +36,7 @@ var Pinot = exports.Pinot = function () {
 Pinot.prototype.start = function () {
     var self = this;
     self.server.listen(self.app.get('port'), function(){
-         console.log("Express server http://127.0.0.1 listening on port " + self.app.get('port'));
+       //  console.log("Express server http://127.0.0.1 listening on port " + self.app.get('port'));
     });
 };
 
