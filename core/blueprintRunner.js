@@ -482,8 +482,11 @@ BlueprintRunner.prototype.addConfiguration = function (config) {
             }
 
             self.driver = driverBuilder(_serverCapabilities, _server, self.config.browser).build();
+            this.logger.dir(self.webdriver);
+        //      var timeouts = webdriver. // Timeouts(self.driver);
 
-              var timeouts = new self.webdriver.WebDriver.Timeouts(self.driver);
+            var timeouts = self.driver.manage().timeouts() // Timeouts(self.driver);
+             // var timeouts = new self.webdriver.WebDriver.Timeouts(self.driver);
                   timeouts.setScriptTimeout(100000); //TODO: set timer to wait for pages to be loaded
                   timeouts.implicitlyWait(30000); //wait 3 seconds for every element to retrieve
                // timeouts.pageLoadTimeout(10000); //set timer to wait for pages to be loaded
@@ -491,10 +494,8 @@ BlueprintRunner.prototype.addConfiguration = function (config) {
 
     } catch (ex) {
         this.logger.dir(ex);
-        this.logger.log('Selenium JAR not found at ' + ex['path']);
-        this.logger.log('HINT: Check for typos');
         self.driver.quit(); // quiting the driver, since we have an error.
-        throw new Error('Unable to find selenium.jar');
+        throw new Error('Error during web driver setup');
     }
 
 };
@@ -772,10 +773,15 @@ BlueprintRunner.prototype.evalAccessibilityWithSemantic = function (webElement, 
         _semantics = semantics;
         _issues = [];
 
-    webElement.getOuterHtml().
+  /*  webElement.getOuterHtml().
         then(function(outerHtml){
             return outerHtml;
-        }).
+        }). */
+
+    webElement.getAttribute('outerHTML').
+    then(function(outerHtml){
+        return outerHtml;
+    }).
         /*
          then(function injectPinot(outerHtml) {
          return self.injectAcessibilityTestScripts().

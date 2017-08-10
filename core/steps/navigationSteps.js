@@ -41,7 +41,8 @@ module.exports = function ({Given, When, Then}) {
                 callback();
             }).
             then(null, function onError(err) {
-                callback.fail(err);
+             self.driver.errorHandler(err,callback);
+            //callback.fail(err);
             });
     });
 
@@ -246,7 +247,7 @@ module.exports = function ({Given, When, Then}) {
                 callback();
             }).
             then(null, function onError(err) {
-                console.dir();
+                 console.dir(err);
                 that.driver.errorHandler(err,_domElement,_stepDescr,callback);
             });
     });

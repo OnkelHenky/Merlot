@@ -12,7 +12,6 @@ module.exports = blueprintSteps = function ({Given, When, Then}) {
    /*
     * Invoking the cucumber hooks to process
     * action before and after each scenario
-
     require('../auxilium/newHooks');
     */
 
