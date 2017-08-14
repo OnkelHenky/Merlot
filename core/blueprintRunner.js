@@ -205,7 +205,6 @@ BlueprintRunner.prototype.getAccessibilityIssuesBuffer = function(ScenarioName, 
     var self    = this,
         _buffer ='';
     console.dir(self);
-
     /*
      * MU Template:
      *
@@ -482,14 +481,12 @@ BlueprintRunner.prototype.addConfiguration = function (config) {
             }
 
             self.driver = driverBuilder(_serverCapabilities, _server, self.config.browser).build();
-            this.logger.dir(self.webdriver);
-        //      var timeouts = webdriver. // Timeouts(self.driver);
+            var timeouts = self.driver.manage().timeouts();// Timeouts(self.driver);
 
-            var timeouts = self.driver.manage().timeouts() // Timeouts(self.driver);
-             // var timeouts = new self.webdriver.WebDriver.Timeouts(self.driver);
-                  timeouts.setScriptTimeout(100000); //TODO: set timer to wait for pages to be loaded
-                  timeouts.implicitlyWait(30000); //wait 3 seconds for every element to retrieve
-               // timeouts.pageLoadTimeout(10000); //set timer to wait for pages to be loaded
+            // var timeouts = new self.webdriver.WebDriver.Timeouts(self.driver);
+            timeouts.setScriptTimeout(100000); //TODO: set timer to wait for the web page to be loaded
+            timeouts.implicitlyWait(30000); //wait 3 seconds for every element to retrieve
+            // timeouts.pageLoadTimeout(10000); //set timer to wait for pages to be loaded
         }
 
     } catch (ex) {
@@ -976,8 +973,6 @@ BlueprintRunner.prototype.injectAcessibilityTestScripts = function () {
                 _jqueryScriptTag.type = "text/javascript";
 
             document.head.appendChild(_jqueryScriptTag);
-
-
 
             /*
                 //Old or alternative implementation for triggering the Selenium callback

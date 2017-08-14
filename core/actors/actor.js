@@ -86,7 +86,7 @@ Actor.prototype = new Merlot;
  */
 //TODO: Add description about the format of the JSON object in the jsDoc comment!
 Actor.prototype.getActorInformation_AsJSON = function () {
-   var _jsonActorInfo = {};
+   let _jsonActorInfo = {};
        _jsonActorInfo.name  = this.getName();  //The name of the actor
        _jsonActorInfo.image = this.getImage(); //The URL to the actor`s image
 
@@ -176,7 +176,7 @@ Actor.prototype.getImage = function(){
  * @returns {{Array}|*} Returns an Array with semantic requirement statements on FALSE otherwise.
  */
 Actor.prototype.hastSomethingtoSayAboutSemenatics = function (elementName){
-    var _semantics = this.getSemenaticRuleSet();
+    let _semantics = this.getSemenaticRuleSet();
 
     if(_semantics[elementName]){
        return _semantics[elementName];
@@ -200,7 +200,7 @@ Actor.prototype.getNavigationPattern = function () {
  * @param properties
  */
 Actor.prototype.addPoperties = function(properties){
-    var that = this;
+    let that = this;
 
     Object.keys(properties).forEach(function (key) {
         that[key] = properties[key];
