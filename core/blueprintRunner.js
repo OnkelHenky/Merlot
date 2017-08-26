@@ -50,8 +50,9 @@ var BlueprintRunner,
     DOMElement = require('./auxilium/DOMElement'),
     TagNameDictionary = require('./auxilium/tagNameDictionary'),
     MerlotErrors = require('./auxilium/MerlotErrors'),
-    Merlot = require('./Merlot').Merlot;
-    Pinot = require('./pinot/pinot').Pinot;
+    Merlot = require('./Merlot').Merlot,
+    Pinot = require('./pinot/pinot').Pinot,
+    Evaluator = require('./evaluator').Evaluator;
 
 /**
  * @description
@@ -95,6 +96,7 @@ BlueprintRunner = exports.BlueprintRunner = function (config) {
     this.reportDirectory     = ""; // Path where the accessibility issue report shall be stored.
     this.vinFiles            = ""; // Path where the vin files (actor rulesets) can be found.
     this.currentBlueprint    = ""; // The name of the current blueprint - aka: "The Scenario" in terms of cucumber
+    this.evaluator           = new Evaluator(); // Evaluator object that hold all the evaluation functions
 
     if (config && (config.seleniumPath && config.port && config.browser)) {
         this.addConfiguration(config);
@@ -126,6 +128,115 @@ BlueprintRunner = exports.BlueprintRunner = function (config) {
  */
 BlueprintRunner.prototype = new Merlot();
 
+/*
+ * +========= - START - ========+
+ * |                            |
+ * |    Object Configuration    |
+ * |                            |
+ * +============================+
+ */
+
+/**
+ * @description
+ * Adding the configuration for a new BlueprintRunner object.
+ * Example config object in JSON format.
+ * {
+ *   'seleniumPath': require('path').join(__dirname, '../../bin/selenium-server-standalone-2.42.0.jar'),
+ *   'port' : '4444',
+ *   'browser' : 'chrome',
+ *   'logLevel' : 3
+ *  };
+ * @param {{a: number, b: string}} config
+ */
+BlueprintRunner.prototype.addConfiguration = function (config) {
+    let self = this;
+
+    /*
+     * Check if the property 'vinFlies' is specified.
+     * The property should contain a valid path to the directory where
+     * the vin files ares stored.
+     */
+    if (config.vinFiles !== undefined && self.aux.isString(config.vinFiles)) {
+        if(self.utile._fs_.existsSync(config.vinFiles)){
+            self.vinFiles = config.vinFiles;
+            self.logger.info('Vin Files are here: '+ self.vinFiles);
+        }else{
+            throw new Error(config.vinFiles+ ' is not a valid directory!!');
+        }
+    }
+
+    /*
+     * Enable Merlot debug logger if the config contains the property
+     * 'config.logLevel' with a valid 'numeric' value.
+     *  1 = Only Logs; 2 = Logs and Info; 3 =  Logs, Info and Errors
+     */
+    if (config.logLevel !== undefined && this.aux.isNumber(config.logLevel)) {
+        this.logger = new Logger({'logLevel': config.logLevel});
+    }
+
+    if(config.reportsDir){
+        this.reportDirectory = config.reportsDir;
+    }
+
+    try {
+        let _stats = self.utile._fs_.statSync(config.seleniumPath);
+        /*
+         * Check if the given path to the selenium jar is pointing to an actual file.
+         * This throws an exception if the path is not pointing to a file
+         */
+        if (_stats.isFile()) {
+            self.config = config;
+            let _pathToSeleniumJar = self.config.seleniumPath,
+                _server = new SeleniumServer(_pathToSeleniumJar, {
+                    port: self.config.port
+                });
+
+            this.logger.info("Using selenium stand alone from: " + _pathToSeleniumJar);
+            _server.start();
+
+            /*
+             * Build the driver.
+             * NOTE: Only chrome is supported!
+             */
+            // self.driver = driverBuilder(self.config.browser).build();
+            self.driver = driverBuilder('using_google_chrome').build();
+            /*
+             * Sets the timeouts for the driver. Here:
+             * script: wait 10 sec. for external scripts to be loaded
+             * page: wait 10sec. for teh page to be loaded
+             * implicit: wait 3 seconds for for every element to be retrieved before throwing an error.
+             */
+            self.driver.manage().setTimeouts({script: 10 * 1000, page: 10 * 1000, implicit: 3 * 1000});
+        }
+
+    } catch (ex) {
+        this.logger.dir(ex);
+        self.driver.quit(); // quiting the driver, since we have an error.
+        throw new Error('Error during web driver setup');
+    }
+
+
+    /*
+     * Helper function for making an instance of the webdriver
+     * If the the browser is 'chrome', special options for are passed
+     * to the webdriver, to avoid any errors in the browser.
+     */
+    function driverBuilder(browser) {
+
+        if ('using_google_chrome' === browser) {
+            /*Adding chrome options to avoid error massages*/
+            var ChromeOptions = require('selenium-webdriver/chrome').Options;
+            var _chromeOpt = new ChromeOptions().addArguments("test-type");
+
+            /* New in selenium-webdriver >= 2.43.x
+             * See: http://www.joecolantonio.com/2014/09/09/selenium-webdriver-version-2-43-0-released/*/
+            return new webdriver.Builder().forBrowser('chrome').setChromeOptions(_chromeOpt);
+        }
+
+    }
+};
+
+
 /**
  * @description
  * Set the name of the current blueprint.
@@ -155,19 +266,358 @@ BlueprintRunner.prototype.getCurrentBlueprint = function (){
 
 /**
  * @description
+ * Define the actor, that shall be used during the blueprint spielwiese.
+ * @param actor {string} the name of the actor.
+ */
+BlueprintRunner.prototype.runWithThatActor = function (actor) {
+    let that = this,
+        _aux = that.utile._aux_;
+
+    if (_aux.isString(actor)) {
+        try {
+            that.actor = new genericActor();
+            that.actor.loadPreferenceSet(that.vinFiles,actor,that.getCurrentBlueprint());
+            that.actor.setName(actor);
+            that.logger.info('Using "' + that.actor + '" as actor');
+        } catch(ex){
+            throw new ReferenceError('Actor with name "' + actor + '" not found');
+        }
+    } else {
+        throw new TypeError('Actor with name "' + actor + '" is not a valid string, use letters only');
+    }
+};
+
+/**
+ * @description
  * Set the WCAG conformance level for this blueprint evaluation
  * @param conformanceLevel
  */
 BlueprintRunner.prototype.setConformanceLevel = function(conformanceLevel){
-   if(["A","AA","AAA"].indexOf(conformanceLevel) !== -1){
-       this.acessibilityRuleset = this.actor.getName() + conformanceLevel;
-       this.logger.info("Checking for "+ this.actor.getName() + "'s "+conformanceLevel+" level conformance");
-   }else{
-       this.acessibilityRuleset = this.actor.getName() + 'A';
-       this.logger.info(conformanceLevel+" is not a valid WCAG conformance level, please use 'A', 'AA' or 'AAA'");
-       this.logger.info("Using default WCAG conformance level: 'A'");
-   }
+    if(["A","AA","AAA"].indexOf(conformanceLevel) !== -1){
+        this.acessibilityRuleset = this.actor.getName() + conformanceLevel;
+        this.logger.info("Checking for "+ this.actor.getName() + "'s "+conformanceLevel+" level conformance");
+    }else{
+        this.acessibilityRuleset = this.actor.getName() + 'A';
+        this.logger.info(conformanceLevel+" is not a valid WCAG conformance level, please use 'A', 'AA' or 'AAA'");
+        this.logger.info("Using default WCAG conformance level: 'A'");
+    }
 };
+
+/**
+ * @description
+ * Set the login credentials, username and password, for the defined actor.
+ * @param type
+ * @param value
+ */
+BlueprintRunner.prototype.setLoginCredentialsForActor = function (type, value) {
+    var that = this,
+        _aux = that.utile._aux_;
+
+    if (that.actor) {
+        if (_aux.isString(type) && _aux.isString(value)) {
+            switch (type) {
+                case 'username':
+                    that.actor.setUsername(value);
+                    break;
+                case 'password':
+                    that.actor.setPassword(value);
+                    break;
+                default:
+                    throw new TypeError("Type " + type + " for 'setLoginCredentialsForActor is not allowed, use 'username' or 'password'");
+                    break;
+            }
+        }
+    } else {
+        throw new TypeError("No actor defined in the blueprintRunner, therefor you cant set any LoginCredentials ");
+    }
+};
+
+
+/**
+ * @description
+ * Create a new DOMElement with the given properties
+ * @param properties
+ * @returns {DOMElement}
+ */
+BlueprintRunner.prototype.createDOMElement = function (properties) {
+
+    var _resolvedTagName,
+        _resolvedType,
+        _resolvedAttributeName = this.aux.resolveAttributeName(properties.identifiedBy);
+
+    if (TagNameDictionary.hasOwnProperty(properties.tagName)) {
+
+        _resolvedTagName = TagNameDictionary[properties.tagName].eleName;
+        _resolvedType = TagNameDictionary[properties.tagName].type;
+
+        var domeElementProperties = {
+            'tagName': _resolvedTagName,
+            'type': _resolvedType,
+            'searchAttribute': {
+                "name": _resolvedAttributeName,
+                'value': properties.identifierValue
+            }
+        };
+
+        if (properties.name) {
+            domeElementProperties.name = properties.name;
+        }
+
+        return new DOMElement(domeElementProperties);
+
+    } else {
+        throw new Error('"' + properties.tagName + '" is not a valid tag name');
+    }
+
+};
+
+/*
+ * +========== - END - =========+
+ * |                            |
+ * |    Object Configuration    |
+ * |                            |
+ * +============================+
+ */
+
+/*
+ * +========= - START - ========+
+ * |                            |
+ * |    Blueprint Commands      |
+ * |                            |
+ * +============================+
+ */
+
+    /**
+     * @description
+     * Got the the URL location, defined by the parameter 'where'
+     * @param where , the URL
+     * @param callback
+     */
+    BlueprintRunner.prototype.goTo = function (where, callback) {
+        var self = this;
+        this.driver.get(where).
+        then(function injectPinot() {
+            return self.injectAcessibilityTestScripts();
+        }).
+        then(function onOk() {
+            callback();
+        }).
+        then(null, function onError(err) {
+            callback.fail(err);
+        });
+    };
+
+    /**
+     * @description
+     * Get the title of the web page
+     * @returns {*}  a promise
+     */
+    BlueprintRunner.prototype.getPageTitle = function () {
+        return  this.driver.getTitle();
+    };
+
+        /**
+     * @description
+     * Let the actor try to find or reach the element, defined by the tag name.
+     * @param domElement
+     * @returns {*} a promise
+     */
+    BlueprintRunner.prototype.actorTryToFindThisElement = function (domElement) {
+        return this.actor.findElement.call(this, domElement);
+    };
+
+
+    /**
+     * @description
+     * Let the actor perform a 'click'
+     * @param webEle
+     */
+    BlueprintRunner.prototype.click = function (webEle) {
+        return this.actor.click.call(this, webEle);
+    };
+
+    /**
+     * @description
+     * Enter text into the given text field, provided by the WebElement.
+     * @param webElement , the reference to the text field
+     * @param text , the text that should be entered into the WebElement.
+     */
+    BlueprintRunner.prototype.enterText = function (webElement, text) {
+        return webElement.sendKeys(text);
+    };
+
+    /**
+     * @description
+     * Find a radio button in a radio group.
+     * With webElement = The first radio button in the group.
+     * And domElement = The representation of the radio button, that we are looking for.
+     * @throws  {MerlotError} If no radio button with given format defined in 'domElement' can be found with in the radio group.
+     * @param   {Object} webElement
+     * @param   {Object} domElement
+     * @returns {Object} A promise with the radio button.
+     */
+    BlueprintRunner.prototype.interactWithRadioButton = function (webElement, domElement) {
+        var _actor = this.actor;
+        return _actor.interactWithRadioButton.call(this, webElement, domElement);
+    };
+
+    /**
+     *
+     * @param webElement
+     * @param domElement
+     * @returns {*}
+     */
+    BlueprintRunner.prototype.interactWithSelection = function (webElement, domElement) {
+        return this.actor.interactWithSelection.call(this, webElement, domElement);
+    };
+
+    /**
+     * @description
+     * Get the handle of the current window
+     * @returns {*}  a promise
+     */
+    BlueprintRunner.prototype.getCurrentWindowHandle = function () {
+        return  this.driver.getWindowHandle();
+    };
+
+    /**
+     * @description
+     * Get all handles of all windows, or tabs
+     * @returns {*} a promise
+     */
+    BlueprintRunner.prototype.getAllWindowHandles = function () {
+        return this.driver.getAllWindowHandles();
+    };
+
+    /**
+     * @description
+     * Switch to the window with the given handle
+     * and wait for a page to be ready when document.readyState is 'complete'
+     * Credit for this solution to Harry and Thomas Marks
+     * URl: http://www.obeythetestinggoat.com/how-to-get-selenium-to-wait-for-page-load-after-a-click.html
+     * @param handle the handle
+     * @returns {*} a promise
+     */
+    BlueprintRunner.prototype.switchToNewHandle = function (handle) {
+        var _driver = this.driver,
+            _by = this.webdriver.By,
+            _deferred = this.webdriver.promise.defer();
+
+        function isPageStale(htmlElementOfTheOldPage) {
+            return  htmlElementOfTheOldPage.findElement(_by.id("12SomeIDdoesntMatter345")).
+            then(function whatWeFoundAElement() {
+                return false;
+            }).
+            then(null, function onError(error) {
+                return('StaleElementReferenceError' === error.name);
+            });
+        }
+
+        _driver.findElement(_by.tagName("html")).
+        then(function switchToNewHandle(htmlElementOfTheOldPage) {
+            _driver.switchTo().window(handle).
+            then(function waitForThePageToBeReady() {
+                _driver.wait(function untilOldPageHasGoneStale() { //wait until ...
+                    return isPageStale(htmlElementOfTheOldPage);
+                }).
+                then(function pageShouldBeReadyNow() {
+                    _deferred.fulfill(true);
+                });
+            });
+        });
+
+        return _deferred.promise;
+    };
+
+    /**
+     * @description
+     * Waiting for an element to be present or ready .
+     * @param locator the locator used to find the element
+     * @param TIMEOUT the time in milliseconds to wait for the element
+     * @returns {*}  a promise
+     */
+    BlueprintRunner.prototype.waitForElementToBeReady = function (locator, TIMEOUT) {
+        var _driver = this.driver;
+        return _driver.wait(function () {  //wait until ...
+            return _driver.isElementPresent(locator);
+        }, TIMEOUT, "Element was not ready after " + TIMEOUT + " milliseconds");
+    };
+
+
+/*
+ * +========= - END - ==========+
+ * |                            |
+ * |    Blueprint Commands      |
+ * |                            |
+ * +============================+
+ */
+
+
+
+/*
+ * +========= - START - ==========+
+ * |                              |
+ * |   Accessibility Evaluation   |
+ * |                              |
+ * +==============================+
+ */
+
+/**
+ * @description
+ * Perform an accessibility evaluation on the provided element
+ * @param webElement {object}, the web element to be tested
+ * @param domElement {object}, the web element's representation as domElement
+ * @param _stepDescr String, the current step description
+ * @param semantics , the semantics of the current actor
+ * @returns {webdriver.promise.Deferred.promise|*} a promise that will be resolved when the evaluation is completed
+ */
+BlueprintRunner.prototype.evalAccessibilityWithSemantic = function (webElement, domElement,_stepDescr,semantics)  {
+    return this.evaluator.evalAccessibilityWithSemantic.call(this, webElement, domElement,_stepDescr,semantics);
+};
+
+/**
+ * @description
+ * Perform an accessibility evaluation on the provided element
+ * @param {object} webElement the element to test
+ * @param {object} domElement the web element's representation as domElement
+ * @param {String} _stepDescr, the current step description
+ * @returns {webdriver.promise.Deferred.promise|*} a promise that will be resolved when the evaluation is completed
+ */
+BlueprintRunner.prototype.evalAccessibility = function (webElement, domElement,_stepDescr) {
+    return this.evaluator.evalAccessibility.call(this,webElement,domElement,_stepDescr);
+
+};
+
+/**
+ * @description
+ * Applying a semantic requirement statement on the web application, which is being evaluated in the current Blueprint.
+ * The semantic requirement statement is shown to the tester in form of a pop-up.
+ * @param _domElement the element on the web application for which the semantic requirement applies to.
+ * @param callback the callback for cucumber
+ * @param semanticRequirementStatement semantic requirement statement - Array
+ */
+BlueprintRunner.prototype.applySemanticRequirementStatement = function(_domElement,semanticRequirementStatement,callback){
+    let self = this;
+
+    self.driver.executeAsyncScript(function checkIfElementExistsOnThePage(_domElement) {
+        window.Gamay.isValidElement(_domElement,arguments[arguments.length - 1]);
+
+    }, _domElement.getCSSSelector()).then(function outlineError(validStatus){
+        if(!validStatus){ //not valid, maybe it a typo.
+            callback.fail(new MerlotErrors.ElementNotFoundError("Element " + _domElement + " does not exit check for typos").message);
+        }else{ //valid
+            //self.addAccessibilityIssue(obj);
+            self.driver.executeAsyncScript(function(_domElement,semanticRequirementStatement) {
+                window.Gamay.markSemanticRequirement(_domElement,semanticRequirementStatement,arguments[arguments.length - 1]);
+            }, _domElement.getCSSSelector(), semanticRequirementStatement).then(function(ok){
+                callback.fail(new MerlotErrors.AbortEvaluationError(self.actor.getName()+" can't continue with the scenario due to an error."
+                    + " \n See the Error report, or the highlighted section on your web page for more details.").message);
+            });
+        }
+    });
+
+};
+
 
 /**
  * @description
@@ -179,23 +629,12 @@ BlueprintRunner.prototype.getArrayWithAccessibilityIssues = function(){
 };
 
 /**
- *
+ * @description
+ * Adds an accessibility issue an the issue stack
  * @param issue
  */
 BlueprintRunner.prototype.addAccessibilityIssue = function(issue){
-    //console.dir(issue);
-  //  console.dir(issue.isssues[0].msgs);
     this.isssuesMsgs.push(issue);
-};
-
-
-/**
- * @description
- * Get the path to the directory where the reports should be stored
- * @returns {string}
- */
-BlueprintRunner.prototype.getReportDirectory = function(){
-    return this.reportDirectory;
 };
 
 /**
@@ -221,18 +660,18 @@ BlueprintRunner.prototype.getAccessibilityIssuesBuffer = function(ScenarioName, 
      */
     mu.root = __dirname + '/reports';
     var data =  issues.map(function(step){
-                                return {
-                                    stepDescr: step.stepDescr,
-                                    issues: step.isssues.map(function(issue){
-                                        return {
-                                                type: issue.type,
-                                                msg : issue.msgs.map(function(issuesDescription){
-                                                      return { m: issuesDescription.msg }
-                                                })
-                                            }
-                                    })
-                                };
-                            });
+        return {
+            stepDescr: step.stepDescr,
+            issues: step.isssues.map(function(issue){
+                return {
+                    type: issue.type,
+                    msg : issue.msgs.map(function(issuesDescription){
+                        return { m: issuesDescription.msg }
+                    })
+                }
+            })
+        };
+    });
     var time = new Date();
     var context = {
         scenario: ScenarioName,
@@ -241,9 +680,34 @@ BlueprintRunner.prototype.getAccessibilityIssuesBuffer = function(ScenarioName, 
         actor : self.actor.getName()
     };
     mu.compileAndRender('report.md.mu', context).
-        on('data', function (data) { _buffer += data;}).
-        on('end', function () { cb(_buffer);}).
-        on('error', function (error) {console.log(error);});
+    on('data', function (data) { _buffer += data;}).
+    on('end', function () { cb(_buffer);}).
+    on('error', function (error) {console.log(error);});
+};
+
+/*
+ * +========= - END - ============+
+ * |                              |
+ * |   Accessibility Evaluation   |
+ * |                              |
+ * +==============================+
+ */
+
+/*
+ * +========= - START - ==========+
+ * |                              |
+ * |          REPORTING           |
+ * |                              |
+ * +==============================+
+ */
+
+/**
+ * @description
+ * Get the path to the directory where the reports should be stored
+ * @returns {string}
+ */
+BlueprintRunner.prototype.getReportDirectory = function(){
+    return this.reportDirectory;
 };
 
 /**
@@ -326,238 +790,32 @@ BlueprintRunner.prototype.printEvaluationReport = function(scenario,callback){
             });
         } else {
             self.getAccessibilityIssuesBuffer(scenario.scenario.name, _issues, function(buffer){
-                 self.printIssuesBuffer(buffer,scenario,callback);
+                self.printIssuesBuffer(buffer,scenario,callback);
             });
         }
     });
 
 };
 
-/**
- * @description
- * Resolving the identifier of an DOMElement by cutting if the '@' form the cucumber scenario steps
- * Example: if you have a step like: 'The actor chooses "Saab" from the selection whose @id is "cars"'
- * The '@' in '@id' indicates the the attribute: 'id' with the value 'cars' should be selected.
- * The '@' is just an abbreviation for attribute and must be cut of before further processing.
- * @param identifiedBy
- * @returns {*} the resolved identifier
+
+/*
+ * +========== - END - ===========+
+ * |                              |
+ * |          REPORTING           |
+ * |                              |
+ * +==============================+
  */
-BlueprintRunner.prototype.resolveAttributeName = function (identifiedBy) {
-    let _resolvedIdentifiedBy = void 0;  //undefined
 
-    switch (identifiedBy) {
-        case "@id":
-        case "@name":
-        case "@href":
-        case "@value":
-        case "@label":
-        case "@css":
-        case "@style":
-            _resolvedIdentifiedBy = identifiedBy.split("@")[1];
-            /* Cutting of the '@' */
-            break;
-        case "textNode":
-        case ">text":
-            _resolvedIdentifiedBy = "textNode"; //identifiedBy.split(">")[1]; /* Cutting of the '>' */
-            break;
-        default:
-            throw new Error('"' + identifiedBy + '" is not valid identifier! e.g.; "@id", "@name", "@value" or ">text", to get the text node value');
-            break;
-    }
-    return _resolvedIdentifiedBy;
-};
 
-/**
- * @description
- * Adding the configuration for a new BlueprintRunner object.
- * Example config object in JSON format.
- * {
- *   'seleniumPath': require('path').join(__dirname, '../../bin/selenium-server-standalone-2.42.0.jar'),
- *   'port' : '4444',
- *   'browser' : 'chrome',
- *   'logLevel' : 3
- *  };
- * @param {{a: number, b: string}} config
+/*
+ * +========= - START - ==========+
+ * |                              |
+ * |        Error Handling        |
+ * |              &               |
+ * |         Communication        |
+ * |                              |
+ * +==============================+
  */
-BlueprintRunner.prototype.addConfiguration = function (config) {
-    let self = this;
-
-    /*
-     * Check if the property 'vinFlies' is specified.
-     * The property should contain a valid path to the directory where
-     * the vin files ares stored.
-     */
-    if (config.vinFiles !== undefined && self.aux.isString(config.vinFiles)) {
-        if(self.utile._fs_.existsSync(config.vinFiles)){
-            self.vinFiles = config.vinFiles;
-            self.logger.info('Vin Files are here: '+ self.vinFiles);
-        }else{
-            throw new Error(config.vinFiles+ ' is not a valid directory!!');
-        }
-    }
-
-    /*
-     * Enable Merlot debug logger if the config contains the property
-     * 'config.logLevel' with a valid 'numeric' value.
-     *  1 = Only Logs; 2 = Logs and Info; 3 =  Logs, Info and Errors
-     */
-    if (config.logLevel !== undefined && this.aux.isNumber(config.logLevel)) {
-        this.logger = new Logger({'logLevel': config.logLevel});
-    }
-
-    if(config.reportsDir){
-        this.reportDirectory = config.reportsDir;
-    }
-
-    try {
-        let _stats = self.utile._fs_.statSync(config.seleniumPath);
-        /*
-         * Check if the given path to the selenium jar is pointing to an actual file.
-         * This throws an exception if the path is not pointing to a file
-         */
-        if (_stats.isFile()) {
-            self.config = config;
-            let _pathToSeleniumJar = self.config.seleniumPath,
-                _server = new SeleniumServer(_pathToSeleniumJar, {
-                    port: self.config.port
-                });
-
-            this.logger.info("Using selenium stand alone from: " + _pathToSeleniumJar);
-            _server.start();
-
-            /*
-             * Build the driver.
-             * NOTE: Only chrome is supported!
-             */
-             // self.driver = driverBuilder(self.config.browser).build();
-            self.driver = driverBuilder('using_google_chrome').build();
-            /*
-             * Sets the timeouts for the driver. Here:
-             * script: wait 10 sec. for external scripts to be loaded
-             * page: wait 10sec. for teh page to be loaded
-             * implicit: wait 3 seconds for for every element to be retrieved before throwing an error.
-             */
-            self.driver.manage().setTimeouts({script: 10 * 1000, page: 10 * 1000, implicit: 3 * 1000});
-        }
-
-    } catch (ex) {
-        this.logger.dir(ex);
-        self.driver.quit(); // quiting the driver, since we have an error.
-        throw new Error('Error during web driver setup');
-    }
-
-
-    /*
-     * Helper function for making an instance of the webdriver
-     * If the the browser is 'chrome', special options for are passed
-     * to the webdriver, to avoid any errors in the browser.
-     */
-    function driverBuilder(browser) {
-
-        if ('using_google_chrome' === browser) {
-            /*Adding chrome options to avoid error massages*/
-            var ChromeOptions = require('selenium-webdriver/chrome').Options;
-            var _chromeOpt = new ChromeOptions().addArguments("test-type");
-
-            /* New in selenium-webdriver >= 2.43.x
-             * See: http://www.joecolantonio.com/2014/09/09/selenium-webdriver-version-2-43-0-released/*/
-            return new webdriver.Builder().forBrowser('chrome').setChromeOptions(_chromeOpt);
-        }
-
-    }
-};
-
-/**
- * @description
- * Create a new DOMElement with the given properties
- * @param properties
- * @returns {DOMElement}
- */
-BlueprintRunner.prototype.createDOMElement = function (properties) {
-
-    var _resolvedTagName,
-        _resolvedType,
-        _resolvedAttributeName = this.resolveAttributeName(properties.identifiedBy);
-
-
-    if (TagNameDictionary.hasOwnProperty(properties.tagName)) {
-
-        _resolvedTagName = TagNameDictionary[properties.tagName].eleName;
-        _resolvedType = TagNameDictionary[properties.tagName].type;
-
-        var domeElementProperties = {
-            'tagName': _resolvedTagName,
-            'type': _resolvedType,
-            'searchAttribute': {
-                "name": _resolvedAttributeName,
-                'value': properties.identifierValue
-            }
-        };
-
-        if (properties.name) {
-            domeElementProperties.name = properties.name;
-        }
-
-        return new DOMElement(domeElementProperties);
-
-    } else {
-        throw new Error('"' + properties.tagName + '" is not a valid tag name');
-    }
-
-};
-
-/**
- * @description
- * Define the actor, that shall be used during the blueprint spielwiese.
- * @param actor {string} the name of the actor.
- */
-BlueprintRunner.prototype.runWithThatActor = function (actor) {
-    let that = this,
-        _aux = that.utile._aux_;
-
-    if (_aux.isString(actor)) {
-            try {
-                    that.actor = new genericActor();
-                    that.actor.loadPreferenceSet(that.vinFiles,actor,that.getCurrentBlueprint());
-                    that.actor.setName(actor);
-                    that.logger.info('Using "' + that.actor + '" as actor');
-                } catch(ex){
-                  throw new ReferenceError('Actor with name "' + actor + '" not found');
-                }
-    } else {
-        throw new TypeError('Actor with name "' + actor + '" is not a valid string, use letters only');
-    }
-};
-
-/**
- * @description
- * Applying a semantic requirement statement on the web application, which is being evaluated in the current Blueprint.
- * The semantic requirement statement is shown to the tester in form of a pop-up.
- * @param _domElement the element on the web application for which the semantic requirement applies to.
- * @param callback the callback for cucumber
- * @param semanticRequirementStatement semantic requirement statement - Array
- */
-BlueprintRunner.prototype.applySemanticRequirementStatement = function(_domElement,semanticRequirementStatement,callback){
-    let self = this;
-
-    self.driver.executeAsyncScript(function checkIfElementExistsOnThePage(_domElement) {
-        window.Gamay.isValidElement(_domElement,arguments[arguments.length - 1]);
-
-    }, _domElement.getCSSSelector()).then(function outlineError(validStatus){
-        if(!validStatus){ //not valid, maybe it a typo.
-            callback.fail(new MerlotErrors.ElementNotFoundError("Element " + _domElement + " does not exit check for typos").message);
-        }else{ //valid
-            //self.addAccessibilityIssue(obj);
-            self.driver.executeAsyncScript(function(_domElement,semanticRequirementStatement) {
-                window.Gamay.markSemanticRequirement(_domElement,semanticRequirementStatement,arguments[arguments.length - 1]);
-            }, _domElement.getCSSSelector(), semanticRequirementStatement).then(function(ok){
-                callback.fail(new MerlotErrors.AbortEvaluationError(self.actor.getName()+" can't continue with the scenario due to an error."
-                    + " \n See the Error report, or the highlighted section on your web page for more details.").message);
-            });
-        }
-    });
-
-};
 
 /**
  * @description
@@ -570,363 +828,79 @@ BlueprintRunner.prototype.applySemanticRequirementStatement = function(_domEleme
 BlueprintRunner.prototype.errorHandler = function(error, _domElement,_stepDescription,callback){
     var self = this;
 
-    console.log('++++++++++++++++++++++++++++++++');
+    console.log('++++++++++++++IN ERROR HANDLER ++++++++++++++++++');
     console.dir(error);
 
-
     /*TODO: This should be somewhat actor-specific*/
-      if(MerlotErrors.ERROR_ISSUES_FOUND === error.getMsg()){
-          callback(new MerlotErrors.AbortEvaluationError(self.actor.getName()+" can't continue with the scenario due to an error."
-                        + " \n See the Error report, or the highlighted section on your web page for more details.").message);
-      }
-      else if(MerlotErrors.LOOP_ERROR === error.getMsg()){
-          var obj = {};
-          obj.stepDescr = _stepDescription;
-
-/*
-          var LoopIssue = new AccessibilityIssue({
-              type: "ERROR",
-              typeCode: 1,
-              code: 'Conformance Level:A - Principle: Operable 2.1.1 Keyboard Accessible: Make all functionality available from a keyboard.',
-              wcagConf: 'AnnaA',
-              wcagGuideline: '2.1.1',
-              wcagPrinciple: 'Operable',
-              wcagTechnique: '',
-              msg: self.actor.name+" can't reach the element "+_domElement+" by using keyboard navigation. Tip: Try to set the tabindex attribute, e.g., 'tabindex='0' '"
-          });
-            obj.isssues = [{ type: 'ERROR', msgs:[
-                LoopIssue
-                ]
-            }];
-
-          console.dir( obj.isssues[0].msgs);
-*/
-
-           obj.isssues = [{ type: 'ERROR', msgs:[{
-              msg: self.actor.name+" can't reach the element "+_domElement+" by using keyboard navigation. Tip: Try to set the tabindex attribute, e.g., 'tabindex='0' '",
-              typeCode: 1,
-              type: "ERROR",
-              code: 'Conformance Level:A - Principle: Operable 2.1.1 Keyboard Accessible: Make all functionality available from a keyboard.',
-              wcagConf: 'AnnaA',
-              wcagGuideline: '"Guideline 2.1 Success Criterion 2.1.1',
-              wcagPrinciple: 'Principle 2 - Operable',
-              wcagTechnique: ''
-              }]
-          }];
-
-
-
-          console.dir( obj.isssues[0].msgs);
-
-         // console.dir( obj.isssues[0]);
-
-          self.driver.executeAsyncScript(function checkIfElementExistsOnThePage(_domElement) {
-              window.Gamay.isValidElement(_domElement,arguments[arguments.length - 1]);
-
-          }, _domElement.getCSSSelector()).then(function outlineError(validStatus){
-              if(!validStatus){ //not valid, maybe it's a typo.
-                  callback.fail(new MerlotErrors.ElementNotFoundError("Element " + _domElement + " does not exit check for typos").message);
-              }else{ //valid
-                  self.addAccessibilityIssue(obj);
-                  self.driver.executeAsyncScript(function(_domElement,issues) {
-                      window.Gamay.markElement(_domElement,issues,arguments[arguments.length - 1]);
-                  }, _domElement.getCSSSelector(), obj.isssues[0].msgs).then(function(ok){
-                      callback(false);
-                      //callback.fail(new MerlotErrors.AbortEvaluationError(self.actor.getName()+" can't continue with the scenario due to an error."
-                        //  + " \n See the Error report, or the highlighted section on your web page for more details.").message);
-                  });
-              }
-          });
-
-      }else{
-          callback.fail(new Error("Merlot reported an error! " + error + " with DOMElement: " + _domElement).message);
-      }
-};
-
-/**
- * @description
- * Set the login credentials, username and password, for the defined actor.
- * @param type
- * @param value
- */
-BlueprintRunner.prototype.setLoginCredentialsForActor = function (type, value) {
-    var that = this,
-        _aux = that.utile._aux_;
-
-    if (that.actor) {
-        if (_aux.isString(type) && _aux.isString(value)) {
-            switch (type) {
-                case 'username':
-                    that.actor.setUsername(value);
-                    break;
-                case 'password':
-                    that.actor.setPassword(value);
-                    break;
-                default:
-                    throw new TypeError("Type " + type + " for 'setLoginCredentialsForActor is not allowed, use 'username' or 'password'");
-                    break;
-            }
-        }
-    } else {
-        throw new TypeError("No actor defined in the blueprintRunner, therefor you cant set any LoginCredentials ");
+    if(MerlotErrors.ERROR_ISSUES_FOUND === error.getMsg()){
+        callback(new MerlotErrors.AbortEvaluationError(self.actor.getName()+" can't continue with the scenario due to an error."
+            + " \n See the Error report, or the highlighted section on your web page for more details.").message);
     }
-};
 
-/**
- * @description
- * Let the actor try to find or reach the element, defined by the tag name.
- * @param domElement
- * @returns {*} a promise
- */
-BlueprintRunner.prototype.actorTryToFindThisElement = function (domElement) {
-    return this.actor.findElement.call(this, domElement);
-};
+    /* LOOP ERROR FOUND */
 
+    else if(MerlotErrors.LOOP_ERROR === error.getMsg()){
+        var obj = {};
+        obj.stepDescr = _stepDescription;
 
-/**
- * @description
- * Let the actor perform a 'click'
- * @param webEle
- */
-BlueprintRunner.prototype.click = function (webEle) {
-    return this.actor.click.call(this, webEle);
-};
-
-/**
- * @description
- * Let the actor perform accessibility checks on an WebElement.
- * This function will invoke the actors 'criteriaBundle' chain
- * and throw an error if one of the criteria is violated.
- * @param webElement
- * @param cb
- */
-BlueprintRunner.prototype.applyCriteria = function (webElement, cb) {
-    this.actor.criteriaBundle.checkCriterion(webElement, cb);
-};
-
-/**
- * @description
- * Enter text into the given text field, provided by the WebElement.
- * @param webElement , the reference to the text field
- * @param text , the text that should be entered into the WebElement.
- */
-BlueprintRunner.prototype.enterText = function (webElement, text) {
-    return webElement.sendKeys(text);
-};
-
-/**
- * @description
- * Find a radio button in a radio group.
- * With webElement = The first radio button in the group.
- * And domElement = The representation of the radio button, that we are looking for.
- * @throws  {MerlotError} If no radio button with given format defined in 'domElement' can be found with in the radio group.
- * @param   {Object} webElement
- * @param   {Object} domElement
- * @returns {Object} A promise with the radio button.
- */
-BlueprintRunner.prototype.interactWithRadioButton = function (webElement, domElement) {
-    var _actor = this.actor;
-    return _actor.interactWithRadioButton.call(this, webElement, domElement);
-};
-
-/**
- *
- * @param webElement
- * @param domElement
- * @returns {*}
- */
-BlueprintRunner.prototype.interactWithSelection = function (webElement, domElement) {
-    var _actor = this.actor;
-    return _actor.interactWithSelection.call(this, webElement, domElement);
-};
-
-
-/**
- * @description
- * Perform an accessibility evaluation on the provided element
- * @param {object} webElement the element to tes
- * @returns {webdriver.promise.Deferred.promise|*} a promise that will be resolved when the evaluation is completed
- */
-BlueprintRunner.prototype.evalAccessibilityWithSemantic = function (webElement, domElement,_stepDescr,semantics) {
-    var self = this,
-        _actorInfo = self.actor.getActorInformation_AsJSON(),//self.actor.getAcessibilityRuleset(),
-        _deferred = self.webdriver.promise.defer(),
-        _semantics = semantics;
-        _issues = [];
-
-  /*  webElement.getOuterHtml().
-        then(function(outerHtml){
-            return outerHtml;
-        }). */
-
-    webElement.getAttribute('outerHTML').
-    then(function(outerHtml){
-        return outerHtml;
-    }).
         /*
-         then(function injectPinot(outerHtml) {
-         return self.injectAcessibilityTestScripts().
-         then(function(){
-         return outerHtml;
-         });
-         }). */
-        then(function(outerHtml){
-            self.driver.executeAsyncScript(function(_actorInfo,html,domElement,_semantics) {
-                window.Gamay.accessibilityEvaluationHTMLCS_WITHSEMANTICS(_actorInfo,html,domElement,_semantics,arguments[arguments.length - 1]);
-            }, _actorInfo, ''+outerHtml,domElement.getCSSSelector(),_semantics)
-                .then(function checkResult(errors) {
+                  var LoopIssue = new AccessibilityIssue({
+                      type: "ERROR",
+                      typeCode: 1,
+                      code: 'Conformance Level:A - Principle: Operable 2.1.1 Keyboard Accessible: Make all functionality available from a keyboard.',
+                      wcagConf: 'AnnaA',
+                      wcagGuideline: '2.1.1',
+                      wcagPrinciple: 'Operable',
+                      wcagTechnique: '',
+                      msg: self.actor.name+" can't reach the element "+_domElement+" by using keyboard navigation. Tip: Try to set the tabindex attribute, e.g., 'tabindex='0' '"
+                  });
+                    obj.isssues = [{ type: 'ERROR', msgs:[
+                        LoopIssue
+                        ]
+                    }];
 
-                    var _notice    = [],
-                        _warning   = [],
-                        _error     = [],
-                        _def       = [];
+                  console.dir( obj.isssues[0].msgs);
+        */
 
-                    errors.forEach(function(error){
-                        switch(error.type){
-                            case 'NOTICE':
-                                _notice.push(error);
-                                break;
-                            case 'WARNING':
-                                _warning.push(error);
-                                break;
-                            case 'ERROR':
-                                _error.push(error);
-                                break;
-                            default:
-                                _def.push(error);
-                                break;
-                        }
-                    });
+        obj.isssues = [{ type: 'ERROR', msgs:[{
+            msg: self.actor.name+" can't reach the element "+_domElement+" by using keyboard navigation. Tip: Try to set the tabindex attribute, e.g., 'tabindex='0' '",
+            typeCode: 1,
+            type: "ERROR",
+            code: 'Conformance Level:A - Principle: Operable 2.1.1 Keyboard Accessible: Make all functionality available from a keyboard.',
+            wcagConf: 'AnnaA',
+            wcagGuideline: '"Guideline 2.1 Success Criterion 2.1.1',
+            wcagPrinciple: 'Principle 2 - Operable',
+            wcagTechnique: ''
+        }]
+        }];
 
-                    if(_notice.length > 0){
-                        _issues.push({
-                            type: 'NOTICE',
-                            msgs: _notice
-                        });
-                    }
-                    if(_warning.length > 0){
-                        _issues.push({
-                            type: 'WARNING',
-                            msgs: _warning
-                        });
-                    }
-                    if(_error.length > 0){
-                        _issues.push({
-                            type: 'ERROR',
-                            msgs: _error
-                        });
-                        var obj = {};
-                        obj.stepDescr = _stepDescr;
-                        obj.isssues = _issues;
-                        self.addAccessibilityIssue(obj);
-                        throw new MerlotErrors.AbortEvaluationError("ErrorFound");
-                    }
-                    if(_def.length > 0){
-                        _issues.push({
-                            type: 'UNKNOWN ISSUE',
-                            msgs: _def
-                        });
-                    }
 
+
+        console.dir( obj.isssues[0].msgs);
+
+        // console.dir( obj.isssues[0]);
+
+        self.driver.executeAsyncScript(function checkIfElementExistsOnThePage(_domElement) {
+            window.Gamay.isValidElement(_domElement,arguments[arguments.length - 1]);
+
+        }, _domElement.getCSSSelector()).then(function outlineError(validStatus){
+            if(!validStatus){ //not valid, maybe it's a typo.
+                callback.fail(new MerlotErrors.ElementNotFoundError("Element " + _domElement + " does not exit check for typos").message);
+            }else{ //valid
+                self.addAccessibilityIssue(obj);
+                self.driver.executeAsyncScript(function(_domElement,issues) {
+                    window.Gamay.markElement(_domElement,issues,arguments[arguments.length - 1]);
+                }, _domElement.getCSSSelector(), obj.isssues[0].msgs).then(function(ok){
+                    callback(false);
+                    //callback.fail(new MerlotErrors.AbortEvaluationError(self.actor.getName()+" can't continue with the scenario due to an error."
+                    //  + " \n See the Error report, or the highlighted section on your web page for more details.").message);
                 });
-        }).
-        then(function onOK() {
-            _deferred.fulfill(_issues);
+            }
         });
 
-    return _deferred.promise;
-
-};
-
-/**
- * @description
- * Perform an accessibility evaluation on the provided element
- * @param {object} webElement the element to tes
- * @returns {webdriver.promise.Deferred.promise|*} a promise that will be resolved when the evaluation is completed
- */
-BlueprintRunner.prototype.evalAccessibility = function (webElement, domElement,_stepDescr) {
-    var self = this,
-        _actorName = self.actor.getName(),//self.actor.getAcessibilityRuleset(),
-        _deferred = self.webdriver.promise.defer(),
-        _issues = [];
-
-    webElement.getOuterHtml().
-        then(function(outerHtml){
-            return outerHtml;
-        }).
-        /*
-        then(function injectPinot(outerHtml) {
-             return self.injectAcessibilityTestScripts().
-                    then(function(){
-                        return outerHtml;
-                    });
-        }). */
-        then(function(outerHtml){
-            self.driver.executeAsyncScript(function(ruleset,html,domElement) {
-                window.Gamay.accessibilityEvaluationHTMLCS(ruleset,html,domElement,arguments[arguments.length - 1]);
-            }, _actorName, ''+outerHtml,domElement.getCSSSelector())
-                .then(function checkResult(errors) {
-
-                    var _notice    = [],
-                        _warning   = [],
-                        _error     = [],
-                        _def       = [];
-
-                    errors.forEach(function(error){
-                       switch(error.type){
-                           case 'NOTICE':
-                               _notice.push(error);
-                               break;
-                           case 'WARNING':
-                               _warning.push(error);
-                               break;
-                           case 'ERROR':
-                               _error.push(error);
-                               break;
-                           default:
-                               _def.push(error);
-                               break;
-                       }
-                    });
-
-                    if(_notice.length > 0){
-                        _issues.push({
-                            type: 'NOTICE',
-                            msgs: _notice
-                        });
-                    }
-                    if(_warning.length > 0){
-                        _issues.push({
-                            type: 'WARNING',
-                            msgs: _warning
-                        });
-                    }
-                    if(_error.length > 0){
-                        _issues.push({
-                            type: 'ERROR',
-                            msgs: _error
-                        });
-                        var obj = {};
-                        obj.stepDescr = _stepDescr;
-                        obj.isssues = _issues;
-                        self.addAccessibilityIssue(obj);
-                        throw new MerlotErrors.AbortEvaluationError("ErrorFound");
-                    }
-                    if(_def.length > 0){
-                        _issues.push({
-                            type: 'UNKNOWN ISSUE',
-                            msgs: _def
-                        });
-                    }
-
-                });
-        }).
-        then(function onOK() {
-            _deferred.fulfill(_issues);
-        });
-
-    return _deferred.promise;
-
+    }else{
+        callback.fail(new Error("Merlot reported an error! " + error + " with DOMElement: " + _domElement).message);
+    }
 };
 
 /**
@@ -954,7 +928,7 @@ BlueprintRunner.prototype.injectAcessibilityTestScripts = function () {
     self.driver.executeAsyncScript(function () {
         if (!window.jQuery) {
             var _jqueryScriptTag = document.createElement("script");
-                _jqueryScriptTag.type = "text/javascript";
+            _jqueryScriptTag.type = "text/javascript";
 
             document.head.appendChild(_jqueryScriptTag);
 
@@ -980,9 +954,9 @@ BlueprintRunner.prototype.injectAcessibilityTestScripts = function () {
         self.driver.executeAsyncScript(function () {
             if (!window.HTMLCS) {
                 var _tooltipsterScriptTag = document.createElement("script");
-                    _tooltipsterScriptTag.type = "text/javascript";
+                _tooltipsterScriptTag.type = "text/javascript";
 
-                 document.head.appendChild(_tooltipsterScriptTag);
+                document.head.appendChild(_tooltipsterScriptTag);
 
                 _tooltipsterScriptTag.onload = arguments[arguments.length - 1];
                 _tooltipsterScriptTag.src = "http://localhost:3000/javascripts/jquery.tooltipster.min.js";
@@ -993,8 +967,8 @@ BlueprintRunner.prototype.injectAcessibilityTestScripts = function () {
         self.driver.executeAsyncScript(function () {
             if (!window.HTMLCS) {
                 var _tooltipsterCSSTag = document.createElement("link");
-                    _tooltipsterCSSTag.type = "text/css";
-                    _tooltipsterCSSTag.rel = "stylesheet";
+                _tooltipsterCSSTag.type = "text/css";
+                _tooltipsterCSSTag.rel = "stylesheet";
 
                 document.head.appendChild(_tooltipsterCSSTag);
 
@@ -1007,7 +981,7 @@ BlueprintRunner.prototype.injectAcessibilityTestScripts = function () {
         self.driver.executeAsyncScript(function () {
             if (!window.HTMLCS) {
                 var _htmlcsScriptTag = document.createElement("script");
-                    _htmlcsScriptTag.type = "text/javascript";
+                _htmlcsScriptTag.type = "text/javascript";
 
                 document.head.appendChild(_htmlcsScriptTag);
 
@@ -1028,18 +1002,18 @@ BlueprintRunner.prototype.injectAcessibilityTestScripts = function () {
      * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
     then(function placeRuleSetonTheWebpage() {
-            var _injectObjct = {};
-                _injectObjct.name =  self.actor.getName();
-                _injectObjct.ruleset =  self.actor.getRuleSet();
-            return self.driver.executeScript(function (obj) {
-                window.window["HTMLCS_"+obj.name] = obj.ruleset;
-            }, _injectObjct);
+        var _injectObjct = {};
+        _injectObjct.name =  self.actor.getName();
+        _injectObjct.ruleset =  self.actor.getRuleSet();
+        return self.driver.executeScript(function (obj) {
+            window.window["HTMLCS_"+obj.name] = obj.ruleset;
+        }, _injectObjct);
     }).
     then(function injectGamay() {
         self.driver.executeAsyncScript(function () {
             if (!window.Gamay) {
                 var _gamayScriptTag = document.createElement("script");
-                    _gamayScriptTag.type = "text/javascript";
+                _gamayScriptTag.type = "text/javascript";
 
                 document.head.appendChild(_gamayScriptTag);
 
@@ -1049,113 +1023,12 @@ BlueprintRunner.prototype.injectAcessibilityTestScripts = function () {
         });
     }).
     then(function onOk() {
-       _deferred.fulfill();
+        _deferred.fulfill();
     }).
     then(null, function onError(err) {
-       _deferred.reject(err);
+        _deferred.reject(err);
     });
     return _deferred.promise;
-};
-
-/**
- * @description
- * Got the the URL location, defined by the parameter 'where'
- * @param where , the URL
- * @param callback
- */
-BlueprintRunner.prototype.goTo = function (where, callback) {
-    var self = this;
-    this.driver.get(where).
-       then(function injectPinot() {
-          return self.injectAcessibilityTestScripts();
-        }).
-        then(function onOk() {
-            callback();
-        }).
-        then(null, function onError(err) {
-            callback.fail(err);
-        });
-};
-
-/**
- * @description
- * Get the title of the web page
- * @returns {*}  a promise
- */
-BlueprintRunner.prototype.getPageTitle = function () {
-    return  this.driver.getTitle();
-};
-
-/**
- * @description
- * Get the handle of the current window
- * @returns {*}  a promise
- */
-BlueprintRunner.prototype.getCurrentWindowHandle = function () {
-    return  this.driver.getWindowHandle();
-};
-
-/**
- * @description
- * Get all handles of all windows, or tabs
- * @returns {*} a promise
- */
-BlueprintRunner.prototype.getAllWindowHandles = function () {
-    return this.driver.getAllWindowHandles();
-};
-
-/**
- * @description
- * Switch to the window with the given handle
- * and wait for a page to be ready when document.readyState is 'complete'
- * Credit for this solution to Harry and Thomas Marks
- * URl: http://www.obeythetestinggoat.com/how-to-get-selenium-to-wait-for-page-load-after-a-click.html
- * @param handle the handle
- * @returns {*} a promise
- */
-BlueprintRunner.prototype.switchToNewHandle = function (handle) {
-    var _driver = this.driver,
-        _by = this.webdriver.By,
-        _deferred = this.webdriver.promise.defer();
-
-    function isPageStale(htmlElementOfTheOldPage) {
-        return  htmlElementOfTheOldPage.findElement(_by.id("12SomeIDdoesntMatter345")).
-            then(function whatWeFoundAElement() {
-                return false;
-            }).
-            then(null, function onError(error) {
-                return('StaleElementReferenceError' === error.name);
-            });
-    }
-
-    _driver.findElement(_by.tagName("html")).
-        then(function switchToNewHandle(htmlElementOfTheOldPage) {
-            _driver.switchTo().window(handle).
-                then(function waitForThePageToBeReady() {
-                    _driver.wait(function untilOldPageHasGoneStale() { //wait until ...
-                        return isPageStale(htmlElementOfTheOldPage);
-                    }).
-                        then(function pageShouldBeReadyNow() {
-                            _deferred.fulfill(true);
-                        });
-                });
-        });
-
-    return _deferred.promise;
-};
-
-/**
- * @description
- * Waiting for an element to be present or ready .
- * @param locator the locator used to find the element
- * @param TIMEOUT the time in milliseconds to wait for the element
- * @returns {*}  a promise
- */
-BlueprintRunner.prototype.waitForElementToBeReady = function (locator, TIMEOUT) {
-    var _driver = this.driver;
-    return _driver.wait(function () {  //wait until ...
-        return _driver.isElementPresent(locator);
-    }, TIMEOUT, "Element was not ready after " + TIMEOUT + " milliseconds");
 };
 
 
@@ -1166,3 +1039,13 @@ BlueprintRunner.prototype.waitForElementToBeReady = function (locator, TIMEOUT) 
 BlueprintRunner.prototype.closeDriver = function () {
     this.driver.close();
 };
+
+/*
+ * +========== - END - ===========+
+ * |                              |
+ * |        Error Handling        |
+ * |              &               |
+ * |         Communication        |
+ * |                              |
+ * +==============================+
+ */
