@@ -826,18 +826,24 @@ BlueprintRunner.prototype.printEvaluationReport = function(scenario,callback){
 BlueprintRunner.prototype.errorHandler = function(error, _domElement,_stepDescription,callback){
     var self = this;
 
-    console.log('++++++++++++++IN ERROR HANDLER ++++++++++++++++++');
-    console.dir(error);
+    //console.log('++++++++++++++IN ERROR HANDLER ++++++++++++++++++');
+    //console.dir(error);
 
     /*TODO: This should be somewhat actor-specific*/
     if(MerlotErrors.ERROR_ISSUES_FOUND === error.getMsg()){
         callback(new MerlotErrors.AbortEvaluationError(self.actor.getName()+" can't continue with the scenario due to an error."
             + " \n See the Error report, or the highlighted section on your web page for more details.").message);
-    }
-
-    /* LOOP ERROR FOUND */
-
-    else if(MerlotErrors.LOOP_ERROR === error.getMsg()){
+    } else if(MerlotErrors.LOOP_ERROR === error.getMsg()){
+        /*
+         * LOOP ERROR FOUND
+         * If an element cant be reached using keyboard navigation than we will see
+         * the start element twice; hence, we are having a loop
+         *
+         * NOTE:
+         * This is du to the "simple" implementation of the keyboard navigation feature
+         * where we use just the "TAB" key to navigate around the web page.
+         * Better to uses "proper" web tactic to simulate the behavior of keyboard navigation better
+         */
         var obj = {};
         obj.stepDescr = _stepDescription;
 
@@ -856,10 +862,10 @@ BlueprintRunner.prototype.errorHandler = function(error, _domElement,_stepDescri
                         LoopIssue
                         ]
                     }];
-
                   console.dir( obj.isssues[0].msgs);
         */
 
+        // Building an accessibility issues for the case if an element can't be reached using keyboard navigation
         obj.isssues = [{ type: 'ERROR', msgs:[{
             msg: self.actor.name+" can't reach the element "+_domElement+" by using keyboard navigation. Tip: Try to set the tabindex attribute, e.g., 'tabindex='0' '",
             typeCode: 1,
@@ -871,13 +877,7 @@ BlueprintRunner.prototype.errorHandler = function(error, _domElement,_stepDescri
             wcagTechnique: ''
         }]
         }];
-
-
-
-        console.dir( obj.isssues[0].msgs);
-
-        // console.dir( obj.isssues[0]);
-
+        //console.dir( obj.isssues[0].msgs);
         self.driver.executeAsyncScript(function checkIfElementExistsOnThePage(_domElement) {
             window.Gamay.isValidElement(_domElement,arguments[arguments.length - 1]);
 
