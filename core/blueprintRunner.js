@@ -387,13 +387,13 @@ BlueprintRunner.prototype.createDOMElement = function (properties) {
  * +============================+
  */
 
-    /**
-     * @description
-     * Got the the URL location, defined by the parameter 'where'
-     * @param where , the URL
-     * @param callback
-     */
-    BlueprintRunner.prototype.goTo = function (where, callback) {
+/**
+* @description
+* Got the the URL location, defined by the parameter 'where'
+* @param where , the URL
+* @param callback
+*/
+BlueprintRunner.prototype.goTo = function (where, callback) {
         var self = this;
         this.driver.get(where).
         then(function injectPinot() {
@@ -407,98 +407,96 @@ BlueprintRunner.prototype.createDOMElement = function (properties) {
         });
     };
 
-    /**
-     * @description
-     * Get the title of the web page
-     * @returns {*}  a promise
-     */
-    BlueprintRunner.prototype.getPageTitle = function () {
+/**
+* @description
+* Get the title of the web page
+* @returns {*}  a promise
+*/
+BlueprintRunner.prototype.getPageTitle = function () {
         return  this.driver.getTitle();
     };
 
-        /**
-     * @description
-     * Let the actor try to find or reach the element, defined by the tag name.
-     * @param domElement
-     * @returns {*} a promise
-     */
-    BlueprintRunner.prototype.actorTryToFindThisElement = function (domElement) {
-        return this.actor.findElement.call(this, domElement);
-    };
+/**
+* @description
+* Let the actor try to find or reach the element, defined by the tag name.
+* @param domElement
+* @returns {*} a promise
+*/
+BlueprintRunner.prototype.actorTryToFindThisElement = function (domElement) {
+   return this.actor.findElement.call(this, domElement);
+};
 
+/**
+* @description
+* Let the actor perform a 'click'
+* @param webEle
+*/
+BlueprintRunner.prototype.click = function (webEle) {
+    return this.actor.click.call(this, webEle);
+};
 
-    /**
-     * @description
-     * Let the actor perform a 'click'
-     * @param webEle
-     */
-    BlueprintRunner.prototype.click = function (webEle) {
-        return this.actor.click.call(this, webEle);
-    };
-
-    /**
-     * @description
-     * Enter text into the given text field, provided by the WebElement.
-     * @param webElement , the reference to the text field
-     * @param text , the text that should be entered into the WebElement.
-     */
-    BlueprintRunner.prototype.enterText = function (webElement, text) {
+/**
+* @description
+* Enter text into the given text field, provided by the WebElement.
+* @param webElement , the reference to the text field
+* @param text , the text that should be entered into the WebElement.
+*/
+BlueprintRunner.prototype.enterText = function (webElement, text) {
         return webElement.sendKeys(text);
     };
 
-    /**
-     * @description
-     * Find a radio button in a radio group.
-     * With webElement = The first radio button in the group.
-     * And domElement = The representation of the radio button, that we are looking for.
-     * @throws  {MerlotError} If no radio button with given format defined in 'domElement' can be found with in the radio group.
-     * @param   {Object} webElement
-     * @param   {Object} domElement
-     * @returns {Object} A promise with the radio button.
-     */
-    BlueprintRunner.prototype.interactWithRadioButton = function (webElement, domElement) {
-        var _actor = this.actor;
-        return _actor.interactWithRadioButton.call(this, webElement, domElement);
-    };
+/**
+* @description
+* Find a radio button in a radio group.
+* With webElement = The first radio button in the group.
+* And domElement = The representation of the radio button, that we are looking for.
+* @throws  {MerlotError} If no radio button with given format defined in 'domElement' can be found with in the radio group.
+* @param   {Object} webElement
+* @param   {Object} domElement
+* @returns {Object} A promise with the radio button.
+*/
+BlueprintRunner.prototype.interactWithRadioButton = function (webElement, domElement) {
+    var _actor = this.actor;
+    return _actor.interactWithRadioButton.call(this, webElement, domElement);
+};
 
-    /**
-     *
-     * @param webElement
-     * @param domElement
-     * @returns {*}
-     */
-    BlueprintRunner.prototype.interactWithSelection = function (webElement, domElement) {
-        return this.actor.interactWithSelection.call(this, webElement, domElement);
-    };
+/**
+* @param webElement
+* @param domElement
+* @returns {*}
+*/
+BlueprintRunner.prototype.interactWithSelection = function (webElement, domElement) {
+   return this.actor.interactWithSelection.call(this, webElement, domElement);
+};
 
-    /**
-     * @description
-     * Get the handle of the current window
-     * @returns {*}  a promise
-     */
-    BlueprintRunner.prototype.getCurrentWindowHandle = function () {
+/**
+* @description
+* Get the handle of the current window
+* @returns {*}  a promise
+*/
+BlueprintRunner.prototype.getCurrentWindowHandle = function () {
         return  this.driver.getWindowHandle();
     };
 
-    /**
-     * @description
-     * Get all handles of all windows, or tabs
-     * @returns {*} a promise
-     */
-    BlueprintRunner.prototype.getAllWindowHandles = function () {
+/**
+* @description
+* Get all handles of all windows, or tabs
+* @returns {*} a promise
+*/
+BlueprintRunner.prototype.getAllWindowHandles = function () {
         return this.driver.getAllWindowHandles();
     };
 
-    /**
-     * @description
-     * Switch to the window with the given handle
-     * and wait for a page to be ready when document.readyState is 'complete'
-     * Credit for this solution to Harry and Thomas Marks
-     * URl: http://www.obeythetestinggoat.com/how-to-get-selenium-to-wait-for-page-load-after-a-click.html
-     * @param handle the handle
-     * @returns {*} a promise
-     */
-    BlueprintRunner.prototype.switchToNewHandle = function (handle) {
+/**
+* @description
+* Switch to the window with the given handle
+* and wait for a page to be ready when document.readyState is 'complete'
+* Credit for this solution to Harry and Thomas Marks
+* URl: http://www.obeythetestinggoat.com/how-to-get-selenium-to-wait-for-page-load-after-a-click.html
+* @param handle the handle
+* @returns {*} a promise
+*/
+BlueprintRunner.prototype.switchToNewHandle = function (handle) {
         var _driver = this.driver,
             _by = this.webdriver.By,
             _deferred = this.webdriver.promise.defer();
@@ -529,19 +527,19 @@ BlueprintRunner.prototype.createDOMElement = function (properties) {
         return _deferred.promise;
     };
 
-    /**
-     * @description
-     * Waiting for an element to be present or ready .
-     * @param locator the locator used to find the element
-     * @param TIMEOUT the time in milliseconds to wait for the element
-     * @returns {*}  a promise
-     */
-    BlueprintRunner.prototype.waitForElementToBeReady = function (locator, TIMEOUT) {
-        var _driver = this.driver;
-        return _driver.wait(function () {  //wait until ...
+/**
+* @description
+* Waiting for an element to be present or ready .
+* @param locator the locator used to find the element
+* @param TIMEOUT the time in milliseconds to wait for the element
+* @returns {*}  a promise
+*/
+BlueprintRunner.prototype.waitForElementToBeReady = function (locator, TIMEOUT) {
+    var _driver = this.driver;
+    return _driver.wait( () => {  //wait until ...
             return _driver.isElementPresent(locator);
-        }, TIMEOUT, "Element was not ready after " + TIMEOUT + " milliseconds");
-    };
+    }, TIMEOUT, "Element was not ready after " + TIMEOUT + " milliseconds");
+};
 
 
 /*
