@@ -86,13 +86,15 @@ GenericActor.prototype.loadPreferenceSet = function(path,actorname,blueprint_nam
         _blueprint_name = blueprint_name.split(' ').join('_');
 
 
-    console.log('actoname = ' + _actor_name);
-    console.log('path to vins = ' + path);
-    console.log('_blueprint_name = ' + _blueprint_name);
+    this.logger.info('Actor is ' + _actor_name);
+   // console.log('path to vins = ' + path);
+    //console.log('_blueprint_name = ' + _blueprint_name);
 
 
     var _path_to_vin_file = _path.join(path, _actor_name+".vin.json");
+    this.logger.info (_path_to_vin_file);
     var _jsonData = _jf.readFileSync(_path_to_vin_file);
+    console.dir(_jf.readFileSync(_path_to_vin_file));
 
     /*
      * Get the correct rule set for the current blueprint (user scenario)
@@ -114,8 +116,8 @@ GenericActor.prototype.loadPreferenceSet = function(path,actorname,blueprint_nam
         }
     };
 
-    console.log('+++++ Actor Infor +++++');
-    console.dir(_jsonData.actor_info);
+  //  console.log('+++++ Actor Infor +++++');
+    //console.dir(_jsonData.actor_info);
 
     this.setImage(_jsonData.actor_info.image);
     this.setRuleSet(ruleset);

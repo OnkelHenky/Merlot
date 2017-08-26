@@ -37,7 +37,8 @@ var webdriver = require('selenium-webdriver'),
     path = require('path'),
     Logger = require('./auxilium/logger').Logger,
     SeleniumServer = require('selenium-webdriver/remote').SeleniumServer,
-    mu = require('mu2');
+    mu = require('mu2'),
+    AccessibilityIssue = require('./auxilium/AccessibilityIssue').AccessibilityIssue
 
 /*
  * +----------------------------+
@@ -136,7 +137,7 @@ BlueprintRunner.prototype.setCurrentBlueprint = function (name_of_the_scenario){
         this.currentBlueprint = name_of_the_scenario;
         this.logger.info("Current Scenario = " + name_of_the_scenario);
     }else{
-        this.logger.info("No scenario name found! Name is empty, please set a proper name in your Blueprint descrprion.");
+        this.logger.info("No scenario name found! Name is empty, please set a proper name in your Blueprint description.");
     }
 };
 
@@ -182,8 +183,8 @@ BlueprintRunner.prototype.getArrayWithAccessibilityIssues = function(){
  * @param issue
  */
 BlueprintRunner.prototype.addAccessibilityIssue = function(issue){
-    console.dir(issue);
-    console.dir(issue.isssues[0].msgs);
+    //console.dir(issue);
+  //  console.dir(issue.isssues[0].msgs);
     this.isssuesMsgs.push(issue);
 };
 
@@ -204,20 +205,20 @@ BlueprintRunner.prototype.getReportDirectory = function(){
 BlueprintRunner.prototype.getAccessibilityIssuesBuffer = function(ScenarioName, issues, cb){
     var self    = this,
         _buffer ='';
-
-   /*
-    * MU Template:
-    *
-    * {{#msgs}}
-    *  STEP: {{stepDescr}}
-    *        {{#issues}}
-    *            ###### {{type}}
-    *            {{#msg}}
-    *                * {{m}}
-    *            {{/msg}}
-    *        {{/issues}}
-    * {{/msgs}}
-    */
+    console.dir(self);
+    /*
+     * MU Template:
+     *
+     * {{#msgs}}
+     *  STEP: {{stepDescr}}
+     *        {{#issues}}
+     *            ###### {{type}}
+     *            {{#msg}}
+     *                * {{m}}
+     *            {{/msg}}
+     *        {{/issues}}
+     * {{/msgs}}
+     */
     mu.root = __dirname + '/reports';
     var data =  issues.map(function(step){
                                 return {
@@ -261,7 +262,7 @@ BlueprintRunner.prototype.printIssuesBuffer = function(buffer,scenario,callback)
         _issues    = self.getArrayWithAccessibilityIssues();
 
     _logger.log('Buffer = ' +buffer);
-    _logger.log("Writing report for =" + scenario.getName());
+    _logger.log("Writing report for =" + scenario.scenario.name);
     var issuePath = _path.join(_reportDIR, '/report.md');
 
     _fs.writeFile(issuePath, buffer, function (err) {
@@ -309,6 +310,7 @@ BlueprintRunner.prototype.printEvaluationReport = function(scenario,callback){
         _issues    = self.getArrayWithAccessibilityIssues();
 
     _logger.info("Generating evaluation report");
+    callback();
 
     _fs.exists(_reportDIR, function (exists) {
         if (!exists) {
@@ -317,17 +319,18 @@ BlueprintRunner.prototype.printEvaluationReport = function(scenario,callback){
                     _logger.error("Error during creation of the reports directory" +err);
                     callback(err);
                 }else{
-                    self.getAccessibilityIssuesBuffer(scenario.getName(), _issues, function(buffer){
+                    self.getAccessibilityIssuesBuffer(scenario.scenario.name, _issues, function(buffer){
                         self.printIssuesBuffer(buffer,scenario,callback);
                     });
                 }
             });
         } else {
-            self.getAccessibilityIssuesBuffer(scenario.getName(), _issues, function(buffer){
+            self.getAccessibilityIssuesBuffer(scenario.scenario.name, _issues, function(buffer){
                  self.printIssuesBuffer(buffer,scenario,callback);
             });
         }
     });
+
 };
 
 /**
@@ -340,7 +343,7 @@ BlueprintRunner.prototype.printEvaluationReport = function(scenario,callback){
  * @returns {*} the resolved identifier
  */
 BlueprintRunner.prototype.resolveAttributeName = function (identifiedBy) {
-    var _resolvedIdentifiedBy = void 0;  //undefined
+    let _resolvedIdentifiedBy = void 0;  //undefined
 
     switch (identifiedBy) {
         case "@id":
@@ -377,7 +380,7 @@ BlueprintRunner.prototype.resolveAttributeName = function (identifiedBy) {
  * @param {{a: number, b: string}} config
  */
 BlueprintRunner.prototype.addConfiguration = function (config) {
-    var self = this;
+    let self = this;
 
     /*
      * Check if the property 'vinFlies' is specified.
@@ -387,7 +390,7 @@ BlueprintRunner.prototype.addConfiguration = function (config) {
     if (config.vinFiles !== undefined && self.aux.isString(config.vinFiles)) {
         if(self.utile._fs_.existsSync(config.vinFiles)){
             self.vinFiles = config.vinFiles;
-           console.log('Vin Files are here: '+ self.vinFiles);
+            self.logger.info('Vin Files are here: '+ self.vinFiles);
         }else{
             throw new Error(config.vinFiles+ ' is not a valid directory!!');
         }
@@ -406,109 +409,61 @@ BlueprintRunner.prototype.addConfiguration = function (config) {
         this.reportDirectory = config.reportsDir;
     }
 
-    /*
-     * Helper function for making an instance of the webdriver
-     * If the the browser is 'chrome', special options for are passed
-     * to the webdriver, to avoid any errors in the browser.
-     */
-    function driverBuilder(caps, server, browser) {
-
-        if ('chrome' === browser) {
-            /*Adding chrome options to avoid error massages*/
-            var ChromeOptions = require('selenium-webdriver/chrome').Options;
-            var _chromeOpt = new ChromeOptions().addArguments("test-type");
-
-            /* New in selenium-webdriver 2.43.x
-             * See: http://www.joecolantonio.com/2014/09/09/selenium-webdriver-version-2-43-0-released/*/
-            return new webdriver.Builder().
-                     forBrowser('chrome').
-                     setChromeOptions(_chromeOpt); //.build();
-
-           /* Old pre 2.43.x way
-           return new webdriver.Builder().
-                usingServer(server.address()).
-                withCapabilities(caps).
-                setChromeOptions(_chromeOpt);
-           */
-
-        } else {
-            return new webdriver.Builder().
-                usingServer(server.address()).
-                withCapabilities(caps);
-        }
-
-
-    }
-
     try {
-        var _stats = self.utile._fs_.statSync(config.seleniumPath);
+        let _stats = self.utile._fs_.statSync(config.seleniumPath);
         /*
          * Check if the given path to the selenium jar is pointing to an actual file.
          * This throws an exception if the path is not pointing to a file
          */
         if (_stats.isFile()) {
             self.config = config;
-            var _pathToSeleniumJar = self.config.seleniumPath,
+            let _pathToSeleniumJar = self.config.seleniumPath,
                 _server = new SeleniumServer(_pathToSeleniumJar, {
                     port: self.config.port
-
                 });
 
-            this.logger.info("Using selenium from: " + _pathToSeleniumJar);
+            this.logger.info("Using selenium stand alone from: " + _pathToSeleniumJar);
             _server.start();
 
-            var _serverCapabilities = webdriver.Capabilities.chrome();  //default
-            switch (self.config.browser) {
-                case 'chrome':
-                    _serverCapabilities = webdriver.Capabilities.chrome();
-                    break;
-                case 'firefox':
-                    _serverCapabilities = webdriver.Capabilities.firefox();
-                    break;
-                case 'safari':
-                    _serverCapabilities = webdriver.Capabilities.safari();
-                    break;
-                case 'ie':
-                    this.logger.info('Internet Explorer is not yet supported, using Chrome instead');
-                    _serverCapabilities = webdriver.Capabilities.chrome();
-                    break;
-                default :
-                    this.logger.info(self.config.browser + ' is not defined, using Chrome instead');
-                    _serverCapabilities = webdriver.Capabilities.chrome();
-                    break;
-            }
-
-            self.driver = driverBuilder(_serverCapabilities, _server, self.config.browser).build();
-
-              var timeouts = new self.webdriver.WebDriver.Timeouts(self.driver);
-                  timeouts.setScriptTimeout(100000); //TODO: set timer to wait for pages to be loaded
-                  timeouts.implicitlyWait(30000); //wait 3 seconds for every element to retrieve
-               // timeouts.pageLoadTimeout(10000); //set timer to wait for pages to be loaded
+            /*
+             * Build the driver.
+             * NOTE: Only chrome is supported!
+             */
+             // self.driver = driverBuilder(self.config.browser).build();
+            self.driver = driverBuilder('using_google_chrome').build();
+            /*
+             * Sets the timeouts for the driver. Here:
+             * script: wait 10 sec. for external scripts to be loaded
+             * page: wait 10sec. for teh page to be loaded
+             * implicit: wait 3 seconds for for every element to be retrieved before throwing an error.
+             */
+            self.driver.manage().setTimeouts({script: 10 * 1000, page: 10 * 1000, implicit: 3 * 1000});
         }
 
     } catch (ex) {
         this.logger.dir(ex);
-        this.logger.log('Selenium JAR not found at ' + ex['path']);
-        this.logger.log('HINT: Check for typos');
         self.driver.quit(); // quiting the driver, since we have an error.
-        throw new Error('Unable to find selenium.jar');
+        throw new Error('Error during web driver setup');
     }
 
-};
 
-/**
- * TODO: function is deprecated
- * @description
- * Create a new DOMElement with the given properties
- * @deprecated
- * @param properties
- * @returns {DOMElement}
- */
-BlueprintRunner.prototype.createDOMElementProperties = function (properties) {
-    if (properties) {
-        return new DOMElement(properties);
-    } else {
-        throw new Error("Can not create new DOMElement with empty properties!");
+    /*
+     * Helper function for making an instance of the webdriver
+     * If the the browser is 'chrome', special options for are passed
+     * to the webdriver, to avoid any errors in the browser.
+     */
+    function driverBuilder(browser) {
+
+        if ('using_google_chrome' === browser) {
+            /*Adding chrome options to avoid error massages*/
+            var ChromeOptions = require('selenium-webdriver/chrome').Options;
+            var _chromeOpt = new ChromeOptions().addArguments("test-type");
+
+            /* New in selenium-webdriver >= 2.43.x
+             * See: http://www.joecolantonio.com/2014/09/09/selenium-webdriver-version-2-43-0-released/*/
+            return new webdriver.Builder().forBrowser('chrome').setChromeOptions(_chromeOpt);
+        }
+
     }
 };
 
@@ -557,7 +512,7 @@ BlueprintRunner.prototype.createDOMElement = function (properties) {
  * @param actor {string} the name of the actor.
  */
 BlueprintRunner.prototype.runWithThatActor = function (actor) {
-    var that = this,
+    let that = this,
         _aux = that.utile._aux_;
 
     if (_aux.isString(actor)) {
@@ -566,9 +521,8 @@ BlueprintRunner.prototype.runWithThatActor = function (actor) {
                     that.actor.loadPreferenceSet(that.vinFiles,actor,that.getCurrentBlueprint());
                     that.actor.setName(actor);
                     that.logger.info('Using "' + that.actor + '" as actor');
-
                 } catch(ex){
-                    throw new ReferenceError('Actor with name "' + actor + '" not found');
+                  throw new ReferenceError('Actor with name "' + actor + '" not found');
                 }
     } else {
         throw new TypeError('Actor with name "' + actor + '" is not a valid string, use letters only');
@@ -584,7 +538,7 @@ BlueprintRunner.prototype.runWithThatActor = function (actor) {
  * @param semanticRequirementStatement semantic requirement statement - Array
  */
 BlueprintRunner.prototype.applySemanticRequirementStatement = function(_domElement,semanticRequirementStatement,callback){
-    var self = this;
+    let self = this;
 
     self.driver.executeAsyncScript(function checkIfElementExistsOnThePage(_domElement) {
         window.Gamay.isValidElement(_domElement,arguments[arguments.length - 1]);
@@ -616,25 +570,55 @@ BlueprintRunner.prototype.applySemanticRequirementStatement = function(_domEleme
 BlueprintRunner.prototype.errorHandler = function(error, _domElement,_stepDescription,callback){
     var self = this;
 
-      /*TODO: This should be somewhat actor-specific*/
+    console.log('++++++++++++++++++++++++++++++++');
+    console.dir(error);
+
+
+    /*TODO: This should be somewhat actor-specific*/
       if(MerlotErrors.ERROR_ISSUES_FOUND === error.getMsg()){
-          callback.fail(new MerlotErrors.AbortEvaluationError(self.actor.getName()+" can't continue with the scenario due to an error."
+          callback(new MerlotErrors.AbortEvaluationError(self.actor.getName()+" can't continue with the scenario due to an error."
                         + " \n See the Error report, or the highlighted section on your web page for more details.").message);
       }
       else if(MerlotErrors.LOOP_ERROR === error.getMsg()){
           var obj = {};
           obj.stepDescr = _stepDescription;
-          obj.isssues = [{ type: 'ERROR', msgs:[{
-              msg: self.actor.name+" can't reach the element "+_domElement+" by using keyboard navigation. Tip: Try to set the tabindex attribute, e.g., 'tabindex='1' '",
-              typeCode: 1,
+
+/*
+          var LoopIssue = new AccessibilityIssue({
               type: "ERROR",
+              typeCode: 1,
               code: 'Conformance Level:A - Principle: Operable 2.1.1 Keyboard Accessible: Make all functionality available from a keyboard.',
               wcagConf: 'AnnaA',
               wcagGuideline: '2.1.1',
               wcagPrinciple: 'Operable',
+              wcagTechnique: '',
+              msg: self.actor.name+" can't reach the element "+_domElement+" by using keyboard navigation. Tip: Try to set the tabindex attribute, e.g., 'tabindex='0' '"
+          });
+            obj.isssues = [{ type: 'ERROR', msgs:[
+                LoopIssue
+                ]
+            }];
+
+          console.dir( obj.isssues[0].msgs);
+*/
+
+           obj.isssues = [{ type: 'ERROR', msgs:[{
+              msg: self.actor.name+" can't reach the element "+_domElement+" by using keyboard navigation. Tip: Try to set the tabindex attribute, e.g., 'tabindex='0' '",
+              typeCode: 1,
+              type: "ERROR",
+              code: 'Conformance Level:A - Principle: Operable 2.1.1 Keyboard Accessible: Make all functionality available from a keyboard.',
+              wcagConf: 'AnnaA',
+              wcagGuideline: '"Guideline 2.1 Success Criterion 2.1.1',
+              wcagPrinciple: 'Principle 2 - Operable',
               wcagTechnique: ''
               }]
           }];
+
+
+
+          console.dir( obj.isssues[0].msgs);
+
+         // console.dir( obj.isssues[0]);
 
           self.driver.executeAsyncScript(function checkIfElementExistsOnThePage(_domElement) {
               window.Gamay.isValidElement(_domElement,arguments[arguments.length - 1]);
@@ -647,8 +631,9 @@ BlueprintRunner.prototype.errorHandler = function(error, _domElement,_stepDescri
                   self.driver.executeAsyncScript(function(_domElement,issues) {
                       window.Gamay.markElement(_domElement,issues,arguments[arguments.length - 1]);
                   }, _domElement.getCSSSelector(), obj.isssues[0].msgs).then(function(ok){
-                      callback.fail(new MerlotErrors.AbortEvaluationError(self.actor.getName()+" can't continue with the scenario due to an error."
-                          + " \n See the Error report, or the highlighted section on your web page for more details.").message);
+                      callback(false);
+                      //callback.fail(new MerlotErrors.AbortEvaluationError(self.actor.getName()+" can't continue with the scenario due to an error."
+                        //  + " \n See the Error report, or the highlighted section on your web page for more details.").message);
                   });
               }
           });
@@ -769,10 +754,15 @@ BlueprintRunner.prototype.evalAccessibilityWithSemantic = function (webElement, 
         _semantics = semantics;
         _issues = [];
 
-    webElement.getOuterHtml().
+  /*  webElement.getOuterHtml().
         then(function(outerHtml){
             return outerHtml;
-        }).
+        }). */
+
+    webElement.getAttribute('outerHTML').
+    then(function(outerHtml){
+        return outerHtml;
+    }).
         /*
          then(function injectPinot(outerHtml) {
          return self.injectAcessibilityTestScripts().
@@ -968,8 +958,6 @@ BlueprintRunner.prototype.injectAcessibilityTestScripts = function () {
 
             document.head.appendChild(_jqueryScriptTag);
 
-
-
             /*
                 //Old or alternative implementation for triggering the Selenium callback
                 jqueryScriptTag.onload = function () {
@@ -1087,7 +1075,6 @@ BlueprintRunner.prototype.goTo = function (where, callback) {
         then(null, function onError(err) {
             callback.fail(err);
         });
-
 };
 
 /**

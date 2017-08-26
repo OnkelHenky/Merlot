@@ -7,3 +7,4 @@ spielwiese/*
 node_modules
 *.log
 projectFilesBackup/*
+/package-lock.json

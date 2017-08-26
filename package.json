@@ -5,12 +5,10 @@
   "author": "Alexander Henka,  Alexander.Henka@googlemail.com",
   "license": "Apache-2.0",
   "main": "./core/index.js",
-
   "repository": {
     "type": "git",
     "url": "https://OnkelHenky@github.com/OnkelHenky/Merlot.git"
   },
-
   "keywords": [
     "selenium",
     "merlot",
@@ -19,12 +17,13 @@
     "accessibility evaluation"
   ],
   "dependencies": {
-    "errorhandler": "^1.2.0",
-    "express": "^4.9.0",
-    "jsonfile": "^2.0.0",
-    "morgan": "^1.3.1",
-    "mu2": "^0.5.20",
-    "selenium-webdriver": "2.43.4",
-    "socket.io": "^1.1.0"
+    "cucumber": "^3.0.0",
+    "errorhandler": "^1.5.0",
+    "express": "^4.15.4",
+    "jsonfile": "^2.4.0",
+    "morgan": "^1.8.2",
+    "mu2": "^0.5.21",
+    "selenium-webdriver": "^3.5.0",
+    "socket.io": "^1.7.4"
   }
 }

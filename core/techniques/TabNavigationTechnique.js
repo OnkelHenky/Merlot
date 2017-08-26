@@ -60,6 +60,7 @@ module.exports = tabNavigationTechnique = function (domElement) {
     /* Recursive 'helper' function to retrieve
      * the element defined in 'domElement' */
     function helperFunction (domElement) {
+        that.driver.sleep(150);
         return _presTAB.perform().
             then(function switchToActiveElement() {
                 if (undefined === _firstWebElement) {
@@ -159,6 +160,7 @@ module.exports = tabNavigationTechnique = function (domElement) {
                         }
                     })
             });
+
     };
 
     return helperFunction(domElement);
