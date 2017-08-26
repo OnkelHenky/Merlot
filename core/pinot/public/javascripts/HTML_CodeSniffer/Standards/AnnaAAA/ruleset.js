@@ -71,7 +71,6 @@ window.HTMLCS_AnnaAAA = {
                 'Principle2.Guideline2_2.2_2_4', // AAA, Interruptions can be postponed or suppressed by the user, except interruptions involving an emergency.
                 'Principle2.Guideline2_4.2_4_9', // AAA, A mechanism is available to allow the purpose of each link to be identified from link text alone, except where the purpose of the link would be ambiguous to users in general.
                 'Principle2.Guideline2_4.2_4_10',// AAA, Section headings are used to organize the content. This is meant for paragraphs in written content
-                'Principle2.Guideline2_4.2_4_10',// AAA, Section headings are used to organize the content. This is meant for paragraphs in written content
                 'Principle2.Guideline3_1.3_1_3', // AAA, A mechanism is available for identifying specific definitions of words or phrases used in an unusual or restricted way, including idioms and jargon.
                 'Principle2.Guideline3_1.3_1_4', // AAA, A mechanism for identifying the expanded form or meaning of abbreviations is available.
                 'Principle2.Guideline3_1.3_1_6'  // AAA, A mechanism is available for identifying specific pronunciation of words where meaning of the words, in context, is ambiguous without knowing the pronunciation.

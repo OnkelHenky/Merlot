@@ -19,14 +19,24 @@ var Pinot = exports.Pinot = function () {
     this.app = express();
     this.server = require('http').Server(this.app);
 
+    this.app.use(errorHandler());
+
+    if ('development' === this.app.get('env')) {
+        this.app.use(errorHandler());
+    }
+
+    this.app.use(function (error, req, res, next) {
+        console.log('dnjksandksalbdnfasbfhjsbfjksdbfkjsdbfsdbfjkdsb');
+        logger.log("received from "+req );
+        next();
+    });
+
     this.app.set('port', process.env.PORT || 3000);
   //  this.app.use(logger('dev')); // logging
     this.app.use(express.static(path.join(__dirname, 'public')));
-    this.app.use(errorHandler());
 
-        if ('development' === this.app.get('env')) {
-            this.app.use(errorHandler());
-        }
+
+
 };
 
 /**
@@ -36,7 +46,7 @@ var Pinot = exports.Pinot = function () {
 Pinot.prototype.start = function () {
     var self = this;
     self.server.listen(self.app.get('port'), function(){
-       //  console.log("Express server http://127.0.0.1 listening on port " + self.app.get('port'));
+    console.log("Express server http://127.0.0.1 listening on port " + self.app.get('port'));
     });
 };
 

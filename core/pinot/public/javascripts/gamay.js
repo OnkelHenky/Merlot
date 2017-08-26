@@ -397,7 +397,12 @@
     */
     window.Gamay.getIssueTextForPupUp = function(issue,_cssStyle){
 
+        console.dir(issue);
+
         issue.getFormattedRepresentation();
+
+        console.log("Nach format");
+        console.dir(issue);
 
         return  "<article class='merlotIssuesContent "+_cssStyle+"'>" +
                  "<fieldset class=\"merlotStyle\"><legend>"+issue.type+"</legend>"+
@@ -777,13 +782,28 @@
      * @param callback {function}, call the blueprint runner when the operation is down.
      */
     window.Gamay.markElement = function(domElement,issue,callback){
+        var issue = issue[0];
 
-        var _issueObj = issue[0],
-            _color =  window.Gamay._OUTLINE_STYLE,
+
+
+        var issue_Element = new AccessibilityIssue({
+            type: issue.type,
+            typeCode: issue.typeCode,
+            code: issue.code,
+            wcagConf: issue.wcagConf,
+            wcagGuideline: issue.wcagGuideline,
+            wcagPrinciple: issue.wcagPrinciple,
+            wcagTechnique: issue.wcagTechnique,
+            msg: issue.msg
+        });
+
+        console.dir(issue_Element);
+
+        _color =  window.Gamay._OUTLINE_STYLE,
             _cssStyle = "merlotIssuesStyleHeaderWARNING",
             _domElement = $(domElement);
 
-        switch (_issueObj.typeCode) {
+        switch (issue_Element.typeCode) {
             case HTMLCS.ERROR:
                 _color += window.Gamay._ERROR_OUTLINE_COLOR;
                 _cssStyle = "merlotIssuesStyleHeaderERROR";
@@ -806,7 +826,7 @@
         _domElement.parent().css("outline", _color);
         _domElement.parent().addClass("tooltip");
 
-        var _msg = window.Gamay.getIssueTextForPupUp(_issueObj,_cssStyle);
+        var _msg = window.Gamay.getIssueTextForPupUp(issue_Element,_cssStyle);
 
      //   var _msg = window.Gamay.getManuelInspectionPopUp(_issueObj,_cssStyle);
 

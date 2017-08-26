@@ -92,7 +92,9 @@ GenericActor.prototype.loadPreferenceSet = function(path,actorname,blueprint_nam
 
 
     var _path_to_vin_file = _path.join(path, _actor_name+".vin.json");
+    this.logger.info (_path_to_vin_file);
     var _jsonData = _jf.readFileSync(_path_to_vin_file);
+    console.dir(_jf.readFileSync(_path_to_vin_file));
 
     /*
      * Get the correct rule set for the current blueprint (user scenario)
