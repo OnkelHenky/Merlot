@@ -159,7 +159,7 @@ BlueprintRunner.prototype.addConfiguration = function (config) {
     if (config.vinFiles !== undefined && self.aux.isString(config.vinFiles)) {
         if(self.utile._fs_.existsSync(config.vinFiles)){
             self.vinFiles = config.vinFiles;
-            self.logger.info('Vin Files are here: '+ self.vinFiles);
+            self.logger.debug('Vin Files are here: '+ self.vinFiles);
         }else{
             throw new Error(config.vinFiles+ ' is not a valid directory!!');
         }
@@ -191,7 +191,7 @@ BlueprintRunner.prototype.addConfiguration = function (config) {
                     port: self.config.port
                 });
 
-            this.logger.info("Using selenium stand alone from: " + _pathToSeleniumJar);
+            this.logger.debug("Using selenium stand alone from: " + _pathToSeleniumJar);
             _server.start();
 
             /*
