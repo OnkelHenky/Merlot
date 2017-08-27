@@ -278,7 +278,6 @@ BlueprintRunner.prototype.runWithThatActor = function (actor) {
             that.actor = new genericActor();
             that.actor.loadPreferenceSet(that.vinFiles,actor,that.getCurrentBlueprint());
             that.actor.setName(actor);
-            that.logger.info('Using "' + that.actor + '" as actor');
         } catch(ex){
             throw new ReferenceError('Actor with name "' + actor + '" not found');
         }
