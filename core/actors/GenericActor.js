@@ -73,7 +73,7 @@ GenericActor.prototype = new Actor;
  */
 //TODO: Add exception handling if the vin file for the current actor can not be found!
 GenericActor.prototype.loadPreferenceSet = function(path,actorname,blueprint_name){
-    var _jf   = require('jsonfile'),
+    let _jf   = require('jsonfile'),
         _util = require('util'),
         _path = require('path'),
         _actor_name = actorname,
@@ -91,18 +91,18 @@ GenericActor.prototype.loadPreferenceSet = function(path,actorname,blueprint_nam
     //console.log('_blueprint_name = ' + _blueprint_name);
 
 
-    var _path_to_vin_file = _path.join(path, _actor_name+".vin.json");
+    let _path_to_vin_file = _path.join(path, _actor_name+".vin.json");
     this.logger.info (_path_to_vin_file);
-    var _jsonData = _jf.readFileSync(_path_to_vin_file);
-    console.dir(_jf.readFileSync(_path_to_vin_file));
+    let _jsonData = _jf.readFileSync(_path_to_vin_file);
+   // console.dir(_jf.readFileSync(_path_to_vin_file));
 
     /*
      * Get the correct rule set for the current blueprint (user scenario)
      * TODO: Check if rule set with given name exist!
      */
-    var rule_for_the_current_blueprint = _jsonData.rule_sets[_blueprint_name];
+    let rule_for_the_current_blueprint = _jsonData.rule_sets[_blueprint_name];
 
-    var ruleset = {
+    let rule_set = {
         name: _actor_name,
         description: 'Accessibility Guidelines for '+_actor_name,
         sniffs: [
@@ -120,7 +120,7 @@ GenericActor.prototype.loadPreferenceSet = function(path,actorname,blueprint_nam
     //console.dir(_jsonData.actor_info);
 
     this.setImage(_jsonData.actor_info.image);
-    this.setRuleSet(ruleset);
+    this.setRuleSet(rule_set);
     this.setSemenaticRuleSet(rule_for_the_current_blueprint.semantic);
     var _navstyle = rule_for_the_current_blueprint.technical.navigation.style;
 

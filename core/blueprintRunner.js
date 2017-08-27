@@ -89,7 +89,7 @@ BlueprintRunner = exports.BlueprintRunner = function (config) {
      * +----------------------------+
      */
     this.aux                 = this.utile._aux_; // 'short cut' properties from Merlot object
-    this.logger              = new Logger({'logLevel': 0});
+    this.logger              = new Logger({'logLevel': 3});
     this.driver              = {};
     this.webdriver           = webdriver;
     this.isssuesMsgs         = []; // Array with all found accessibility issues
@@ -295,7 +295,7 @@ BlueprintRunner.prototype.runWithThatActor = function (actor) {
 BlueprintRunner.prototype.setConformanceLevel = function(conformanceLevel){
     if(["A","AA","AAA"].indexOf(conformanceLevel) !== -1){
         this.acessibilityRuleset = this.actor.getName() + conformanceLevel;
-        this.logger.info("Checking for "+ this.actor.getName() + "'s "+conformanceLevel+" level conformance");
+        //this.logger.info("Checking for "+ this.actor.getName() + "'s "+conformanceLevel+" level conformance");
     }else{
         this.acessibilityRuleset = this.actor.getName() + 'A';
         this.logger.info(conformanceLevel+" is not a valid WCAG conformance level, please use 'A', 'AA' or 'AAA'");
@@ -362,13 +362,10 @@ BlueprintRunner.prototype.createDOMElement = function (properties) {
         if (properties.name) {
             domeElementProperties.name = properties.name;
         }
-
         return new DOMElement(domeElementProperties);
-
     } else {
         throw new Error('"' + properties.tagName + '" is not a valid tag name');
     }
-
 };
 
 /*
@@ -642,7 +639,7 @@ BlueprintRunner.prototype.addAccessibilityIssue = function(issue){
 BlueprintRunner.prototype.getAccessibilityIssuesBuffer = function(ScenarioName, issues, cb){
     var self    = this,
         _buffer ='';
-    console.dir(self);
+    this.logger.dir(self);
     /*
      * MU Template:
      *
@@ -680,7 +677,7 @@ BlueprintRunner.prototype.getAccessibilityIssuesBuffer = function(ScenarioName, 
     mu.compileAndRender('report.md.mu', context).
     on('data', function (data) { _buffer += data;}).
     on('end', function () { cb(_buffer);}).
-    on('error', function (error) {console.log(error);});
+    on('error', function (error) {self.logger.log(error);});
 };
 
 /*
@@ -826,13 +823,15 @@ BlueprintRunner.prototype.printEvaluationReport = function(scenario,callback){
 BlueprintRunner.prototype.errorHandler = function(error, _domElement,_stepDescription,callback){
     var self = this;
 
-    //console.log('++++++++++++++IN ERROR HANDLER ++++++++++++++++++');
+    //self.logger.info('++++++++++++++IN ERROR HANDLER ++++++++++++++++++');
     //console.dir(error);
 
     /*TODO: This should be somewhat actor-specific*/
     if(MerlotErrors.ERROR_ISSUES_FOUND === error.getMsg()){
-        callback(new MerlotErrors.AbortEvaluationError(self.actor.getName()+" can't continue with the scenario due to an error."
+       //self.logger.error("AbortEvaluationError")
+       callback(new MerlotErrors.AbortEvaluationError(self.actor.getName()+" can't continue with the scenario due to an error."
             + " \n See the Error report, or the highlighted section on your web page for more details.").message);
+
     } else if(MerlotErrors.LOOP_ERROR === error.getMsg()){
         /*
          * LOOP ERROR FOUND
@@ -877,7 +876,7 @@ BlueprintRunner.prototype.errorHandler = function(error, _domElement,_stepDescri
             wcagTechnique: ''
         }]
         }];
-        //console.dir( obj.isssues[0].msgs);
+       // self.logger.dir( obj.isssues[0].msgs);
         self.driver.executeAsyncScript(function checkIfElementExistsOnThePage(_domElement) {
             window.Gamay.isValidElement(_domElement,arguments[arguments.length - 1]);
 

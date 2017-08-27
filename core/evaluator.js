@@ -129,7 +129,8 @@ Evaluator.prototype.evalAccessibility = function (webElement, domElement,_stepDe
                     obj.stepDescr = _stepDescr;
                     obj.isssues = _issues;
                     self.addAccessibilityIssue(obj);
-                    throw new MerlotErrors.AbortEvaluationError("ErrorFound");
+                    _deferred.reject();
+                    //throw new MerlotErrors.AbortEvaluationError("ErrorFound");
                 }
                 if(_def.length > 0){
                     _issues.push({
@@ -226,6 +227,7 @@ Evaluator.prototype.evalAccessibilityWithSemantic = function (webElement, domEle
                     obj.stepDescr = _stepDescr;
                     obj.isssues = _issues;
                     self.addAccessibilityIssue(obj);
+                   // _deferred.reject();
                     throw new MerlotErrors.AbortEvaluationError("ErrorFound");
                 }
                 if(_def.length > 0){

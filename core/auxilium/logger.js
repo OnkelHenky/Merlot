@@ -43,10 +43,10 @@ Logger.prototype = new Merlot();
 /**
  * @description
  * The log level
- * 1 = Show only normal debug logs
- * 2 = Debug and info logs
- * 3 = Debug, info and Errors logs
- * @returns {number} the loglevel
+ * 1 = Debug logs only
+ * 2 = Debug and Info logs
+ * 3 = Debug, Info and Errors logs
+ * @returns {number} the log level
  */
 Logger.prototype.getLogLevel = function () {
     return this.logLevel;
@@ -72,9 +72,9 @@ Logger.prototype.addProperties = function (properties) {
  * @returns {boolean|*}
  */
 Logger.prototype.log = function (stuff) {
-    var _style = this.style;
+    let _style = this.style;
     if(this.getLogLevel() >= 1) {
-        this.sys.puts("\n\r"+_style.foreground.magenta("Debug:")+ _style.foreground.green(stuff));
+    console.log(("\n\r"+_style.foreground.magenta("Debug:")+ _style.foreground.green(stuff)));
     }
 };
 
@@ -84,12 +84,12 @@ Logger.prototype.log = function (stuff) {
  * @param stuff
  */
 Logger.prototype.dir = function (stuff, inspectProperties) {
-    var _style = this.style;
+    let _style = this.style;
     if(this.getLogLevel() >= 2) {
         if(inspectProperties){
-            this.sys.puts("\n\r"+this.sys.inspect(stuff, inspectProperties));
+         console.log("\n\r"+this.sys.inspect(stuff, inspectProperties));
         }else{
-            this.sys.puts("\n\r"+this.sys.inspect(stuff));
+         console.log("\n\r"+this.sys.inspect(stuff));
         }
     }
 };
@@ -102,9 +102,9 @@ Logger.prototype.dir = function (stuff, inspectProperties) {
  * @returns {boolean|*}
  */
 Logger.prototype.info = function (stuff) {
-    var _style = this.style;
+    let _style = this.style;
     if(this.getLogLevel() >= 2) {
-        this.sys.puts("\n\r"+_style.extras.underline(_style.foreground.cyan("Info:")) + " " + _style.foreground.green(stuff));
+     console.log("\n\r"+_style.extras.underline(_style.foreground.cyan("Info:")) + " " + _style.foreground.green(stuff));
     }
 };
 
@@ -116,8 +116,8 @@ Logger.prototype.info = function (stuff) {
  * @returns {boolean|*}
  */
 Logger.prototype.error = function (stuff) {
-    var _style = this.style;
+    let _style = this.style;
     if(this.getLogLevel() === 3) {
-        this.sys.puts("\n\r"+_style.extras.underline(_style.extras.bold(_style.foreground.red("Error:")))+ " " + _style.foreground.green(stuff));
+     console.log("\n\r"+_style.extras.underline(_style.extras.bold(_style.foreground.red("Error:")))+ " " + _style.foreground.green(stuff));
     }
 };
