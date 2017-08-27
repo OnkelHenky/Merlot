@@ -71,7 +71,7 @@ Logger.prototype.addProperties = function (properties) {
  * @param stuff the text to log on the console
  * @returns {boolean|*}
  */
-Logger.prototype.log = function (stuff) {
+Logger.prototype.debug = function (stuff) {
     let _style = this.style;
     if(this.getLogLevel() >= 1) {
     console.log(("\n\r"+_style.foreground.magenta("Debug:")+ _style.foreground.green(stuff)));
