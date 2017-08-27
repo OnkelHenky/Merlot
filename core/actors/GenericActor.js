@@ -43,7 +43,7 @@ var Actor =  require('./actor').Actor,
  * The profile for the actor
  * @type {GenericActor}
  */
-exports.GenericActor = GenericActor = function() {
+exports.GenericActor = GenericActor = function(logger) {
 
     /*
      * +----------------------------+
@@ -51,6 +51,7 @@ exports.GenericActor = GenericActor = function() {
      * +----------------------------+
      */
     this.name = 'GPII_Based_Actor';
+    this.logger = logger
 
 };
 
@@ -86,13 +87,13 @@ GenericActor.prototype.loadPreferenceSet = function(path,actorname,blueprint_nam
         _blueprint_name = blueprint_name.split(' ').join('_');
 
 
-    this.logger.info('Actor is ' + _actor_name);
+
    // console.log('path to vins = ' + path);
     //console.log('_blueprint_name = ' + _blueprint_name);
 
 
     let _path_to_vin_file = _path.join(path, _actor_name+".vin.json");
-    this.logger.info (_path_to_vin_file);
+    this.logger.debug (_path_to_vin_file);
     let _jsonData = _jf.readFileSync(_path_to_vin_file);
    // console.dir(_jf.readFileSync(_path_to_vin_file));
 

@@ -246,9 +246,9 @@ BlueprintRunner.prototype.addConfiguration = function (config) {
 BlueprintRunner.prototype.setCurrentBlueprint = function (name_of_the_scenario){
     if(name_of_the_scenario !== undefined && this.aux.isString(name_of_the_scenario)){
         this.currentBlueprint = name_of_the_scenario;
-        this.logger.info("Current Scenario = " + name_of_the_scenario);
+        this.logger.debug("Current Scenario = " + name_of_the_scenario);
     }else{
-        this.logger.info("No scenario name found! Name is empty, please set a proper name in your Blueprint description.");
+        this.logger.error("No scenario name found! Name is empty, please set a proper name in your Blueprint description.");
     }
 };
 
@@ -275,9 +275,10 @@ BlueprintRunner.prototype.runWithThatActor = function (actor) {
 
     if (_aux.isString(actor)) {
         try {
-            that.actor = new genericActor();
+            that.actor = new genericActor(that.logger);
             that.actor.loadPreferenceSet(that.vinFiles,actor,that.getCurrentBlueprint());
             that.actor.setName(actor);
+            this.logger.info('Actor is ' +  that.actor.getName());
         } catch(ex){
             throw new ReferenceError('Actor with name "' + actor + '" not found');
         }

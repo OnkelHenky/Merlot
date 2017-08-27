@@ -63,7 +63,6 @@ exports.Actor = Actor =  function(properties) {
 
     this.username = void 0;  //default value is 'undefined'
     this.password = void 0;  //default value is 'undefined'
-    this.logger = new Logger({'logLevel': 2});
 
     if(properties){
         this.addPoperties(properties);

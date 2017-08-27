@@ -74,7 +74,7 @@ Logger.prototype.addProperties = function (properties) {
 Logger.prototype.debug = function (stuff) {
     let _style = this.style;
     if(this.getLogLevel() >= 1) {
-    console.log(("\n\r"+_style.foreground.magenta("Debug:")+ _style.foreground.green(stuff)));
+    console.log(("\r"+_style.foreground.magenta("Debug:")+ _style.foreground.green(stuff))+"\n");
     }
 };
 
@@ -104,7 +104,7 @@ Logger.prototype.dir = function (stuff, inspectProperties) {
 Logger.prototype.info = function (stuff) {
     let _style = this.style;
     if(this.getLogLevel() >= 2) {
-     console.log("\n\r"+_style.extras.underline(_style.foreground.cyan("Info:")) + " " + _style.foreground.green(stuff));
+     console.log(""+_style.extras.underline(_style.foreground.cyan("Info:")) + " " + _style.foreground.green(stuff));
     }
 };
 
