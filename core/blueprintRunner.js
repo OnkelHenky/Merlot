@@ -33,12 +33,20 @@
  * |   Require selenium stuff   |
  * +----------------------------+
  */
-var webdriver = require('selenium-webdriver'),
+const webdriver = require('selenium-webdriver'),
     path = require('path'),
     Logger = require('./auxilium/logger').Logger,
     SeleniumServer = require('selenium-webdriver/remote').SeleniumServer,
     mu = require('mu2'),
-    AccessibilityIssue = require('./auxilium/AccessibilityIssue').AccessibilityIssue
+    AccessibilityIssue = require('./auxilium/AccessibilityIssue').AccessibilityIssue;
+const {promise,logging} = require('selenium-webdriver');
+
+// async/await do not work well when the promise manager is enabled.
+// See https://github.com/SeleniumHQ/selenium/issues/3037
+//
+// 3037 does not impact these specific examples, but it is still recommended
+// that you disable the promise manager when using async/await.
+promise.USE_PROMISE_MANAGER = false;
 
 /*
  * +----------------------------+
@@ -207,6 +215,17 @@ BlueprintRunner.prototype.addConfiguration = function (config) {
              * implicit: wait 3 seconds for for every element to be retrieved before throwing an error.
              */
             self.driver.manage().setTimeouts({script: 10 * 1000, page: 10 * 1000, implicit: 3 * 1000});
+            //let logging = self.driver.getLogger()
+            //console.log("==========> LOGGER OBJECT")
+            // console.dir(logging);
+            logging.installConsoleHandler();
+            logging.getLogger('promise.ControlFlow').setLevel(logging.Level.ALL);
+            self.driver.manage().logs().get(logging.Type.BROWSER)
+                .then(function(entries) {
+                    entries.forEach(function(entry) {
+                        console.log('[%s] %s', entry.level.name, entry.message);
+                    });
+                });
         }
 
     } catch (ex) {
@@ -297,9 +316,9 @@ BlueprintRunner.prototype.setConformanceLevel = function(conformanceLevel){
         this.acessibilityRuleset = this.actor.getName() + conformanceLevel;
         //this.logger.info("Checking for "+ this.actor.getName() + "'s "+conformanceLevel+" level conformance");
     }else{
-        this.acessibilityRuleset = this.actor.getName() + 'A';
-        this.logger.info(conformanceLevel+" is not a valid WCAG conformance level, please use 'A', 'AA' or 'AAA'");
+        this.logger.info(conformanceLevel+" is not a valid WCAG conformance level, use 'A', 'AA' or 'AAA'");
         this.logger.info("Using default WCAG conformance level: 'A'");
+        this.acessibilityRuleset = this.actor.getName() + 'A';
     }
 };
 
@@ -328,7 +347,7 @@ BlueprintRunner.prototype.setLoginCredentialsForActor = function (type, value) {
             }
         }
     } else {
-        throw new TypeError("No actor defined in the blueprintRunner, therefor you cant set any LoginCredentials ");
+        throw new TypeError("No actor defined! Hence, you cant set any login credentials.");
     }
 };
 
@@ -388,20 +407,13 @@ BlueprintRunner.prototype.createDOMElement = function (properties) {
 * @description
 * Got the the URL location, defined by the parameter 'where'
 * @param where , the URL
-* @param callback
 */
-BlueprintRunner.prototype.goTo = function (where, callback) {
-        var self = this;
-        this.driver.get(where).
+BlueprintRunner.prototype.goTo = function (where) {
+     var self = this;
+     return this.driver.get(where).
         then(function injectPinot() {
-            return self.injectAcessibilityTestScripts();
-        }).
-        then(function onOk() {
-            callback();
-        }).
-        then(null, function onError(err) {
-            callback.fail(err);
-        });
+             return self.injectAcessibilityTestScripts();
+        })
     };
 
 /**
@@ -828,9 +840,12 @@ BlueprintRunner.prototype.errorHandler = function(error, _domElement,_stepDescri
 
     /*TODO: This should be somewhat actor-specific*/
     if(MerlotErrors.ERROR_ISSUES_FOUND === error.getMsg()){
-       //self.logger.error("AbortEvaluationError")
-       callback(new MerlotErrors.AbortEvaluationError(self.actor.getName()+" can't continue with the scenario due to an error."
-            + " \n See the Error report, or the highlighted section on your web page for more details.").message);
+        self.logger.error(new MerlotErrors.AbortEvaluationError(self.actor.getName()+" can't continue with the scenario due to an error."
+        + " \n See the Error report, or the highlighted section on your web page for more details.").message);
+       // self.logger.dir(error)
+        callback({});
+       /* callback(new MerlotErrors.AbortEvaluationError(self.actor.getName()+" can't continue with the scenario due to an error."
+            + " \n See the Error report, or the highlighted section on your web page for more details.").message); */
 
     } else if(MerlotErrors.LOOP_ERROR === error.getMsg()){
         /*
@@ -920,7 +935,7 @@ BlueprintRunner.prototype.errorHandler = function(error, _domElement,_stepDescri
  */
 BlueprintRunner.prototype.injectAcessibilityTestScripts = function () {
     var self = this,
-        _deferred = self.webdriver.promise.defer();
+        _deferred =  self.webdriver.promise.defer();
 
     self.driver.executeAsyncScript(function () {
         if (!window.jQuery) {
@@ -1020,11 +1035,12 @@ BlueprintRunner.prototype.injectAcessibilityTestScripts = function () {
         });
     }).
     then(function onOk() {
-        _deferred.fulfill();
+        _deferred.resolve();
     }).
     then(null, function onError(err) {
         _deferred.reject(err);
     });
+
     return _deferred.promise;
 };
 

@@ -142,7 +142,7 @@ Evaluator.prototype.evalAccessibility = function (webElement, domElement,_stepDe
             });
     }).
     then(function onOK() {
-        _deferred.fulfill(_issues);
+        _deferred.resolve(_issues);
     });
 
     return _deferred.promise;
@@ -240,7 +240,7 @@ Evaluator.prototype.evalAccessibilityWithSemantic = function (webElement, domEle
             });
     }).
     then(function onOK() {
-        _deferred.fulfill(_issues);
+        _deferred.resolve(_issues);
     });
 
     return _deferred.promise;

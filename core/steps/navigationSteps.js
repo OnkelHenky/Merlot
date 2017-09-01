@@ -16,7 +16,13 @@ module.exports = function ({Given, When, Then}) {
      * TODO: maybe implement check if 'url' is a valid url-pattern string.
      */
     Given(/^Actor navigates to the website with URL: "([^"]*)"$/, function (url, callback) {
-        this.driver.goTo(url, callback);
+        this.driver.goTo(url).
+            then(function onOK(){
+                callback();
+            }).then(null, function onError(err) {
+            console.log('err =  '+err);
+            //callback.fail(err);
+        });
     });
 
     /**
@@ -247,7 +253,7 @@ module.exports = function ({Given, When, Then}) {
                 callback();
             }).
             then(null, function onError(err) {
-                that.driver.errorHandler(err,_domElement,_stepDescr,callback);
+            that.driver.errorHandler(err,_domElement,_stepDescr,callback);
             });
     });
 

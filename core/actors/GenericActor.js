@@ -1,5 +1,5 @@
 /**
- *  anna.js is part of Merlot
+ *  GenericActor.js is part of Merlot
  *  Copyright (c) by Alexander Henka, 09.01.15.
  *  Project URL: https://github.com/OnkelHenky/Merlot
  *
@@ -42,6 +42,7 @@ var Actor =  require('./actor').Actor,
  * @description
  * The profile for the actor
  * @type {GenericActor}
+ * @param logger
  */
 exports.GenericActor = GenericActor = function(logger) {
 
@@ -78,7 +79,6 @@ GenericActor.prototype.loadPreferenceSet = function(path,actorname,blueprint_nam
         _util = require('util'),
         _path = require('path'),
         _actor_name = actorname,
-
         /*
          * Replace blank " " with underscore _ in the blueprint name
          * to match the name of the user scenario in the persona's rule set.
@@ -86,16 +86,9 @@ GenericActor.prototype.loadPreferenceSet = function(path,actorname,blueprint_nam
          */
         _blueprint_name = blueprint_name.split(' ').join('_');
 
-
-
-   // console.log('path to vins = ' + path);
-    //console.log('_blueprint_name = ' + _blueprint_name);
-
-
-    let _path_to_vin_file = _path.join(path, _actor_name+".vin.json");
-    this.logger.debug (_path_to_vin_file);
-    let _jsonData = _jf.readFileSync(_path_to_vin_file);
-   // console.dir(_jf.readFileSync(_path_to_vin_file));
+        let _path_to_vin_file = _path.join(path, _actor_name+".vin.json");
+        this.logger.debug (_path_to_vin_file);
+        let _jsonData = _jf.readFileSync(_path_to_vin_file);
 
     /*
      * Get the correct rule set for the current blueprint (user scenario)
@@ -116,9 +109,6 @@ GenericActor.prototype.loadPreferenceSet = function(path,actorname,blueprint_nam
             return HTMLCS_WCAG2AAA.getMsgInfo(code);
         }
     };
-
-  //  console.log('+++++ Actor Infor +++++');
-    //console.dir(_jsonData.actor_info);
 
     this.setImage(_jsonData.actor_info.image);
     this.setRuleSet(rule_set);
